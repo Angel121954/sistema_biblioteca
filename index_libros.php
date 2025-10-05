@@ -362,6 +362,7 @@ $sql->desconectar();
                                                     <th>ISBN</th>
                                                     <th>Categoría</th>
                                                     <th>Disponibilidad</th>
+                                                    <th>Cantidad</th>
                                                     <?php if ($_SESSION["tipo_usuario"] === "1"): ?>
                                                         <th class="text-center">Acciones</th>
                                                     <?php endif; ?>
@@ -376,6 +377,7 @@ $sql->desconectar();
                                                         <th><?php echo $filas["isbn_libro"]; ?></th>
                                                         <th><?php echo $filas["categoria_libro"]; ?></th>
                                                         <th><?php echo $filas["disponibilidad_libro"]; ?></th>
+                                                        <th><?php echo $filas["cantidad_libro"]; ?></th>
                                                         <td class="text-center">
                                                             <?php if ($_SESSION["tipo_usuario"] === "1"): ?>
                                                                 <!--(id, titulo, autor, isbn, categoria, cantidad)-->
@@ -384,7 +386,7 @@ $sql->desconectar();
                                                             '<?php echo $filas['autor_libro']; ?>',
                                                             '<?php echo $filas['isbn_libro']; ?>',
                                                             '<?php echo $filas['categoria_libro']; ?>',
-                                                            '<?php echo $filas['cantidad_libro']; ?>'"><i class="bi bi-pencil-square"></i></button>
+                                                            '<?php echo $filas['cantidad_libro']; ?>')"><i class="bi bi-pencil-square"></i></button>
                                                                 <button class="btn btn-sm btn-danger" onclick="eliminarLibro('<?php echo $filas['id_libro']; ?>')">
                                                                     <i class="bi bi-trash"></i>
                                                                 </button>

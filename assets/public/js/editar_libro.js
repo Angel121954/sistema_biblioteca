@@ -60,7 +60,7 @@ function editarLibro(id, titulo, autor, isbn, categoria, cantidad) {
     },
   }).then((result) => {
     if (result.isConfirmed) {
-      fetch("assets/controladores/editar_libro.php", {
+      fetch("assets/controladores/libros/editar_libro.php", {
         method: "POST",
         body: result.value,
       })

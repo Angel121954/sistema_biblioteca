@@ -54,7 +54,7 @@ document
             e.preventDefault();
             const formData = new FormData(this);
 
-            fetch("assets/controladores/registro_usuario.php", {
+            fetch("assets/controladores/usuarios/registro_usuario.php", {
               method: "POST",
               body: formData,
             })

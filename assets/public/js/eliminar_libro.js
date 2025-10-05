@@ -13,7 +13,7 @@ function eliminarLibro(id_libro) {
       const fd = new FormData();
       fd.append("id_libro", id_libro);
 
-      fetch("assets/controladores/eliminar_libro.php", {
+      fetch("assets/controladores/libros/eliminar_libro.php", {
         method: "POST",
         body: fd,
       })

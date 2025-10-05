@@ -63,7 +63,7 @@ document.querySelector("#btn_registro_libro").addEventListener("click", () => {
 
         const formData = new FormData(form);
 
-        fetch("assets/controladores/registro_libro.php", {
+        fetch("assets/controladores/libros/registro_libro.php", {
           method: "POST",
           body: formData,
         })

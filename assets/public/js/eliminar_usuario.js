@@ -13,7 +13,7 @@ function eliminarUsuario(id_usuario) {
       const fd = new FormData();
       fd.append("id_usuario", id_usuario);
 
-      fetch("assets/controladores/eliminar_usuario.php", {
+      fetch("assets/controladores/usuarios/eliminar_usuario.php", {
         method: "POST",
         body: fd,
       })

@@ -14,7 +14,7 @@ while ($fila_tipos = $tipos_usuarios_c->fetch_assoc()) {
     $tipos_usuarios[] = $fila_tipos;
 }
 
-$tipos_usuarios_json = htmlspecialchars(json_encode($tipos_usuarios), ENT_QUOTES, 'UTF-8');
+$tipos_usuarios_json = json_encode($tipos_usuarios, JSON_UNESCAPED_UNICODE);
 $sql->desconectar();
 
 ?>
@@ -389,11 +389,11 @@ $sql->desconectar();
                                                         <th><?php echo $filas["nombre_tipo_usuario"]; ?></th>
                                                         <td class="text-center">
                                                             <?php if ($_SESSION["tipo_usuario"] === "1"): ?>
-                                                                <button class="btn btn-sm btn-warning" onclick="editarUsuario('<?php echo $filas['id_usuario']; ?>',
-                                                            '<?php echo $filas['nombre_usuario']; ?>',
-                                                            '<?php echo $filas['apellido_usuario']; ?>',
-                                                            '<?php echo $filas['email_usuario']; ?>',
-                                                            '<?php echo $filas['contrasena_usuario']; ?>',
+                                                                <button class="btn btn-sm btn-warning" onclick="editarUsuario('<?php echo htmlspecialchars($filas['id_usuario'], ENT_QUOTES, 'UTF-8'); ?>',
+                                                            '<?php echo htmlspecialchars($filas['nombre_usuario'], ENT_QUOTES, 'UTF-8'); ?>',
+                                                            '<?php echo htmlspecialchars($filas['apellido_usuario'], ENT_QUOTES, 'UTF-8'); ?>',
+                                                            '<?php echo htmlspecialchars($filas['email_usuario'], ENT_QUOTES, 'UTF-8'); ?>',
+                                                            '<?php echo htmlspecialchars($filas['contrasena_usuario'], ENT_QUOTES, 'UTF-8'); ?>',
                                                             this.dataset.tiposUsuarios)"
                                                                     data-tipos-usuarios='<?php echo htmlspecialchars($tipos_usuarios_json, ENT_QUOTES, "UTF-8"); ?>'><i class="bi bi-pencil-square"></i></button>
                                                                 <button class="btn btn-sm btn-danger" onclick="eliminarUsuario('<?php echo $filas['id_usuario']; ?>')">
