@@ -15,6 +15,11 @@ while ($fila_tipos = $tipos_usuarios_c->fetch_assoc()) {
 }
 
 $tipos_usuarios_json = json_encode($tipos_usuarios, JSON_UNESCAPED_UNICODE);
+
+$id_usuario = $_SESSION["id_usuario"];
+$usuario_result = $sql->efectuarConsulta("SELECT * FROM usuarios WHERE id_usuario = $id_usuario");
+$usuario = $usuario_result->fetch_assoc();
+
 $sql->desconectar();
 
 ?>
@@ -55,11 +60,11 @@ $sql->desconectar();
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.php">
                 <div class="sidebar-brand-icon rotate-n-15">
                     <i class="fas fa-laugh-wink"></i>
                 </div>
-                <div class="sidebar-brand-text mx-3">SB Admin <sup>2</sup></div>
+                <div class="sidebar-brand-text mx-3">Biblioteca</div>
             </a>
 
             <!-- Divider -->
@@ -67,7 +72,7 @@ $sql->desconectar();
 
             <!-- Nav Item - Dashboard -->
             <li class="nav-item active">
-                <a class="nav-link" href="index.html">
+                <a class="nav-link" href="index.php">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Dashboard</span></a>
             </li>
@@ -77,57 +82,46 @@ $sql->desconectar();
 
             <!-- Heading -->
             <div class="sidebar-heading">
-                Interface
+                Funcionalidad
             </div>
-
-            <!-- Nav Item - Pages Collapse Menu -->
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
-                    aria-expanded="true" aria-controls="collapseTwo">
-                    <i class="fas fa-fw fa-cog"></i>
-                    <span>Components</span>
-                </a>
-                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Custom Components:</h6>
-                        <a class="collapse-item" href="buttons.html">Buttons</a>
-                        <a class="collapse-item" href="cards.html">Cards</a>
-                    </div>
-                </div>
-            </li>
-
-            <!-- Nav Item - Utilities Collapse Menu -->
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"
-                    aria-expanded="true" aria-controls="collapseUtilities">
-                    <i class="fas fa-fw fa-wrench"></i>
-                    <span>Utilities</span>
-                </a>
-                <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities"
-                    data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Custom Utilities:</h6>
-                        <a class="collapse-item" href="utilities-color.html">Colors</a>
-                        <a class="collapse-item" href="utilities-border.html">Borders</a>
-                        <a class="collapse-item" href="utilities-animation.html">Animations</a>
-                        <a class="collapse-item" href="utilities-other.html">Other</a>
-                    </div>
-                </div>
-            </li>
 
             <!-- Enlace: usuarios -->
             <li class="nav-item">
                 <a class="nav-link" href="index.php">
-                    <i class="fas fa-fw fa-chart-area"></i>
-                    <span>Usuarios</span></a>
+                    <i class="bi bi-people-fill"></i>
+                    <span>Usuarios</span>
+                </a>
             </li>
 
             <!-- Enlace: libros -->
             <li class="nav-item">
                 <a class="nav-link" href="index_libros.php">
-                    <i class="fas fa-fw fa-table"></i>
-                    <span>Libros</span></a>
+                    <i class="bi bi-journal-bookmark-fill"></i>
+                    <span>Libros</span>
+                </a>
             </li>
+
+            <!-- Enlace: reservas -->
+            <li class="nav-item">
+                <a class="nav-link" href="index_reservas.php">
+                    <i class="bi bi-calendar2-check-fill"></i>
+                    <span>Reservas</span>
+                </a>
+            </li>
+
+            <!-- Enlace: perfil -->
+            <li class="nav-item">
+                <a class="nav-link" href="#"
+                    onclick="actualizarPerfil(
+                    '<?php echo $usuario['id_usuario']; ?>',
+                    '<?php echo $usuario['nombre_usuario']; ?>',
+                    '<?php echo $usuario['apellido_usuario']; ?>',
+                    '<?php echo $usuario['email_usuario']; ?>')">
+                    <i class="fas fa-user-cog"></i>
+                    <span>Perfil</span>
+                </a>
+            </li>
+
 
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">
@@ -136,14 +130,6 @@ $sql->desconectar();
             <div class="text-center d-none d-md-inline">
                 <button class="rounded-circle border-0" id="sidebarToggle"></button>
             </div>
-
-            <!-- Sidebar Message -->
-            <div class="sidebar-card d-none d-lg-flex">
-                <img class="sidebar-card-illustration mb-2" src="img/undraw_rocket.svg" alt="...">
-                <p class="text-center mb-2"><strong>SB Admin Pro</strong> is packed with premium features, components, and more!</p>
-                <a class="btn btn-success btn-sm" href="https://startbootstrap.com/theme/sb-admin-pro">Upgrade to Pro!</a>
-            </div>
-
         </ul>
         <!-- End of Sidebar -->
 
@@ -350,15 +336,17 @@ $sql->desconectar();
 
                         <!-- Begin Page Content -->
                         <div class="container-fluid">
-                            <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                                <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
-                                <button
-                                    id="btn_registro_usuario"
-                                    data-tiposUsuarios="<?php echo $tipos_usuarios_json; ?>"
-                                    class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
-                                    <i class="fas fa-user-plus fa-sm text-white-50"></i> Agregar usuario
-                                </button>
-                            </div>
+                            <?php if ($_SESSION["tipo_usuario"] === "1"): ?>
+                                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                                    <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
+                                    <button
+                                        id="btn_registro_usuario"
+                                        data-tipos-usuarios="<?php echo htmlspecialchars($tipos_usuarios_json, ENT_QUOTES, 'UTF-8'); ?>"
+                                        class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                                        <i class="fas fa-user-plus fa-sm text-white-50"></i> Agregar usuario
+                                    </button>
+                                </div>
+                            <?php endif; ?>
                             <!-- DataTales Example -->
                             <div class="card shadow mb-4">
                                 <div class="card-header py-3">
@@ -387,8 +375,9 @@ $sql->desconectar();
                                                         <th><?php echo $filas["apellido_usuario"]; ?></th>
                                                         <th><?php echo $filas["email_usuario"]; ?></th>
                                                         <th><?php echo $filas["nombre_tipo_usuario"]; ?></th>
-                                                        <td class="text-center">
-                                                            <?php if ($_SESSION["tipo_usuario"] === "1"): ?>
+                                                        <?php if ($_SESSION["tipo_usuario"] === "1"): ?>
+                                                            <td class="text-center">
+
                                                                 <button class="btn btn-sm btn-warning" onclick="editarUsuario('<?php echo htmlspecialchars($filas['id_usuario'], ENT_QUOTES, 'UTF-8'); ?>',
                                                             '<?php echo htmlspecialchars($filas['nombre_usuario'], ENT_QUOTES, 'UTF-8'); ?>',
                                                             '<?php echo htmlspecialchars($filas['apellido_usuario'], ENT_QUOTES, 'UTF-8'); ?>',
@@ -399,8 +388,9 @@ $sql->desconectar();
                                                                 <button class="btn btn-sm btn-danger" onclick="eliminarUsuario('<?php echo $filas['id_usuario']; ?>')">
                                                                     <i class="bi bi-trash"></i>
                                                                 </button>
-                                                            <?php endif; ?>
-                                                        </td>
+
+                                                            </td>
+                                                        <?php endif; ?>
                                                     </tr>
                                                 <?php endwhile; ?>
                                             </tbody>
@@ -794,7 +784,6 @@ $sql->desconectar();
 
     <!-- Bootstrap core JavaScript-->
     <script src="vendor/jquery/jquery.min.js"></script>
-    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
     <!-- Core plugin JavaScript-->
     <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
@@ -803,7 +792,7 @@ $sql->desconectar();
     <script src="js/sb-admin-2.min.js"></script>
 
     <!-- Page level plugins -->
-    <script src="vendor/chart.js/Chart.min.js"></script>
+    <script src="assets/libs/chart.js/Chart.bundle.min.js"></script>
 
     <!-- Page level custom scripts -->
     <script src="js/demo/chart-area-demo.js"></script>
@@ -817,9 +806,12 @@ $sql->desconectar();
 
     <!--JS SweetAlert-->
     <script src="assets/libs/sweetAlert/sweetalert2.all.min.js"></script>
-    <script src="assets/public/js/registro_usuario.js"></script>
-    <script src="assets/public/js/editar_usuario.js"></script>
-    <script src="assets/public/js/eliminar_usuario.js"></script>
+    <script src="assets/public/js/usuarios/registro_usuario.js"></script>
+    <script src="assets/public/js/usuarios/editar_usuario.js"></script>
+    <script src="assets/public/js/usuarios/eliminar_usuario.js"></script>
+
+    <!--JS actualizar perfil-->
+    <script src="assets/public/js/usuarios/actualizar_perfil.js"></script>
 </body>
 
 </html>
