@@ -123,6 +123,14 @@ $sql->desconectar();
                 </a>
             </li>
 
+            <!-- Enlace: prestamos -->
+            <li class="nav-item">
+                <a class="nav-link" href="index_prestamos.php">
+                    <i class="bi bi-clock-history"></i>
+                    <span>Prestamos</span>
+                </a>
+            </li>
+
             <!-- Enlace: perfil -->
             <li class="nav-item">
                 <a class="nav-link" href="#"
@@ -351,7 +359,7 @@ $sql->desconectar();
                             <!-- Botones superiores -->
                             <?php if ($_SESSION["tipo_usuario"] === "1"): ?>
                                 <div class="d-sm-flex align-items-center justify-content-end mb-4">
-                                    <a href="#" class="mx-2 d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                                    <a href="#" class="mx-2 d-none d-sm-inline-block btn btn-sm btn-success shadow-sm">
                                         <i class="fas fa-download fa-sm text-white-50"></i> Generar informe inventario
                                     </a>
                                     <button id="btn_registro_libro" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">

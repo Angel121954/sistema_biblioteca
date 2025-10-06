@@ -122,6 +122,14 @@ $sql->desconectar();
                 </a>
             </li>
 
+            <!-- Enlace: prestamos -->
+            <li class="nav-item">
+                <a class="nav-link" href="index_prestamos.php">
+                    <i class="bi bi-clock-history"></i>
+                    <span>Prestamos</span>
+                </a>
+            </li>
+
             <!-- Enlace: perfil -->
             <li class="nav-item">
                 <a class="nav-link" href="#"

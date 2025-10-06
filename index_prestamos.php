@@ -4,32 +4,29 @@ session_start();
 require_once "assets/modelos/MySQL.php";
 $sql = new MySQL();
 $sql->conectar();
-$id_usuario = intval($_SESSION["id_usuario"]);
 
-$consulta = "SELECT p.id_prestamo, p.fecha_prestamo, p.fecha_devolucion
-                    FROM prestamos AS p INNER JOIN
-                    reservas AS r ON p.reservas_id_reserva = r.id_reserva
-                    WHERE estado_reserva = 'Aceptada'";
+//* consulta para convertirlo en arreglo y luego en json
+$prestamos_result = $sql->efectuarConsulta("SELECT p.id_prestamo, p.fecha_prestamo, p.fecha_devolucion,
+                        r.fecha_reserva, l.titulo_libro, u.nombre_usuario
+                        FROM prestamos p INNER JOIN reservas r 
+                        ON p.reservas_id_reserva = r.id_reserva
+                        INNER JOIN usuarios u ON r.usuarios_id_usuario = u.id_usuario
+                        INNER JOIN libros l ON r.libros_id_libro = l.id_libro");
 
-switch ($_SESSION["tipo_usuario"]) {
-    case "1":
-        $reservas = $sql->efectuarConsulta($consulta);
-        break;
-    case "2":
-        $consulta .= "AND u.id_usuario = $id_usuario";
-        $reservas = $sql->efectuarConsulta($consulta);
-        break;
-}
-$usuario_result = $sql->efectuarConsulta("SELECT * FROM usuarios WHERE id_usuario = $id_usuario");
-$usuario = $usuario_result->fetch_assoc();
+//* otra consulta para poderlo imprimir en la tabla
+$presta = $sql->efectuarConsulta("SELECT p.id_prestamo, p.fecha_prestamo, p.fecha_devolucion,
+                        r.fecha_reserva, l.titulo_libro, u.nombre_usuario
+                        FROM prestamos p INNER JOIN reservas r 
+                        ON p.reservas_id_reserva = r.id_reserva
+                        INNER JOIN usuarios u ON r.usuarios_id_usuario = u.id_usuario
+                        INNER JOIN libros l ON r.libros_id_libro = l.id_libro");
 
-$titulos = $sql->efectuarConsulta("SELECT id_libro, titulo_libro FROM libros");
-$titulo_libro = [];
-while ($valor = $titulos->fetch_assoc()) {
-    $titulo_libro[] = $valor;
+$prestamos = [];
+while ($valor = $prestamos_result->fetch_assoc()) {
+    $prestamos[] = $valor;
 }
 
-$libros_json = json_encode($titulo_libro, JSON_UNESCAPED_UNICODE);
+// $prestamos_json = json_encode($prestamos, JSON_UNESCAPED_UNICODE);
 
 $sql->desconectar();
 
@@ -140,6 +137,14 @@ $sql->desconectar();
                 <a class="nav-link" href="index_reservas.php">
                     <i class="bi bi-calendar2-check-fill"></i>
                     <span>Reservas</span>
+                </a>
+            </li>
+
+            <!-- Enlace: prestamos -->
+            <li class="nav-item">
+                <a class="nav-link" href="index_prestamos.php">
+                    <i class="bi bi-clock-history"></i>
+                    <span>Prestamos</span>
                 </a>
             </li>
 
@@ -358,7 +363,7 @@ $sql->desconectar();
                             <!-- Page Heading -->
                             <?php if ($_SESSION["tipo_usuario"] === "1"): ?>
                                 <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                                    <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
+                                    <h1 class="h3 mb-0 text-gray-800">Gestión de Prestamos</h1>
                                     <button id="btn_registro_prestamo" data-reserva="<?php echo htmlspecialchars($libros_json, ENT_QUOTES, 'UTF-8'); ?>"
                                         class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
                                             class="fas fa-download fa-sm text-white-50"></i>Realizar un prestamo</button>
@@ -367,56 +372,30 @@ $sql->desconectar();
                             <!-- DataTales Example -->
                             <div class="card shadow mb-4">
                                 <div class="card-header py-3">
-                                    <?php switch ($_SESSION["tipo_usuario"]):
-                                        case "1": ?>
-                                            <h6 class="m-0 font-weight-bold text-primary">Tabla de las reservas realizadas por los usuarios</h6>
-                                        <?php break;
-                                        case "2": ?>
-                                            <h6 class="m-0 font-weight-bold text-primary">Tabla de mis reservas</h6>
-                                            <?php break; ?>
-                                    <?php endswitch; ?>
+                                    <h6 class="m-0 font-weight-bold text-primary">Tabla de los prestamos</h6>
                                 </div>
                                 <div class="card-body">
                                     <div class="table-responsive">
                                         <table class="table table-bordered" id="tbl_reservas" width="100%" cellspacing="0">
                                             <thead>
                                                 <tr>
-                                                    <th>ID reserva</th>
-                                                    <th>Fecha</th>
-                                                    <th>Estado</th>
+                                                    <th>ID prestamo</th>
+                                                    <th>Fecha reserva</th>
+                                                    <th>Fecha prestamo</th>
+                                                    <th>Fecha devolución</th>
                                                     <th>Nombre usuario</th>
                                                     <th>Titulo libro</th>
-                                                    <?php switch ($_SESSION["tipo_usuario"]):
-                                                        case "1": ?>
-                                                            <th class="text-center">Acción frente a la reserva</th>
-                                                        <?php break;
-                                                        case "2": ?>
-                                                            <th class="text-center">Acción de mi reserva</th>
-                                                    <?php break;
-                                                    endswitch; ?>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <?php while ($fila = $reservas->fetch_assoc()): ?>
+                                                <?php while ($fila = $presta->fetch_assoc()): ?>
                                                     <tr>
-                                                        <th><?php echo $fila["id_reserva"]; ?></th>
+                                                        <th><?php echo $fila["id_prestamo"]; ?></th>
                                                         <th><?php echo $fila["fecha_reserva"]; ?></th>
-                                                        <th><?php echo $fila["estado_reserva"]; ?></th>
+                                                        <th><?php echo $fila["fecha_prestamo"]; ?></th>
+                                                        <th><?php echo $fila["fecha_devolucion"]; ?></th>
                                                         <th><?php echo $fila["nombre_usuario"]; ?></th>
                                                         <th><?php echo $fila["titulo_libro"]; ?></th>
-
-                                                        <td class="text-center">
-                                                            <?php if ($_SESSION["tipo_usuario"] === "1"): ?>
-                                                                <button class="btn btn-success btn-sm"
-                                                                    onclick="actualizarReserva(<?= $fila['id_reserva'] ?>, 'Aceptar')">
-                                                                    <i class="bi bi-check-circle"></i> Aceptar
-                                                                </button>
-                                                            <?php endif; ?>
-                                                            <button class="btn btn-danger btn-sm"
-                                                                onclick="actualizarReserva(<?= $fila['id_reserva'] ?>, 'Cancelar')">
-                                                                <i class="bi bi-x-circle"></i> Cancelar
-                                                            </button>
-                                                        </td>
                                                     </tr>
                                                 <?php endwhile; ?>
                                             </tbody>
@@ -804,8 +783,8 @@ $sql->desconectar();
     <!-- 🔹 Librerías base y dependencias -->
     <!-- ============================ -->
     <script src="assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="vendor/jquery/jquery.min.js"></script>
-    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+    <script src="assets/libs/jquery/jquery.min.js"></script>
+    <script src="assets/libs/jquery-easing/jquery.easing.min.js"></script>
 
     <!-- ============================ -->
     <!-- 🔹 Librerías externas -->
