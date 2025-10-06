@@ -6,18 +6,16 @@ $sql->conectar();
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     if (
-        isset($_POST["email_usuario"], $_POST["contrasena_usuario"]) &&
-        !empty($_POST["email_usuario"]) && !empty($_POST["contrasena_usuario"])
+        isset($_POST["nombre_usuario"], $_POST["contrasena_usuario"]) &&
+        !empty($_POST["nombre_usuario"]) && !empty($_POST["contrasena_usuario"])
     ) {
         //* variables
-        $email = htmlspecialchars(trim($_POST["email_usuario"]));
+        $nombre = htmlspecialchars(trim($_POST["nombre_usuario"]));
         $contrasena = trim($_POST["contrasena_usuario"]);
 
         $usuarios = $sql->efectuarConsulta("SELECT * FROM usuarios
-                    WHERE email_usuario = '$email'");
+                    WHERE nombre_usuario = '$nombre'");
 
-        echo "SELECT * FROM usuarios
-                    WHERE email_usuario = '$email'";
         $fila = mysqli_fetch_assoc($usuarios);
         if ($fila && password_verify($contrasena, $fila["contrasena_usuario"])) {
             session_start();
@@ -28,7 +26,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $_SESSION["email_usuario"] = $fila["email_usuario"];
             $_SESSION["acceso"] = true;
 
-            header("Location: ../../index.php");
+            if ($_SESSION["tipo_usuario"] === "1") {
+                header("Location: ../../index.php");
+            } else {
+                header("Location: ../../index_libros.php");
+            }
             /* switch ($fila["fk_tipo_usuario"]) {
                 case "1":
                     header("Location: ../../index.php");
@@ -37,11 +39,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     header("Location: ../../.php");
                     break; */
         } else {
-            header("Location: ../../login.html?error=credenciales");
+            header("Location: ../../login.php?error=credenciales");
         }
         exit;
     } else {
-        header("Location: ../../login.html?error=credenciales");
+        header("Location: ../../login.php?error=credenciales");
         exit;
     }
     $sql->desconectar();

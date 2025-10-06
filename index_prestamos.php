@@ -6,17 +6,16 @@ $sql = new MySQL();
 $sql->conectar();
 $id_usuario = intval($_SESSION["id_usuario"]);
 
-$consulta = "SELECT r.id_reserva, r.fecha_reserva, r.estado_reserva,
-                    u.nombre_usuario, l.titulo_libro FROM reservas AS r INNER JOIN
-                    usuarios AS u ON r.usuarios_id_usuario = u.id_usuario
-                    INNER JOIN libros AS l ON r.libros_id_libro = l.id_libro
-                    WHERE r.estado_reserva = 'Pendiente'";
+$consulta = "SELECT p.id_prestamo, p.fecha_prestamo, p.fecha_devolucion
+                    FROM prestamos AS p INNER JOIN
+                    reservas AS r ON p.reservas_id_reserva = r.id_reserva
+                    WHERE estado_reserva = 'Aceptada'";
 
 switch ($_SESSION["tipo_usuario"]) {
     case "1":
         $reservas = $sql->efectuarConsulta($consulta);
         break;
-    default:
+    case "2":
         $consulta .= "AND u.id_usuario = $id_usuario";
         $reservas = $sql->efectuarConsulta($consulta);
         break;
@@ -24,8 +23,7 @@ switch ($_SESSION["tipo_usuario"]) {
 $usuario_result = $sql->efectuarConsulta("SELECT * FROM usuarios WHERE id_usuario = $id_usuario");
 $usuario = $usuario_result->fetch_assoc();
 
-$titulos = $sql->efectuarConsulta("SELECT id_libro, titulo_libro FROM libros
-                                WHERE disponibilidad_libro = 'Disponible'");
+$titulos = $sql->efectuarConsulta("SELECT id_libro, titulo_libro FROM libros");
 $titulo_libro = [];
 while ($valor = $titulos->fetch_assoc()) {
     $titulo_libro[] = $valor;
@@ -47,7 +45,7 @@ $sql->desconectar();
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>Reservas</title>
+    <title>Prestamos</title>
 
     <!--Font Awesome local-->
     <link href="assets/libs/awesome/css/all.min.css" rel="stylesheet" type="text/css">
@@ -358,23 +356,14 @@ $sql->desconectar();
                         <!-- Begin Page Content -->
                         <div class="container-fluid">
                             <!-- Page Heading -->
-                            <?php switch ($_SESSION["tipo_usuario"]):
-                                case "1": ?>
-                                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                                        <h1 class="h3 mb-0 text-gray-800">Reservas</h1>
-                                        <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
-                                                class="fas fa-download fa-sm text-white-50"></i> Generate Report</a>
-                                    </div>
-                                <?php break;
-                                case "2": ?>
-                                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                                        <h1 class="h3 mb-0 text-gray-800">Reservas</h1>
-                                        <button id="btn_registro_reserva" data-libros="<?php echo htmlspecialchars($libros_json, ENT_QUOTES, 'UTF-8'); ?>"
-                                            class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
-                                                class="fas fa-download fa-sm text-white-50"></i>Agregar reserva</button>
-                                    </div>
-                            <?php break;
-                            endswitch; ?>
+                            <?php if ($_SESSION["tipo_usuario"] === "1"): ?>
+                                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                                    <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
+                                    <button id="btn_registro_prestamo" data-reserva="<?php echo htmlspecialchars($libros_json, ENT_QUOTES, 'UTF-8'); ?>"
+                                        class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
+                                            class="fas fa-download fa-sm text-white-50"></i>Realizar un prestamo</button>
+                                </div>
+                            <?php endif; ?>
                             <!-- DataTales Example -->
                             <div class="card shadow mb-4">
                                 <div class="card-header py-3">
@@ -811,37 +800,37 @@ $sql->desconectar();
         </div>
     </div>
 
-    <!-- jQuery -->
-    <script src="assets/libs/jquery/jquery.min.js"></script>
-    <script src="assets/libs/jquery-easing/jquery.easing.min.js"></script>
-
-    <!-- Bootstrap -->
+    <!-- ============================ -->
+    <!-- 🔹 Librerías base y dependencias -->
+    <!-- ============================ -->
     <script src="assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
 
-    <!-- SweetAlert -->
+    <!-- ============================ -->
+    <!-- 🔹 Librerías externas -->
+    <!-- ============================ -->
+    <script src="assets/libs/chart.js/Chart.bundle.min.js"></script>
+    <script src="assets/libs/awesome/js/all.min.js"></script>
     <script src="assets/libs/sweetAlert/sweetalert2.all.min.js"></script>
 
-    <!-- Font Awesome -->
-    <script src="assets/libs/awesome/js/all.min.js"></script>
-
-    <!-- SB Admin 2 -->
+    <!-- ============================ -->
+    <!-- 🔹 Scripts principales -->
+    <!-- ============================ -->
     <script src="js/sb-admin-2.min.js"></script>
 
-    <!-- Chart.js -->
-    <script src="assets/libs/chart.js/Chart.bundle.min.js"></script>
+    <!-- ============================ -->
+    <!-- 🔹 Scripts personalizados -->
+    <!-- ============================ -->
+    <?php if ($_SESSION["tipo_usuario"] !== "1"): ?>
+        <script src="assets/public/js/prestamos/registro_prestamo.js"></script>
+    <?php endif; ?>
 
-    <!-- Script de tu gráfico -->
+    <!-- ============================ -->
+    <!-- 🔹 Scripts de gráficos -->
+    <!-- ============================ -->
     <script src="assets/public/js/graficos/gestion_total.js"></script>
     <script src="assets/public/js/graficos/gestion_total_pie.js"></script>
-
-    <!-- JS reservas -->
-    <?php if ($_SESSION["tipo_usuario"] !== "1"): ?>
-        <script src="assets/public/js/reservas/registro_reserva.js"></script>
-    <?php endif; ?>
-    <script src="assets/public/js/reservas/actualizar_reserva.js"></script>
-
-    <!-- JS actualizar perfil -->
-    <script src="assets/public/js/usuarios/actualizar_perfil.js"></script>
 </body>
 
 </html>

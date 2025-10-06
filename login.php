@@ -55,12 +55,12 @@
                     >
                       <div class="form-group">
                         <input
-                          type="email"
+                          type="text"
                           class="form-control form-control-user"
-                          id="email_usuario"
-                          name="email_usuario"
+                          id="nombre_usuario"
+                          name="nombre_usuario"
                           aria-describedby="emailHelp"
-                          placeholder="Ingrese su gmail..."
+                          placeholder="Ingrese su nombre..."
                         />
                       </div>
                       <div class="form-group">

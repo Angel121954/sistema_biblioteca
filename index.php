@@ -60,12 +60,23 @@ $sql->desconectar();
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.php">
-                <div class="sidebar-brand-icon rotate-n-15">
-                    <i class="fas fa-laugh-wink"></i>
-                </div>
-                <div class="sidebar-brand-text mx-3">Biblioteca</div>
-            </a>
+            <?php switch ($_SESSION["tipo_usuario"]):
+                case "1": ?>
+                    <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.php">
+                        <div class="sidebar-brand-icon rotate-n-15">
+                            <i class="fas fa-laugh-wink"></i>
+                        </div>
+                        <div class="sidebar-brand-text mx-3">Biblioteca</div>
+                    </a>
+                <?php break;
+                default: ?>
+                    <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index_libros.php">
+                        <div class="sidebar-brand-icon rotate-n-15">
+                            <i class="fas fa-laugh-wink"></i>
+                        </div>
+                        <div class="sidebar-brand-text mx-3">Biblioteca</div>
+                    </a>
+            <?php endswitch; ?>
 
             <!-- Divider -->
             <hr class="sidebar-divider my-0">
@@ -74,7 +85,7 @@ $sql->desconectar();
             <li class="nav-item active">
                 <a class="nav-link" href="index.php">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
-                    <span>Dashboard</span></a>
+                    <span>Usuarios</span></a>
             </li>
 
             <!-- Divider -->
@@ -85,13 +96,15 @@ $sql->desconectar();
                 Funcionalidad
             </div>
 
-            <!-- Enlace: usuarios -->
-            <li class="nav-item">
-                <a class="nav-link" href="index.php">
-                    <i class="bi bi-people-fill"></i>
-                    <span>Usuarios</span>
-                </a>
-            </li>
+            <?php if ($_SESSION["tipo_usuario"] === "1"): ?>
+                <!-- Enlace: usuarios -->
+                <li class="nav-item">
+                    <a class="nav-link" href="index.php">
+                        <i class="bi bi-people-fill"></i>
+                        <span>Usuarios</span>
+                    </a>
+                </li>
+            <?php endif; ?>
 
             <!-- Enlace: libros -->
             <li class="nav-item">
@@ -121,7 +134,6 @@ $sql->desconectar();
                     <span>Perfil</span>
                 </a>
             </li>
-
 
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">
@@ -338,7 +350,7 @@ $sql->desconectar();
                         <div class="container-fluid">
                             <?php if ($_SESSION["tipo_usuario"] === "1"): ?>
                                 <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                                    <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
+                                    <h1 class="h3 mb-0 text-gray-800">Usuarios</h1>
                                     <button
                                         id="btn_registro_usuario"
                                         data-tipos-usuarios="<?php echo htmlspecialchars($tipos_usuarios_json, ENT_QUOTES, 'UTF-8'); ?>"
@@ -411,8 +423,7 @@ $sql->desconectar();
                 <div class="container-fluid">
 
                     <!-- Page Heading -->
-                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
+                    <div class="d-sm-flex align-items-center justify-content-end mb-4">
                         <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
                                 class="fas fa-download fa-sm text-white-50"></i> Generate Report</a>
                     </div>
@@ -514,7 +525,7 @@ $sql->desconectar();
                                 <!-- Card Header - Dropdown -->
                                 <div
                                     class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                    <h6 class="m-0 font-weight-bold text-primary">Earnings Overview</h6>
+                                    <h6 class="m-0 font-weight-bold text-primary">Totales en general</h6>
                                     <div class="dropdown no-arrow">
                                         <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
                                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -531,9 +542,9 @@ $sql->desconectar();
                                     </div>
                                 </div>
                                 <!-- Card Body -->
-                                <div class="card-body">
+                                <div class="card-body" style="width: 100%; max-width: 600px; margin: auto;">
                                     <div class="chart-area">
-                                        <canvas id="myAreaChart"></canvas>
+                                        <canvas id="grafico_totales"></canvas>
                                     </div>
                                 </div>
                             </div>
@@ -545,7 +556,7 @@ $sql->desconectar();
                                 <!-- Card Header - Dropdown -->
                                 <div
                                     class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                    <h6 class="m-0 font-weight-bold text-primary">Revenue Sources</h6>
+                                    <h6 class="m-0 font-weight-bold text-primary">Totales</h6>
                                     <div class="dropdown no-arrow">
                                         <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
                                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -564,7 +575,7 @@ $sql->desconectar();
                                 <!-- Card Body -->
                                 <div class="card-body">
                                     <div class="chart-pie pt-4 pb-2">
-                                        <canvas id="myPieChart"></canvas>
+                                        <canvas id="grafico_totales_pie"></canvas>
                                     </div>
                                     <div class="mt-4 text-center small">
                                         <span class="mr-2">
@@ -782,35 +793,60 @@ $sql->desconectar();
         </div>
     </div>
 
-    <!-- Bootstrap core JavaScript-->
-    <script src="vendor/jquery/jquery.min.js"></script>
+    <!-- ======================== -->
+    <!-- Librerías principales -->
+    <!-- ======================== -->
 
-    <!-- Core plugin JavaScript-->
-    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+    <!-- jQuery -->
+    <script src="assets/libs/jquery/jquery.min.js"></script>
 
-    <!-- Custom scripts for all pages-->
-    <script src="js/sb-admin-2.min.js"></script>
+    <!-- jQuery Easing -->
+    <script src="assets/libs/jquery-easing/jquery.easing.min.js"></script>
 
-    <!-- Page level plugins -->
-    <script src="assets/libs/chart.js/Chart.bundle.min.js"></script>
-
-    <!-- Page level custom scripts -->
-    <script src="js/demo/chart-area-demo.js"></script>
-    <script src="js/demo/chart-pie-demo.js"></script>
-
-    <!--Font Awesome local-->
-    <script src="assets/libs/awesome/js/all.min.js"></script>
-
-    <!--Bootstrap local-->
+    <!-- Bootstrap -->
     <script src="assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
 
-    <!--JS SweetAlert-->
+    <!-- Font Awesome -->
+    <script src="assets/libs/awesome/js/all.min.js"></script>
+
+    <!-- SweetAlert2 -->
     <script src="assets/libs/sweetAlert/sweetalert2.all.min.js"></script>
+
+
+    <!-- ======================== -->
+    <!-- Scripts generales -->
+    <!-- ======================== -->
+
+    <!-- Plantilla SB Admin 2 -->
+    <script src="js/sb-admin-2.min.js"></script>
+
+
+    <!-- ======================== -->
+    <!-- Gráficos -->
+    <!-- ======================== -->
+
+    <!-- Chart.js -->
+    <script src="assets/libs/chart.js/Chart.bundle.min.js"></script>
+
+    <!-- Script de gestión de gráficos -->
+    <script src="assets/public/js/graficos/gestion_total.js"></script>
+    <script src="assets/public/js/graficos/gestion_total_pie.js"></script>
+
+
+    <!-- ======================== -->
+    <!-- Gestión de usuarios -->
+    <!-- ======================== -->
+
+    <!-- Registro de usuario -->
     <script src="assets/public/js/usuarios/registro_usuario.js"></script>
+
+    <!-- Edición de usuario -->
     <script src="assets/public/js/usuarios/editar_usuario.js"></script>
+
+    <!-- Eliminación de usuario -->
     <script src="assets/public/js/usuarios/eliminar_usuario.js"></script>
 
-    <!--JS actualizar perfil-->
+    <!-- Actualización de perfil -->
     <script src="assets/public/js/usuarios/actualizar_perfil.js"></script>
 </body>
 

@@ -25,7 +25,7 @@ $sql->desconectar();
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>Inicio</title>
+    <title>Libros</title>
 
     <!--Font Awesome local-->
     <link href="assets/libs/awesome/css/all.min.css" rel="stylesheet" type="text/css">
@@ -51,22 +51,43 @@ $sql->desconectar();
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.php">
-                <div class="sidebar-brand-icon rotate-n-15">
-                    <i class="fas fa-laugh-wink"></i>
-                </div>
-                <div class="sidebar-brand-text mx-3">Biblioteca</div>
-            </a>
+            <?php switch ($_SESSION["tipo_usuario"]):
+                case "1": ?>
+                    <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.php">
+                        <div class="sidebar-brand-icon rotate-n-15">
+                            <i class="fas fa-laugh-wink"></i>
+                        </div>
+                        <div class="sidebar-brand-text mx-3">Biblioteca</div>
+                    </a>
+                <?php break;
+                default: ?>
+                    <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index_libros.php">
+                        <div class="sidebar-brand-icon rotate-n-15">
+                            <i class="fas fa-laugh-wink"></i>
+                        </div>
+                        <div class="sidebar-brand-text mx-3">Biblioteca</div>
+                    </a>
+            <?php endswitch; ?>
 
             <!-- Divider -->
             <hr class="sidebar-divider my-0">
 
             <!-- Nav Item - Dashboard -->
-            <li class="nav-item active">
-                <a class="nav-link" href="index.php">
-                    <i class="fas fa-fw fa-tachometer-alt"></i>
-                    <span>Dashboard</span></a>
-            </li>
+            <?php switch ($_SESSION["tipo_usuario"]):
+                case "1": ?>
+                    <li class="nav-item active">
+                        <a class="nav-link" href="index.php">
+                            <i class="fas fa-fw fa-tachometer-alt"></i>
+                            <span>Dashboard</span></a>
+                    </li>
+                <?php break;
+                default: ?>
+                    <li class="nav-item active">
+                        <a class="nav-link" href="index_libros.php">
+                            <i class="fas fa-fw fa-tachometer-alt"></i>
+                            <span>Dashboard</span></a>
+                    </li>
+            <?php endswitch; ?>
 
             <!-- Divider -->
             <hr class="sidebar-divider">
@@ -76,13 +97,15 @@ $sql->desconectar();
                 Funcionalidad
             </div>
 
-            <!-- Enlace: usuarios -->
-            <li class="nav-item">
-                <a class="nav-link" href="index.php">
-                    <i class="bi bi-people-fill"></i>
-                    <span>Usuarios</span>
-                </a>
-            </li>
+            <?php if ($_SESSION["tipo_usuario"] === "1"): ?>
+                <!-- Enlace: usuarios -->
+                <li class="nav-item">
+                    <a class="nav-link" href="index.php">
+                        <i class="bi bi-people-fill"></i>
+                        <span>Usuarios</span>
+                    </a>
+                </li>
+            <?php endif; ?>
 
             <!-- Enlace: libros -->
             <li class="nav-item">
@@ -137,10 +160,10 @@ $sql->desconectar();
                         <i class="fa fa-bars"></i>
                     </button>
 
-                    <!-- Topbar Search -->
+                    <!-- filtrar libro por titulo, categoría, autor o ISBN -->
                     <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
                         <div class="input-group">
-                            <input type="text" id="filtrar_libro" class="form-control bg-light border-0 small" placeholder="Buscar..."
+                            <input type="text" id="filtrar_libro" class="form-control bg-light border-0 small" placeholder="Buscar... (titulo, autor, categoría, ISBN)"
                                 aria-label="Buscar" aria-describedby="basic-addon2">
                             <div class="input-group-append">
                                 <button id="btn_filtrar_libros" class="btn btn-primary" type="button">
@@ -325,23 +348,31 @@ $sql->desconectar();
 
                         <!-- Begin Page Content -->
                         <div class="container-fluid">
-                            <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                                <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
-                                <button id="btn_registro_libro" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
-                                        class="fas fa-download fa-sm text-white-50"></i>Agregar libro</button>
-                            </div>
-                            <!-- DataTales Example -->
+                            <!-- Botones superiores -->
+                            <?php if ($_SESSION["tipo_usuario"] === "1"): ?>
+                                <div class="d-sm-flex align-items-center justify-content-end mb-4">
+                                    <a href="#" class="mx-2 d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                                        <i class="fas fa-download fa-sm text-white-50"></i> Generar informe inventario
+                                    </a>
+                                    <button id="btn_registro_libro" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                                        <i class="fas fa-plus fa-sm text-white-50"></i> Agregar libro
+                                    </button>
+                                </div>
+                            <?php endif; ?>
+
+                            <!-- Tabla de libros -->
                             <div class="card shadow mb-4">
                                 <div class="card-header py-3">
                                     <h6 class="m-0 font-weight-bold text-primary">Tabla de libros</h6>
                                 </div>
+
                                 <div class="card-body">
                                     <div class="table-responsive">
                                         <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                             <thead>
                                                 <tr>
                                                     <th>ID libro</th>
-                                                    <th>Titulo</th>
+                                                    <th>Título</th>
                                                     <th>Autor</th>
                                                     <th>ISBN</th>
                                                     <th>Categoría</th>
@@ -352,26 +383,37 @@ $sql->desconectar();
                                                     <?php endif; ?>
                                                 </tr>
                                             </thead>
+
                                             <tbody>
                                                 <?php while ($filas = $fila->fetch_assoc()): ?>
                                                     <tr>
-                                                        <th><?php echo $filas["id_libro"]; ?></th>
-                                                        <th><?php echo $filas["titulo_libro"]; ?></th>
-                                                        <th><?php echo $filas["autor_libro"]; ?></th>
-                                                        <th><?php echo $filas["isbn_libro"]; ?></th>
-                                                        <th><?php echo $filas["categoria_libro"]; ?></th>
-                                                        <th><?php echo $filas["disponibilidad_libro"]; ?></th>
-                                                        <th><?php echo $filas["cantidad_libro"]; ?></th>
+                                                        <td><?php echo $filas["id_libro"]; ?></td>
+                                                        <td><?php echo $filas["titulo_libro"]; ?></td>
+                                                        <td><?php echo $filas["autor_libro"]; ?></td>
+                                                        <td><?php echo $filas["isbn_libro"]; ?></td>
+                                                        <td><?php echo $filas["categoria_libro"]; ?></td>
+                                                        <td><?php echo $filas["disponibilidad_libro"]; ?></td>
+                                                        <td><?php echo $filas["cantidad_libro"]; ?></td>
+
                                                         <?php if ($_SESSION["tipo_usuario"] === "1"): ?>
                                                             <td class="text-center">
-                                                                <!--(id, titulo, autor, isbn, categoria, cantidad)-->
-                                                                <button class="btn btn-sm btn-warning" onclick="editarLibro('<?php echo $filas['id_libro']; ?>',
-                                                            '<?php echo $filas['titulo_libro']; ?>',
-                                                            '<?php echo $filas['autor_libro']; ?>',
-                                                            '<?php echo $filas['isbn_libro']; ?>',
-                                                            '<?php echo $filas['categoria_libro']; ?>',
-                                                            '<?php echo $filas['cantidad_libro']; ?>')"><i class="bi bi-pencil-square"></i></button>
-                                                                <button class="btn btn-sm btn-danger" onclick="eliminarLibro('<?php echo $filas['id_libro']; ?>')">
+                                                                <!-- Botones de acción -->
+                                                                <button
+                                                                    class="btn btn-sm btn-warning"
+                                                                    onclick="editarLibro(
+                                                '<?php echo $filas['id_libro']; ?>',
+                                                '<?php echo $filas['titulo_libro']; ?>',
+                                                '<?php echo $filas['autor_libro']; ?>',
+                                                '<?php echo $filas['isbn_libro']; ?>',
+                                                '<?php echo $filas['categoria_libro']; ?>',
+                                                '<?php echo $filas['cantidad_libro']; ?>'
+                                            )">
+                                                                    <i class="bi bi-pencil-square"></i>
+                                                                </button>
+
+                                                                <button
+                                                                    class="btn btn-sm btn-danger"
+                                                                    onclick="eliminarLibro('<?php echo $filas['id_libro']; ?>')">
                                                                     <i class="bi bi-trash"></i>
                                                                 </button>
                                                             </td>
@@ -383,7 +425,10 @@ $sql->desconectar();
                                     </div>
                                 </div>
                             </div>
+
                         </div>
+                        <!-- End Page Content -->
+
                         <!-- /.container-fluid -->
 
                     </div>
@@ -394,14 +439,6 @@ $sql->desconectar();
 
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
-
-                    <!-- Page Heading -->
-                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
-                        <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
-                                class="fas fa-download fa-sm text-white-50"></i> Generate Report</a>
-                    </div>
-
                     <!-- Content Row -->
                     <div class="row">
 
@@ -499,7 +536,7 @@ $sql->desconectar();
                                 <!-- Card Header - Dropdown -->
                                 <div
                                     class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                    <h6 class="m-0 font-weight-bold text-primary">Earnings Overview</h6>
+                                    <h6 class="m-0 font-weight-bold text-primary">Totales en general</h6>
                                     <div class="dropdown no-arrow">
                                         <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
                                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -516,9 +553,9 @@ $sql->desconectar();
                                     </div>
                                 </div>
                                 <!-- Card Body -->
-                                <div class="card-body">
+                                <div class="card-body" style="width: 100%; max-width: 600px; margin: auto;">
                                     <div class="chart-area">
-                                        <canvas id="myAreaChart"></canvas>
+                                        <canvas id="grafico_totales"></canvas>
                                     </div>
                                 </div>
                             </div>
@@ -530,7 +567,7 @@ $sql->desconectar();
                                 <!-- Card Header - Dropdown -->
                                 <div
                                     class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                    <h6 class="m-0 font-weight-bold text-primary">Revenue Sources</h6>
+                                    <h6 class="m-0 font-weight-bold text-primary">Totales</h6>
                                     <div class="dropdown no-arrow">
                                         <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
                                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -549,7 +586,7 @@ $sql->desconectar();
                                 <!-- Card Body -->
                                 <div class="card-body">
                                     <div class="chart-pie pt-4 pb-2">
-                                        <canvas id="myPieChart"></canvas>
+                                        <canvas id="grafico_totales_pie"></canvas>
                                     </div>
                                     <div class="mt-4 text-center small">
                                         <span class="mr-2">
@@ -767,38 +804,46 @@ $sql->desconectar();
         </div>
     </div>
 
-    <!-- Bootstrap core JavaScript-->
-    <script src="vendor/jquery/jquery.min.js"></script>
 
-    <!-- Core plugin JavaScript-->
-    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
-
-    <!-- Custom scripts for all pages-->
-    <script src="js/sb-admin-2.min.js"></script>
-
-    <!-- Page level plugins -->
-    <script src="assets/libs/chart.js/Chart.bundle.min.js"></script>
-
-    <!-- Page level custom scripts -->
-    <script src="js/demo/chart-area-demo.js"></script>
-    <script src="js/demo/chart-pie-demo.js"></script>
-
-    <!--Font Awesome local-->
-    <script src="assets/libs/awesome/js/all.min.js"></script>
-
-    <!--Bootstrap local-->
+    <!-- ============================ -->
+    <!-- 🔹 Librerías base y dependencias -->
+    <!-- ============================ -->
+    <script src="assets/libs/jquery/jquery.js"></script>
+    <script src="assets/libs/jquery-easing/jquery.easing.min.js"></script>
     <script src="assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
 
-    <!--JS SweetAlert-->
+    <!-- ============================ -->
+    <!-- 🔹 Librerías externas -->
+    <!-- ============================ -->
+    <script src="assets/libs/awesome/js/all.min.js"></script>
     <script src="assets/libs/sweetAlert/sweetalert2.all.min.js"></script>
-    <!-- <script src="assets/public/js/registro_libro.js"></script> -->
+    <script src="assets/libs/chart.js/Chart.bundle.min.js"></script>
+
+    <!-- ============================ -->
+    <!-- 🔹 Script principal del template -->
+    <!-- ============================ -->
+    <script src="js/sb-admin-2.min.js"></script>
+
+    <!-- ============================ -->
+    <!-- 🔹 Scripts personalizados - Libros -->
+    <!-- ============================ -->
     <script src="assets/public/js/libros/filtrar_libro.js"></script>
-    <script src="assets/public/js/libros/registro_libro.js"></script>
+    <?php if ($_SESSION["tipo_usuario"] === "1"): ?>
+        <script src="assets/public/js/libros/registro_libro.js"></script>
+    <?php endif; ?>
     <script src="assets/public/js/libros/editar_libro.js"></script>
     <script src="assets/public/js/libros/eliminar_libro.js"></script>
 
-    <!--JS actualizar perfil-->
+    <!-- ============================ -->
+    <!-- 🔹 Script personalizado - Usuarios -->
+    <!-- ============================ -->
     <script src="assets/public/js/usuarios/actualizar_perfil.js"></script>
+
+    <!-- ============================ -->
+    <!-- 🔹 Gráficos -->
+    <!-- ============================ -->
+    <script src="assets/public/js/graficos/gestion_total.js"></script>
+    <script src="assets/public/js/graficos/gestion_total_pie.js"></script>
 </body>
 
 </html>

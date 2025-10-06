@@ -1,10 +1,11 @@
 <?php
+session_start();
 require_once "../../modelos/MySQL.php";
 $sql = new MySQL();
 $sql->conectar();
 
 if (isset($_POST['filtro']) && !empty($_POST['filtro'])) {
-    $filtro = $_POST['filtro'];
+    $filtro = filter_var($_POST['filtro'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
     $consulta = "SELECT id_libro, titulo_libro, autor_libro, 
                 isbn_libro, categoria_libro, disponibilidad_libro,
@@ -28,14 +29,10 @@ if (isset($_POST['filtro']) && !empty($_POST['filtro'])) {
                     <td>{$fila['categoria_libro']}</td>
                     <td>{$fila['disponibilidad_libro']}</td>
                     <td>{$fila['cantidad_libro']}</td>
-                    <td>
-                        <button class='btn btn-warning btn-sm'><i class='fas fa-edit'></i></button>
-                        <button class='btn btn-danger btn-sm'><i class='fas fa-trash-alt'></i></button>
-                    </td>
                 </tr>";
         }
     } else {
-        echo '<tr><td colspan="8" class="text-center text-muted">No se encontraron resultados.</td></tr>';
+        echo '<tr><td colspan="7" class="text-center text-muted">No se encontraron resultados.</td></tr>';
     }
 }
 

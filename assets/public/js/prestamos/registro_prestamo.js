@@ -11,9 +11,14 @@ document
     });
 
     Swal.fire({
-      title: '<h2 class="fw-bold mb-3 text-primary">Registro de reserva</h2>',
+      title: '<h2 class="fw-bold mb-3 text-primary">Registro de prestamo</h2>',
       html: `
         <form id="frm_registro_reserva" class="text-start" novalidate style="max-width: 450px; margin: 0 auto;">
+          <div class="form-floating mb-3">
+            <input name="fecha" id="fecha" type="datetime-local" class="form-control" required>
+            <label for="fecha"><i class="bi bi-calendar-event"></i> Fecha</label>
+          </div>
+
           <div class="form-floating mb-4">
             <select name="id_libro" id="id_libro" class="form-select" required>
               ${opcionesLibros}

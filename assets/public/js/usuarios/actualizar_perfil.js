@@ -1,6 +1,6 @@
 function actualizarPerfil(id, nombre, apellido, email) {
   Swal.fire({
-    title: "Actualizar perfil",
+    title: "<i class='fa-solid fa-user-pen'></i> Actualizar perfil",
     html: `
       <input id="nombre" name="nombre" class="swal2-input" placeholder="Nombre" value="${nombre}">
       <input id="apellido" name="apellido" class="swal2-input" placeholder="Apellido" value="${apellido}">
