@@ -57,10 +57,6 @@ function editarLibro(id, titulo, autor, isbn, categoria, cantidad) {
         document.querySelector("#swal_categoria").value
       );
       fd.append(
-        "disponibilidad_libro",
-        document.querySelector("#swal_disponibilidad").value
-      );
-      fd.append(
         "cantidad_libro",
         document.querySelector("#swal_cantidad").value
       );
