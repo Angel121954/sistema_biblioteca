@@ -11,7 +11,8 @@ $prestamos_result = $sql->efectuarConsulta("SELECT p.id_prestamo, p.fecha_presta
                         FROM prestamos p INNER JOIN reservas r 
                         ON p.reservas_id_reserva = r.id_reserva
                         INNER JOIN usuarios u ON r.usuarios_id_usuario = u.id_usuario
-                        INNER JOIN libros l ON r.libros_id_libro = l.id_libro");
+                        INNER JOIN libros l ON r.libros_id_libro = l.id_libro
+                        WHERE r.estado_reserva = 'Aceptada'");
 
 //* otra consulta para poderlo imprimir en la tabla
 $presta = $sql->efectuarConsulta("SELECT p.id_prestamo, p.fecha_prestamo, p.fecha_devolucion,
@@ -19,12 +20,17 @@ $presta = $sql->efectuarConsulta("SELECT p.id_prestamo, p.fecha_prestamo, p.fech
                         FROM prestamos p INNER JOIN reservas r 
                         ON p.reservas_id_reserva = r.id_reserva
                         INNER JOIN usuarios u ON r.usuarios_id_usuario = u.id_usuario
-                        INNER JOIN libros l ON r.libros_id_libro = l.id_libro");
+                        INNER JOIN libros l ON r.libros_id_libro = l.id_libro
+                        WHERE r.estado_reserva = 'Aceptada'");
 
 $prestamos = [];
 while ($valor = $prestamos_result->fetch_assoc()) {
     $prestamos[] = $valor;
 }
+
+$id_usuario = $_SESSION["id_usuario"];
+$usuario_result = $sql->efectuarConsulta("SELECT * FROM usuarios WHERE id_usuario = $id_usuario");
+$usuario = $usuario_result->fetch_assoc();
 
 // $prestamos_json = json_encode($prestamos, JSON_UNESCAPED_UNICODE);
 
@@ -801,9 +807,10 @@ $sql->desconectar();
     <!-- ============================ -->
     <!-- 🔹 Scripts personalizados -->
     <!-- ============================ -->
-    <?php if ($_SESSION["tipo_usuario"] !== "1"): ?>
+    <?php if ($_SESSION["tipo_usuario"] === "1"): ?>
         <script src="assets/public/js/prestamos/registro_prestamo.js"></script>
     <?php endif; ?>
+    <script src="assets/public/js/usuarios/actualizar_perfil.js"></script>
 
     <!-- ============================ -->
     <!-- 🔹 Scripts de gráficos -->
