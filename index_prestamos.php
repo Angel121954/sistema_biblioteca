@@ -34,8 +34,6 @@ $usuario = $usuario_result->fetch_assoc();
 
 // $prestamos_json = json_encode($prestamos, JSON_UNESCAPED_UNICODE);
 
-$sql->desconectar();
-
 ?>
 
 <!DOCTYPE html>
@@ -423,83 +421,111 @@ $sql->desconectar();
                     <!-- Content Row -->
                     <div class="row">
 
-                        <!-- Earnings (Monthly) Card Example -->
+                        <!-- Cantidad de libros de Historia -->
                         <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card border-left-primary shadow h-100 py-2">
+                            <div class="card border-left-primary shadow py-2">
                                 <div class="card-body">
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                                Earnings (Monthly)</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">$40,000</div>
+                                                Libros de Historia
+                                            </div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                                <?php
+                                                $historia_result = $sql->efectuarConsulta("SELECT COUNT(*) AS cantidad_historia
+                                                                                        FROM libros
+                                                                                        WHERE categoria_libro = 'Historia'");
+                                                $historia = $historia_result->fetch_assoc();
+                                                echo $historia['cantidad_historia'];
+                                                ?>
+                                            </div>
                                         </div>
                                         <div class="col-auto">
-                                            <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                                            <i class="bi bi-journal-text fa-2x text-gray-300"></i>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Earnings (Monthly) Card Example -->
+                        <!-- Total de libros disponibles -->
                         <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card border-left-success shadow h-100 py-2">
+                            <div class="card border-left-success shadow py-2">
                                 <div class="card-body">
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                                Earnings (Annual)</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">$215,000</div>
+                                                Total de libros disponibles
+                                            </div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                                <?php
+                                                $total_result = $sql->efectuarConsulta("SELECT SUM(cantidad_libro) AS total_libros
+                                                                                        FROM libros
+                                                                                        WHERE disponibilidad_libro = 'Disponible'");
+                                                $total = $total_result->fetch_assoc();
+                                                echo $total['total_libros'];
+                                                ?>
+                                            </div>
                                         </div>
                                         <div class="col-auto">
-                                            <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                                            <i class="bi bi-book-half fa-2x text-gray-300"></i>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Earnings (Monthly) Card Example -->
+                        <!-- Libro más solicitado -->
                         <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card border-left-info shadow h-100 py-2">
+                            <div class="card border-left-info shadow py-2">
                                 <div class="card-body">
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Tasks
+                                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                                Libro más solicitado
                                             </div>
-                                            <div class="row no-gutters align-items-center">
-                                                <div class="col-auto">
-                                                    <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">50%</div>
-                                                </div>
-                                                <div class="col">
-                                                    <div class="progress progress-sm mr-2">
-                                                        <div class="progress-bar bg-info" role="progressbar"
-                                                            style="width: 50%" aria-valuenow="50" aria-valuemin="0"
-                                                            aria-valuemax="100"></div>
-                                                    </div>
-                                                </div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                                <?php
+                                                $titulo_max_result = $sql->efectuarConsulta("SELECT l.titulo_libro, COUNT(r.id_reserva) AS cantidad
+                                                                            FROM libros l
+                                                                            INNER JOIN reservas r ON r.libros_id_libro = l.id_libro
+                                                                            GROUP BY l.id_libro
+                                                                            ORDER BY cantidad DESC");
+                                                $titulo_max = $titulo_max_result->fetch_assoc();
+                                                echo $titulo_max['titulo_libro'];
+                                                ?>
                                             </div>
                                         </div>
                                         <div class="col-auto">
-                                            <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                                            <i class="bi bi-star-fill fa-2x text-gray-300"></i>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Pending Requests Card Example -->
+                        <!-- Autor con más libros -->
                         <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card border-left-warning shadow h-100 py-2">
+                            <div class="card border-left-warning shadow py-2">
                                 <div class="card-body">
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                                Pending Requests</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">18</div>
+                                                Autor con más libros
+                                            </div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                                <?php
+                                                $autor_max_result = $sql->efectuarConsulta("SELECT autor_libro, COUNT(*) AS cantidad
+                                                                                                FROM libros
+                                                                                                GROUP BY autor_libro
+                                                                                                ORDER BY cantidad DESC");
+                                                $autor_max = $autor_max_result->fetch_assoc();
+                                                echo $autor_max['autor_libro'];
+                                                ?>
+                                            </div>
                                         </div>
                                         <div class="col-auto">
-                                            <i class="fas fa-comments fa-2x text-gray-300"></i>
+                                            <i class="bi bi-pen-fill fa-2x text-gray-300"></i>
                                         </div>
                                     </div>
                                 </div>
@@ -784,6 +810,7 @@ $sql->desconectar();
             </div>
         </div>
     </div>
+    <?php $sql->desconectar(); ?>
 
     <!-- ============================ -->
     <!-- 🔹 Librerías base y dependencias -->
