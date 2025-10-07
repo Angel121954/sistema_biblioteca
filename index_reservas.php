@@ -151,6 +151,26 @@ $libros_json = json_encode($titulo_libro, JSON_UNESCAPED_UNICODE);
                 </a>
             </li>
 
+            <!-- Menú informes -->
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#menu_despegable"
+                    aria-expanded="true" aria-controls="collapsePages">
+                    <i class="fas fa-fw fa-folder"></i>
+                    <span>Informes</span>
+                </a>
+                <div id="menu_despegable" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <a class="collapse-item" href="assets/controladores/informes/libro_disponible.php">Libros disponibles</a>
+                        <a class="collapse-item" href="register.html">Register</a>
+                        <a class="collapse-item" href="forgot-password.html">Forgot Password</a>
+                        <div class="collapse-divider"></div>
+                        <h6 class="collapse-header">Other Pages:</h6>
+                        <a class="collapse-item" href="404.html">404 Page</a>
+                        <a class="collapse-item" href="blank.html">Blank Page</a>
+                    </div>
+                </div>
+            </li>
+
             <!-- Enlace: perfil -->
             <li class="nav-item">
                 <a class="nav-link" href="#"
@@ -885,6 +905,9 @@ $libros_json = json_encode($titulo_libro, JSON_UNESCAPED_UNICODE);
 
     <!-- JS actualizar perfil -->
     <script src="assets/public/js/usuarios/actualizar_perfil.js"></script>
+
+    <!--Funcionalidad menú-->
+    <script src="assets/funcionalidad/app.js"></script>
 </body>
 
 </html>

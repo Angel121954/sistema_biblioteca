@@ -1,8 +1,8 @@
 document
-  .querySelector("#btn_registro_reserva")
+  .querySelector("#btn_registro_prestamo")
   .addEventListener("click", () => {
     const libros = JSON.parse(
-      document.querySelector("#btn_registro_reserva").dataset.libros
+      document.querySelector("#btn_registro_prestamo").dataset.libros
     );
     let opcionesLibros =
       '<option value="" disabled selected>Seleccione un libro</option>';

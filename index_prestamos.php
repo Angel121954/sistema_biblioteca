@@ -152,6 +152,26 @@ $usuario = $usuario_result->fetch_assoc();
                 </a>
             </li>
 
+            <!-- Menú informes -->
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#menu_despegable"
+                    aria-expanded="true" aria-controls="collapsePages">
+                    <i class="fas fa-fw fa-folder"></i>
+                    <span>Informes</span>
+                </a>
+                <div id="menu_despegable" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <a class="collapse-item" href="assets/controladores/informes/libro_disponible.php">Libros disponibles</a>
+                        <a class="collapse-item" href="register.html">Register</a>
+                        <a class="collapse-item" href="forgot-password.html">Forgot Password</a>
+                        <div class="collapse-divider"></div>
+                        <h6 class="collapse-header">Other Pages:</h6>
+                        <a class="collapse-item" href="404.html">404 Page</a>
+                        <a class="collapse-item" href="blank.html">Blank Page</a>
+                    </div>
+                </div>
+            </li>
+
             <!-- Enlace: perfil -->
             <li class="nav-item">
                 <a class="nav-link" href="#"
@@ -380,7 +400,7 @@ $usuario = $usuario_result->fetch_assoc();
                                 </div>
                                 <div class="card-body">
                                     <div class="table-responsive">
-                                        <table class="table table-bordered" id="tbl_reservas" width="100%" cellspacing="0">
+                                        <table class="table table-bordered" id="tbl_prestamos" width="100%" cellspacing="0">
                                             <thead>
                                                 <tr>
                                                     <th>ID prestamo</th>
@@ -844,6 +864,9 @@ $usuario = $usuario_result->fetch_assoc();
     <!-- ============================ -->
     <script src="assets/public/js/graficos/gestion_total.js"></script>
     <script src="assets/public/js/graficos/gestion_total_pie.js"></script>
+
+    <!--Funcionalidad del menú despegable-->
+    <script src="assets/funcionalidad/app.js"></script>
 </body>
 
 </html>
