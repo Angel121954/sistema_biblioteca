@@ -378,17 +378,17 @@ $sql->desconectar();
 
                                 <div class="card-body">
                                     <div class="table-responsive">
-                                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                        <table class="table table-bordered" id="tbl_libros" width="100%" cellspacing="0">
                                             <thead>
                                                 <tr>
                                                     <th>ID libro</th>
                                                     <th>Título</th>
                                                     <th>Autor</th>
-                                                    <th>ISBN</th>
                                                     <th>Categoría</th>
                                                     <th>Disponibilidad</th>
-                                                    <th>Cantidad</th>
                                                     <?php if ($_SESSION["tipo_usuario"] === "1"): ?>
+                                                        <th>Cantidad</th>
+                                                        <th>ISBN</th>
                                                         <th class="text-center">Acciones</th>
                                                     <?php endif; ?>
                                                 </tr>
@@ -400,14 +400,12 @@ $sql->desconectar();
                                                         <td><?php echo $filas["id_libro"]; ?></td>
                                                         <td><?php echo $filas["titulo_libro"]; ?></td>
                                                         <td><?php echo $filas["autor_libro"]; ?></td>
-                                                        <td><?php echo $filas["isbn_libro"]; ?></td>
                                                         <td><?php echo $filas["categoria_libro"]; ?></td>
                                                         <td><?php echo $filas["disponibilidad_libro"]; ?></td>
-                                                        <td><?php echo $filas["cantidad_libro"]; ?></td>
-
                                                         <?php if ($_SESSION["tipo_usuario"] === "1"): ?>
+                                                            <td><?php echo $filas["cantidad_libro"]; ?></td>
+                                                            <td><?php echo $filas["isbn_libro"]; ?></td>
                                                             <td class="text-center">
-                                                                <!-- Botones de acción -->
                                                                 <button
                                                                     class="btn btn-sm btn-warning"
                                                                     onclick="editarLibro(

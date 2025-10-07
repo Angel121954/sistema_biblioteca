@@ -19,18 +19,36 @@ if (isset($_POST['filtro']) && !empty($_POST['filtro'])) {
 
     $resultado = $sql->efectuarConsulta($consulta);
 
+    $id_usuario = $_SESSION["id_usuario"];
+
     if ($resultado->num_rows > 0) {
+        $tabla = "<table class='table table-bordered' id='tbl_libros' width='100%'
+                    <tr>
+                        <th>ID libro</th>
+                        <th>Título</th>
+                        <th>Autor</th>
+                        <th>Categoría</th>
+                        <th>Disponibilidad</th>";
+        if ($id_usuario === "1") {
+            $tabla .= "<th>Cantidad</th>
+                        <th>ISBN</th>";
+        }
+        $tabla .= "</tr>";
         while ($fila = $resultado->fetch_assoc()) {
-            echo "<tr>
+            $tabla .= "<tr>
                     <td>{$fila['id_libro']}</td>
                     <td>{$fila['titulo_libro']}</td>
                     <td>{$fila['autor_libro']}</td>
-                    <td>{$fila['isbn_libro']}</td>
                     <td>{$fila['categoria_libro']}</td>
-                    <td>{$fila['disponibilidad_libro']}</td>
-                    <td>{$fila['cantidad_libro']}</td>
-                </tr>";
+                    <td>{$fila['disponibilidad_libro']}</td>";
+            if ($id_usuario === "1") {
+                $tabla .= "<td>{$fila['cantidad_libro']}</td>
+                        <td>{$fila['isbn_libro']}</td>";
+            }
+            $tabla .= "</tr>";
         }
+        $tabla .= "</table>";
+        echo $tabla;
     } else {
         echo '<tr><td colspan="7" class="text-center text-muted">No se encontraron resultados.</td></tr>';
     }

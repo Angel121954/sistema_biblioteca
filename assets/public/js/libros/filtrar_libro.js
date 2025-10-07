@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
   const btnFiltrar = document.querySelector("#btn_filtrar_libros");
   const inputFiltro = document.querySelector("#filtrar_libro");
-  const contenedor = document.querySelector("#dataTable tbody"); // solo el cuerpo de la tabla
+  const contenedor = document.querySelector("#tbl_libros");
 
   btnFiltrar.addEventListener("click", () => {
     const filtro = inputFiltro.value.trim();
