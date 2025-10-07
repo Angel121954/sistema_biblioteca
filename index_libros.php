@@ -168,18 +168,20 @@ $sql->desconectar();
                         <i class="fa fa-bars"></i>
                     </button>
 
-                    <!-- filtrar libro por titulo, categoría, autor o ISBN -->
-                    <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
-                        <div class="input-group">
-                            <input type="text" id="filtrar_libro" class="form-control bg-light border-0 small" placeholder="Buscar... (titulo, autor, categoría, ISBN)"
-                                aria-label="Buscar" aria-describedby="basic-addon2">
-                            <div class="input-group-append">
-                                <button id="btn_filtrar_libros" class="btn btn-primary" type="button">
-                                    <i class="fas fa-search fa-sm"></i>
-                                </button>
+                    <?php if ($_SESSION["tipo_usuario"] !== "1"): ?>
+                        <!-- filtrar libro por titulo, categoría, autor o ISBN -->
+                        <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+                            <div class="input-group">
+                                <input type="text" id="filtrar_libro" class="form-control bg-light border-0 small" placeholder="Buscar... (titulo, autor, categoría, ISBN)"
+                                    aria-label="Buscar" aria-describedby="basic-addon2">
+                                <div class="input-group-append">
+                                    <button id="btn_filtrar_libros" class="btn btn-primary" type="button">
+                                        <i class="fas fa-search fa-sm"></i>
+                                    </button>
+                                </div>
                             </div>
-                        </div>
-                    </form>
+                        </form>
+                    <?php endif; ?>
 
                     <!-- Topbar Navbar -->
                     <ul class="navbar-nav ml-auto">
@@ -835,7 +837,9 @@ $sql->desconectar();
     <!-- ============================ -->
     <!-- 🔹 Scripts personalizados - Libros -->
     <!-- ============================ -->
-    <script src="assets/public/js/libros/filtrar_libro.js"></script>
+    <?php if ($_SESSION["tipo_usuario"] !== "1"): ?>
+        <script src="assets/public/js/libros/filtrar_libro.js"></script>
+    <?php endif; ?>
     <?php if ($_SESSION["tipo_usuario"] === "1"): ?>
         <script src="assets/public/js/libros/registro_libro.js"></script>
     <?php endif; ?>
