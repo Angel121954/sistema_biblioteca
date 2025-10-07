@@ -445,16 +445,25 @@ $libros_json = json_encode($titulo_libro, JSON_UNESCAPED_UNICODE);
                                                         <th><?php echo $fila["titulo_libro"]; ?></th>
 
                                                         <td class="text-center">
-                                                            <?php if ($_SESSION["tipo_usuario"] === "1"): ?>
-                                                                <button class="btn btn-success btn-sm"
-                                                                    onclick="actualizarReserva(<?= $fila['id_reserva'] ?>, 'Aceptar')">
-                                                                    <i class="bi bi-check-circle"></i> Aceptar
-                                                                </button>
-                                                            <?php endif; ?>
-                                                            <button class="btn btn-danger btn-sm"
-                                                                onclick="actualizarReserva(<?= $fila['id_reserva'] ?>, 'Cancelar')">
-                                                                <i class="bi bi-x-circle"></i> Cancelar
-                                                            </button>
+                                                            <?php switch ($_SESSION["tipo_usuario"]):
+                                                                case "1": ?>
+                                                                    <button class="btn btn-success btn-sm"
+                                                                        onclick="actualizarReserva(<?= $fila['id_reserva'] ?>, 'Aceptar')">
+                                                                        <i class="bi bi-check-circle"></i> Aceptar
+                                                                    </button>
+
+                                                                    <button class="btn btn-danger btn-sm"
+                                                                        onclick="actualizarReserva(<?= $fila['id_reserva'] ?>, 'Cancelar')">
+                                                                        <i class="bi bi-x-circle"></i> Cancelar
+                                                                    </button>
+                                                                <?php break;
+                                                                default: ?>
+                                                                    <button class="btn btn-danger btn-sm"
+                                                                        onclick="eliminarReserva(<?= $fila['id_reserva'] ?>)">
+                                                                        <i class="bi bi-x-circle"></i> Eliminar
+                                                                    </button>
+                                                            <?php break;
+                                                            endswitch; ?>
                                                         </td>
                                                     </tr>
                                                 <?php endwhile; ?>
@@ -901,15 +910,21 @@ $libros_json = json_encode($titulo_libro, JSON_UNESCAPED_UNICODE);
 
     <!-- JS reservas -->
     <?php if ($_SESSION["tipo_usuario"] !== "1"): ?>
+        <!--JS registro reserva-->
         <script src="assets/public/js/reservas/registro_reserva.js"></script>
+
+        <!--JS eliminar reserva-->
+        <script src="assets/public/js/reservas/eliminar_reserva.js"></script>
     <?php endif; ?>
-    <script src="assets/public/js/reservas/actualizar_reserva.js"></script>
 
     <!-- JS actualizar perfil -->
     <script src="assets/public/js/usuarios/actualizar_perfil.js"></script>
 
-    <!--Funcionalidad menú-->
     <?php if ($_SESSION["tipo_usuario"] === "1"): ?>
+        <!--JS actualizar estado de la reserva-->
+        <script src="assets/public/js/reservas/actualizar_reserva.js"></script>
+
+        <!--Funcionalidad menú-->
         <script src="assets/funcionalidad/app.js"></script>
     <?php endif; ?>
 </body>
