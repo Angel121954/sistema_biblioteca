@@ -141,8 +141,8 @@ $usuario = $usuario_result->fetch_assoc();
                     <div id="menu_despegable" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
                         <div class="bg-white py-2 collapse-inner rounded">
                             <a class="collapse-item" href="assets/controladores/informes/libro_disponible.php">Libros disponibles</a>
-                            <a class="collapse-item" href="register.html">Register</a>
-                            <a class="collapse-item" href="forgot-password.html">Forgot Password</a>
+                            <a class="collapse-item" href="assets/controladores/informes/libro_prestado.php">Libros prestados</a>
+                            <a class="collapse-item" href="assets/controladores/informes/historial_prestamo.php">Historial prestamo</a>
                             <div class="collapse-divider"></div>
                             <h6 class="collapse-header">Other Pages:</h6>
                             <a class="collapse-item" href="404.html">404 Page</a>
