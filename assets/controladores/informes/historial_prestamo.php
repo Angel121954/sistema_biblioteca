@@ -21,9 +21,9 @@ $pdf->Ln(5);
 $pdf->SetFont('Arial', 'B', 10);
 $pdf->SetFillColor(41, 128, 185);
 $pdf->SetTextColor(255, 255, 255);
-$pdf->Cell(37, 8, 'Nombre y Apellido', 1, 0, 'C', true);
+$pdf->Cell(36, 8, 'Nombre y Apellido', 1, 0, 'C', true);
 $pdf->Cell(43, 8, 'Titulo del libro', 1, 0, 'C', true);
-$pdf->Cell(45, 8, 'Autor', 1, 0, 'C', true);
+$pdf->Cell(46, 8, 'Autor', 1, 0, 'C', true);
 $pdf->Cell(32, 8, 'Prestamo', 1, 0, 'C', true);
 $pdf->Cell(32, 8, 'Devolucion', 1, 1, 'C', true);
 
@@ -38,9 +38,9 @@ if ($resultado && $resultado->num_rows > 0) {
         $prestamo = $fila['fecha_prestamo'];
         $devolucion = $fila['fecha_devolucion'];
 
-        $pdf->Cell(37, 8, $usuario, 1, 0, 'L');
+        $pdf->Cell(36, 8, $usuario, 1, 0, 'L');
         $pdf->Cell(43, 8, $libro, 1, 0, 'L');
-        $pdf->Cell(45, 8, $autor, 1, 0, 'L');
+        $pdf->Cell(46, 8, $autor, 1, 0, 'L');
         $pdf->Cell(32, 8, $prestamo, 1, 0, 'C');
         $pdf->Cell(32, 8, $devolucion, 1, 1, 'C');
     }
