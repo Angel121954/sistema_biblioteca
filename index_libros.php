@@ -119,7 +119,7 @@ $usuario = $usuario_result->fetch_assoc();
                 <li class="nav-item">
                     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#menu_reservas"
                         aria-expanded="true" aria-controls="collapsePages">
-                        <i class="fas fa-fw fa-folder"></i>
+                        <i class="fas fa-fw fa-book-open"></i>
                         <span>Reservas</span>
                     </a>
                     <div id="menu_reservas" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
@@ -144,7 +144,7 @@ $usuario = $usuario_result->fetch_assoc();
                 <li class="nav-item">
                     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#menu_informes"
                         aria-expanded="true" aria-controls="collapsePages">
-                        <i class="fas fa-fw fa-folder"></i>
+                        <i class="fas fa-fw fa-chart-line"></i>
                         <span>Informes</span>
                     </a>
                     <div id="menu_informes" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
@@ -152,10 +152,6 @@ $usuario = $usuario_result->fetch_assoc();
                             <a class="collapse-item" href="assets/controladores/informes/libro_disponible.php">Libros disponibles</a>
                             <a class="collapse-item" href="assets/controladores/informes/libro_prestado.php">Libros prestados</a>
                             <a class="collapse-item" href="assets/controladores/informes/historial_prestamo.php">Historial prestamo</a>
-                            <div class="collapse-divider"></div>
-                            <h6 class="collapse-header">Other Pages:</h6>
-                            <a class="collapse-item" href="404.html">404 Page</a>
-                            <a class="collapse-item" href="blank.html">Blank Page</a>
                         </div>
                     </div>
                 </li>
@@ -391,9 +387,6 @@ $usuario = $usuario_result->fetch_assoc();
                             <!-- Botones superiores -->
                             <?php if ($_SESSION["tipo_usuario"] === "1"): ?>
                                 <div class="d-sm-flex align-items-center justify-content-end mb-4">
-                                    <a href="#" class="mx-2 d-none d-sm-inline-block btn btn-sm btn-success shadow-sm">
-                                        <i class="fas fa-download fa-sm text-white-50"></i> Generar informe inventario
-                                    </a>
                                     <button id="btn_registro_libro" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
                                         <i class="fas fa-plus fa-sm text-white-50"></i> Agregar libro
                                     </button>

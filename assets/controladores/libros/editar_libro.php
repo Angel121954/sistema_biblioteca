@@ -21,10 +21,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $categoria = filter_var($_POST["categoria_libro"], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $cantidad = floatval($_POST["cantidad_libro"]);
 
-        $sql->efectuarConsulta("UPDATE libros SET titulo_libro = '$titulo', autor_libro = '$autor',
+        if ($cantidad > 0):
+            $sql->efectuarConsulta("UPDATE libros SET titulo_libro = '$titulo', autor_libro = '$autor',
                         isbn_libro = '$isbn', categoria_libro = '$categoria', disponibilidad_libro = 'Disponible',
                         cantidad_libro = $cantidad WHERE id_libro = $id");
-        echo "ok";
+            echo "ok";
+        endif;
         $sql->desconectar();
     }
 }
