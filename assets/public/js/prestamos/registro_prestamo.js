@@ -58,8 +58,12 @@ document.addEventListener("DOMContentLoaded", () => {
           if (reserva) {
             infoDiv.innerHTML = `
               <div class="border rounded-3 p-3 bg-light">
-                <p class="mb-1"><i class="bi bi-person-circle"></i> <b>Usuario:</b> ${reserva.nombre_usuario}</p>
-                <p class="mb-0"><i class="bi bi-book"></i> <b>Libro:</b> ${reserva.titulo_libro}</p>
+                <p class="mb-1"><i class="bi bi-person-circle"></i> <b>Usuario:</b> ${
+                  reserva.nombre_usuario + " " + reserva.apellido_usuario
+                }</p>
+                <p class="mb-0"><i class="bi bi-book"></i> <b>Libro:</b> ${
+                  reserva.titulo_libro
+                }</p>
               </div>
             `;
           }

@@ -19,7 +19,7 @@ $usuario_result = $sql->efectuarConsulta("SELECT * FROM usuarios WHERE id_usuari
 $usuario = $usuario_result->fetch_assoc();
 
 $fechas_reservas_result = $sql->efectuarConsulta("SELECT r.id_reserva, r.fecha_reserva AS fecha,
-                                        u.nombre_usuario, l.titulo_libro FROM reservas r
+                                        u.nombre_usuario, u.apellido_usuario, l.titulo_libro FROM reservas r
                                         INNER JOIN usuarios u ON r.usuarios_id_usuario = u.id_usuario
                                         INNER JOIN libros l ON r.libros_id_libro = l.id_libro
                                         GROUP BY r.fecha_reserva ORDER BY fecha");
@@ -136,13 +136,22 @@ $fechas_reservas_json = json_encode($fechas_reservas, JSON_UNESCAPED_UNICODE);
                 </a>
             </li>
 
-            <!-- Enlace: reservas -->
-            <li class="nav-item">
-                <a class="nav-link" href="index_reservas.php">
-                    <i class="bi bi-calendar2-check-fill"></i>
-                    <span>Reservas</span>
-                </a>
-            </li>
+            <!-- Reservas -->
+            <?php if ($_SESSION["tipo_usuario"] === "1"): ?>
+                <li class="nav-item">
+                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#menu_reservas"
+                        aria-expanded="true" aria-controls="collapsePages">
+                        <i class="fas fa-fw fa-folder"></i>
+                        <span>Reservas</span>
+                    </a>
+                    <div id="menu_reservas" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                        <div class="bg-white py-2 collapse-inner rounded">
+                            <a class="collapse-item" href="index_reservas.php">Reservas</a>
+                            <a class="collapse-item" href="assets/controladores/informes/historial_reserva.php">Historial de reservas</a>
+                        </div>
+                    </div>
+                </li>
+            <?php endif; ?>
 
             <!-- Enlace: prestamos -->
             <li class="nav-item">
@@ -155,12 +164,12 @@ $fechas_reservas_json = json_encode($fechas_reservas, JSON_UNESCAPED_UNICODE);
             <!-- Menú informes -->
             <?php if ($_SESSION["tipo_usuario"] === "1"): ?>
                 <li class="nav-item">
-                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#menu_despegable"
+                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#menu_informes"
                         aria-expanded="true" aria-controls="collapsePages">
                         <i class="fas fa-fw fa-folder"></i>
                         <span>Informes</span>
                     </a>
-                    <div id="menu_despegable" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                    <div id="menu_informes" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
                         <div class="bg-white py-2 collapse-inner rounded">
                             <a class="collapse-item" href="assets/controladores/informes/libro_disponible.php">Libros disponibles</a>
                             <a class="collapse-item" href="assets/controladores/informes/libro_prestado.php">Libros prestados</a>
