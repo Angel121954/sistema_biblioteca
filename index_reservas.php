@@ -60,6 +60,8 @@ $libros_json = json_encode($titulo_libro, JSON_UNESCAPED_UNICODE);
     <!-- Custom styles for this template-->
     <link href="css/sb-admin-2.min.css" rel="stylesheet">
 
+    <!--DataTable local-->
+    <link href="assets/libs/datatables/datatables.min.css" rel="stylesheet">
 </head>
 
 <body id="page-top">
@@ -136,21 +138,33 @@ $libros_json = json_encode($titulo_libro, JSON_UNESCAPED_UNICODE);
             </li>
 
             <!-- Reservas -->
-            <?php if ($_SESSION["tipo_usuario"] === "1"): ?>
-                <li class="nav-item">
-                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#menu_reservas"
-                        aria-expanded="true" aria-controls="collapsePages">
-                        <i class="fas fa-fw fa-book-open"></i>
-                        <span>Reservas</span>
-                    </a>
-                    <div id="menu_reservas" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
-                        <div class="bg-white py-2 collapse-inner rounded">
-                            <a class="collapse-item" href="index_reservas.php">Reservas</a>
-                            <a class="collapse-item" href="assets/controladores/informes/historial_reserva.php">Historial de reservas</a>
+            <?php switch ($_SESSION["tipo_usuario"]):
+                case "1": ?>
+                    <li class="nav-item">
+                        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#menu_reservas"
+                            aria-expanded="true" aria-controls="collapsePages">
+                            <i class="fas fa-fw fa-book-open"></i>
+                            <span>Reservas</span>
+                        </a>
+
+                        <div id="menu_reservas" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                            <div class="bg-white py-2 collapse-inner rounded">
+                                <a class="collapse-item" href="index_reservas.php">Reservas</a>
+                                <a class="collapse-item" href="assets/controladores/informes/historial_reserva.php">Historial de reservas</a>
+                            </div>
                         </div>
-                    </div>
-                </li>
-            <?php endif; ?>
+
+                    </li>
+                <?php break;
+                default: ?>
+                    <li class="nav-item">
+                        <a class="nav-link" href="index_reservas.php">
+                            <i class="bi bi-people-fill"></i>
+                            <span>Reservas</span>
+                        </a>
+                    </li>
+            <?php break;
+            endswitch; ?>
 
             <!-- Enlace: prestamos -->
             <li class="nav-item">
@@ -399,7 +413,7 @@ $libros_json = json_encode($titulo_libro, JSON_UNESCAPED_UNICODE);
                                                 class="fas fa-download fa-sm text-white-50"></i> Generate Report</a>
                                     </div>
                                 <?php break;
-                                case "2": ?>
+                                default: ?>
                                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
                                         <h1 class="h3 mb-0 text-gray-800">Reservas</h1>
                                         <button id="btn_registro_reserva" data-libros="<?php echo htmlspecialchars($libros_json, ENT_QUOTES, 'UTF-8'); ?>"
@@ -422,7 +436,7 @@ $libros_json = json_encode($titulo_libro, JSON_UNESCAPED_UNICODE);
                                 </div>
                                 <div class="card-body">
                                     <div class="table-responsive">
-                                        <table class="table table-bordered" id="tbl_reservas" width="100%" cellspacing="0">
+                                        <table class="table table-bordered tabla_dt" id="tbl_reservas" width="100%" cellspacing="0">
                                             <thead>
                                                 <tr>
                                                     <th>ID reserva</th>
@@ -928,10 +942,14 @@ $libros_json = json_encode($titulo_libro, JSON_UNESCAPED_UNICODE);
     <?php if ($_SESSION["tipo_usuario"] === "1"): ?>
         <!--JS actualizar estado de la reserva-->
         <script src="assets/public/js/reservas/actualizar_reserva.js"></script>
-
-        <!--Funcionalidad menú-->
-        <script src="assets/funcionalidad/app.js"></script>
     <?php endif; ?>
+
+    <!--Funcionalidad menú-->
+    <script src="assets/funcionalidad/app.js"></script>
+
+    <!--DataTables local-->
+    <script src="assets/libs/datatables/datatables.min.js"></script>
+    <script src="assets/funcionalidad/tablas.js"></script>
 </body>
 
 </html>

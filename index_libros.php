@@ -39,6 +39,8 @@ $usuario = $usuario_result->fetch_assoc();
     <!-- Custom styles for this template-->
     <link href="css/sb-admin-2.min.css" rel="stylesheet">
 
+    <!--DataTable local-->
+    <link href="assets/libs/datatables/datatables.min.css" rel="stylesheet">
 </head>
 
 <body id="page-top">
@@ -115,21 +117,34 @@ $usuario = $usuario_result->fetch_assoc();
             </li>
 
             <!-- Reservas -->
-            <?php if ($_SESSION["tipo_usuario"] === "1"): ?>
-                <li class="nav-item">
-                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#menu_reservas"
-                        aria-expanded="true" aria-controls="collapsePages">
-                        <i class="fas fa-fw fa-book-open"></i>
-                        <span>Reservas</span>
-                    </a>
-                    <div id="menu_reservas" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
-                        <div class="bg-white py-2 collapse-inner rounded">
-                            <a class="collapse-item" href="index_reservas.php">Reservas</a>
-                            <a class="collapse-item" href="assets/controladores/informes/historial_reserva.php">Historial de reservas</a>
+            <?php switch ($_SESSION["tipo_usuario"]):
+                case "1": ?>
+                    <li class="nav-item">
+                        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#menu_reservas"
+                            aria-expanded="true" aria-controls="collapsePages">
+                            <i class="fas fa-fw fa-book-open"></i>
+                            <span>Reservas</span>
+                        </a>
+
+                        <div id="menu_reservas" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                            <div class="bg-white py-2 collapse-inner rounded">
+                                <a class="collapse-item" href="index_reservas.php">Reservas</a>
+                                <a class="collapse-item" href="assets/controladores/informes/historial_reserva.php">Historial de reservas</a>
+                            </div>
                         </div>
-                    </div>
-                </li>
-            <?php endif; ?>
+
+                    </li>
+                <?php break;
+                default: ?>
+                    <li class="nav-item">
+                        <a class="nav-link" href="index_reservas.php">
+                            <i class="bi bi-people-fill"></i>
+                            <span>Reservas</span>
+                        </a>
+                    </li>
+            <?php break;
+            endswitch; ?>
+
 
             <!-- Enlace: prestamos -->
             <li class="nav-item">
@@ -401,7 +416,7 @@ $usuario = $usuario_result->fetch_assoc();
 
                                 <div class="card-body">
                                     <div class="table-responsive">
-                                        <table class="table table-bordered" id="tbl_libros" width="100%" cellspacing="0">
+                                        <table class="table table-bordered tabla_dt" id="tbl_libros" width="100%" cellspacing="0">
                                             <thead>
                                                 <tr>
                                                     <th>ID libro</th>
@@ -903,9 +918,11 @@ $usuario = $usuario_result->fetch_assoc();
         <script src="assets/public/js/graficos/gestion_total_pie.js"></script>
 
         <!--Funcionalidad menú-->
-        <?php if ($_SESSION["tipo_usuario"] === "1"): ?>
-            <script src="assets/funcionalidad/app.js"></script>
-        <?php endif; ?>
+        <script src="assets/funcionalidad/app.js"></script>
+
+        <!--DataTables local-->
+        <script src="assets/libs/datatables/datatables.min.js"></script>
+        <script src="assets/funcionalidad/tablas.js"></script>
 </body>
 
 </html>

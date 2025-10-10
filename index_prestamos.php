@@ -4,6 +4,7 @@ session_start();
 require_once "assets/modelos/MySQL.php";
 $sql = new MySQL();
 $sql->conectar();
+$id_usuario = intval($_SESSION["id_usuario"]);
 
 //* consulta para poderlo imprimir en la tabla
 $presta = $sql->efectuarConsulta("SELECT p.id_prestamo, p.fecha_prestamo, p.fecha_devolucion,
@@ -12,17 +13,24 @@ $presta = $sql->efectuarConsulta("SELECT p.id_prestamo, p.fecha_prestamo, p.fech
                         ON p.reservas_id_reserva = r.id_reserva
                         INNER JOIN usuarios u ON r.usuarios_id_usuario = u.id_usuario
                         INNER JOIN libros l ON r.libros_id_libro = l.id_libro
-                        WHERE r.estado_reserva = 'Aceptada'");
+                        ORDER BY p.id_prestamo");
 
-$id_usuario = $_SESSION["id_usuario"];
+$prestamos_usuario = $sql->efectuarConsulta("SELECT p.id_prestamo, p.fecha_prestamo, p.fecha_devolucion,
+                        r.fecha_reserva, l.titulo_libro, u.nombre_usuario
+                        FROM prestamos p INNER JOIN reservas r 
+                        ON p.reservas_id_reserva = r.id_reserva
+                        INNER JOIN usuarios u ON r.usuarios_id_usuario = u.id_usuario
+                        INNER JOIN libros l ON r.libros_id_libro = l.id_libro
+                        WHERE u.id_usuario = $id_usuario
+                        ORDER BY p.id_prestamo");
+
 $usuario_result = $sql->efectuarConsulta("SELECT * FROM usuarios WHERE id_usuario = $id_usuario");
 $usuario = $usuario_result->fetch_assoc();
 
 $fechas_reservas_result = $sql->efectuarConsulta("SELECT r.id_reserva, r.fecha_reserva AS fecha,
                                         u.nombre_usuario, u.apellido_usuario, l.titulo_libro FROM reservas r
                                         INNER JOIN usuarios u ON r.usuarios_id_usuario = u.id_usuario
-                                        INNER JOIN libros l ON r.libros_id_libro = l.id_libro
-                                        GROUP BY r.fecha_reserva ORDER BY fecha");
+                                        INNER JOIN libros l ON r.libros_id_libro = l.id_libro");
 
 $fechas_reservas = [];
 
@@ -31,7 +39,6 @@ while ($valor = $fechas_reservas_result->fetch_assoc()) {
 }
 
 //* convertir las fechas en formato JSON para poderlo leer en el public/js/prestamos/registro_prestamo.js
-
 $fechas_reservas_json = json_encode($fechas_reservas, JSON_UNESCAPED_UNICODE);
 
 ?>
@@ -61,6 +68,8 @@ $fechas_reservas_json = json_encode($fechas_reservas, JSON_UNESCAPED_UNICODE);
     <!-- Custom styles for this template-->
     <link href="css/sb-admin-2.min.css" rel="stylesheet">
 
+    <!--DataTable local-->
+    <link href="assets/libs/datatables/datatables.min.css" rel="stylesheet">
 </head>
 
 <body id="page-top">
@@ -137,21 +146,33 @@ $fechas_reservas_json = json_encode($fechas_reservas, JSON_UNESCAPED_UNICODE);
             </li>
 
             <!-- Reservas -->
-            <?php if ($_SESSION["tipo_usuario"] === "1"): ?>
-                <li class="nav-item">
-                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#menu_reservas"
-                        aria-expanded="true" aria-controls="collapsePages">
-                        <i class="fas fa-fw fa-book-open"></i>
-                        <span>Reservas</span>
-                    </a>
-                    <div id="menu_reservas" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
-                        <div class="bg-white py-2 collapse-inner rounded">
-                            <a class="collapse-item" href="index_reservas.php">Reservas</a>
-                            <a class="collapse-item" href="assets/controladores/informes/historial_reserva.php">Historial de reservas</a>
+            <?php switch ($_SESSION["tipo_usuario"]):
+                case "1": ?>
+                    <li class="nav-item">
+                        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#menu_reservas"
+                            aria-expanded="true" aria-controls="collapsePages">
+                            <i class="fas fa-fw fa-book-open"></i>
+                            <span>Reservas</span>
+                        </a>
+
+                        <div id="menu_reservas" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                            <div class="bg-white py-2 collapse-inner rounded">
+                                <a class="collapse-item" href="index_reservas.php">Reservas</a>
+                                <a class="collapse-item" href="assets/controladores/informes/historial_reserva.php">Historial de reservas</a>
+                            </div>
                         </div>
-                    </div>
-                </li>
-            <?php endif; ?>
+
+                    </li>
+                <?php break;
+                default: ?>
+                    <li class="nav-item">
+                        <a class="nav-link" href="index_reservas.php">
+                            <i class="bi bi-people-fill"></i>
+                            <span>Reservas</span>
+                        </a>
+                    </li>
+            <?php break;
+            endswitch; ?>
 
             <!-- Enlace: prestamos -->
             <li class="nav-item">
@@ -406,30 +427,57 @@ $fechas_reservas_json = json_encode($fechas_reservas, JSON_UNESCAPED_UNICODE);
                                 </div>
                                 <div class="card-body">
                                     <div class="table-responsive">
-                                        <table class="table table-bordered" id="tbl_prestamos" width="100%" cellspacing="0">
-                                            <thead>
-                                                <tr>
-                                                    <th>ID prestamo</th>
-                                                    <th>Fecha reserva</th>
-                                                    <th>Fecha prestamo</th>
-                                                    <th>Fecha devolución</th>
-                                                    <th>Nombre usuario</th>
-                                                    <th>Titulo libro</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <?php while ($fila = $presta->fetch_assoc()): ?>
+                                        <?php if ($_SESSION["tipo_usuario"] === "1") { ?>
+                                            <table class="table table-bordered tabla_dt" id="tbl_prestamos" width="100%" cellspacing="0">
+                                                <thead>
                                                     <tr>
-                                                        <th><?php echo $fila["id_prestamo"]; ?></th>
-                                                        <th><?php echo $fila["fecha_reserva"]; ?></th>
-                                                        <th><?php echo $fila["fecha_prestamo"]; ?></th>
-                                                        <th><?php echo $fila["fecha_devolucion"]; ?></th>
-                                                        <th><?php echo $fila["nombre_usuario"]; ?></th>
-                                                        <th><?php echo $fila["titulo_libro"]; ?></th>
+                                                        <th>ID prestamo</th>
+                                                        <th>Fecha reserva</th>
+                                                        <th>Fecha prestamo</th>
+                                                        <th>Fecha devolución</th>
+                                                        <th>Nombre usuario</th>
+                                                        <th>Titulo libro</th>
                                                     </tr>
-                                                <?php endwhile; ?>
-                                            </tbody>
-                                        </table>
+                                                </thead>
+                                                <tbody>
+                                                    <?php while ($fila = $presta->fetch_assoc()): ?>
+                                                        <tr>
+                                                            <th><?php echo $fila["id_prestamo"]; ?></th>
+                                                            <th><?php echo $fila["fecha_reserva"]; ?></th>
+                                                            <th><?php echo $fila["fecha_prestamo"]; ?></th>
+                                                            <th><?php echo $fila["fecha_devolucion"]; ?></th>
+                                                            <th><?php echo $fila["nombre_usuario"]; ?></th>
+                                                            <th><?php echo $fila["titulo_libro"]; ?></th>
+                                                        </tr>
+                                                    <?php endwhile; ?>
+                                                </tbody>
+                                            </table>
+                                        <?php } else { ?>
+                                            <table class="table table-bordered" id="tbl_prestamos1" width="100%" cellspacing="0">
+                                                <thead>
+                                                    <tr>
+                                                        <th>ID prestamo</th>
+                                                        <th>Fecha reserva</th>
+                                                        <th>Fecha prestamo</th>
+                                                        <th>Fecha devolución</th>
+                                                        <th>Nombre usuario</th>
+                                                        <th>Titulo libro</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <?php while ($fila = $prestamos_usuario->fetch_assoc()): ?>
+                                                        <tr>
+                                                            <th><?php echo $fila["id_prestamo"]; ?></th>
+                                                            <th><?php echo $fila["fecha_reserva"]; ?></th>
+                                                            <th><?php echo $fila["fecha_prestamo"]; ?></th>
+                                                            <th><?php echo $fila["fecha_devolucion"]; ?></th>
+                                                            <th><?php echo $fila["nombre_usuario"]; ?></th>
+                                                            <th><?php echo $fila["titulo_libro"]; ?></th>
+                                                        </tr>
+                                                    <?php endwhile; ?>
+                                                </tbody>
+                                            </table>
+                                        <?php } ?>
                                     </div>
                                 </div>
                             </div>
@@ -872,9 +920,11 @@ $fechas_reservas_json = json_encode($fechas_reservas, JSON_UNESCAPED_UNICODE);
     <script src="assets/public/js/graficos/gestion_total_pie.js"></script>
 
     <!--Funcionalidad del menú despegable-->
-    <?php if ($_SESSION["tipo_usuario"] === "1"): ?>
-        <script src="assets/funcionalidad/app.js"></script>
-    <?php endif; ?>
+    <script src="assets/funcionalidad/app.js"></script>
+
+    <!--DataTables local-->
+    <script src="assets/libs/datatables/datatables.min.js"></script>
+    <script src="assets/funcionalidad/tablas.js"></script>
 </body>
 
 </html>
