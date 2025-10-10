@@ -5,16 +5,7 @@ require_once "assets/modelos/MySQL.php";
 $sql = new MySQL();
 $sql->conectar();
 
-//* consulta para convertirlo en arreglo y luego en json
-$prestamos_result = $sql->efectuarConsulta("SELECT p.id_prestamo, p.fecha_prestamo, p.fecha_devolucion,
-                        r.fecha_reserva, l.titulo_libro, u.nombre_usuario
-                        FROM prestamos p INNER JOIN reservas r 
-                        ON p.reservas_id_reserva = r.id_reserva
-                        INNER JOIN usuarios u ON r.usuarios_id_usuario = u.id_usuario
-                        INNER JOIN libros l ON r.libros_id_libro = l.id_libro
-                        WHERE r.estado_reserva = 'Aceptada'");
-
-//* otra consulta para poderlo imprimir en la tabla
+//* consulta para poderlo imprimir en la tabla
 $presta = $sql->efectuarConsulta("SELECT p.id_prestamo, p.fecha_prestamo, p.fecha_devolucion,
                         r.fecha_reserva, l.titulo_libro, u.nombre_usuario
                         FROM prestamos p INNER JOIN reservas r 
@@ -23,16 +14,25 @@ $presta = $sql->efectuarConsulta("SELECT p.id_prestamo, p.fecha_prestamo, p.fech
                         INNER JOIN libros l ON r.libros_id_libro = l.id_libro
                         WHERE r.estado_reserva = 'Aceptada'");
 
-$prestamos = [];
-while ($valor = $prestamos_result->fetch_assoc()) {
-    $prestamos[] = $valor;
-}
-
 $id_usuario = $_SESSION["id_usuario"];
 $usuario_result = $sql->efectuarConsulta("SELECT * FROM usuarios WHERE id_usuario = $id_usuario");
 $usuario = $usuario_result->fetch_assoc();
 
-// $prestamos_json = json_encode($prestamos, JSON_UNESCAPED_UNICODE);
+$fechas_reservas_result = $sql->efectuarConsulta("SELECT r.id_reserva, r.fecha_reserva AS fecha,
+                                        u.nombre_usuario, l.titulo_libro FROM reservas r
+                                        INNER JOIN usuarios u ON r.usuarios_id_usuario = u.id_usuario
+                                        INNER JOIN libros l ON r.libros_id_libro = l.id_libro
+                                        GROUP BY r.fecha_reserva ORDER BY fecha");
+
+$fechas_reservas = [];
+
+while ($valor = $fechas_reservas_result->fetch_assoc()) {
+    $fechas_reservas[] = $valor;
+}
+
+//* convertir las fechas en formato JSON para poderlo leer en el public/js/prestamos/registro_prestamo.js
+
+$fechas_reservas_json = json_encode($fechas_reservas, JSON_UNESCAPED_UNICODE);
 
 ?>
 
@@ -390,7 +390,7 @@ $usuario = $usuario_result->fetch_assoc();
                             <?php if ($_SESSION["tipo_usuario"] === "1"): ?>
                                 <div class="d-sm-flex align-items-center justify-content-between mb-4">
                                     <h1 class="h3 mb-0 text-gray-800">Gestión de Prestamos</h1>
-                                    <button id="btn_registro_prestamo" data-reserva="<?php echo htmlspecialchars($libros_json, ENT_QUOTES, 'UTF-8'); ?>"
+                                    <button id="btn_registro_prestamo" data-reserva="<?php echo htmlspecialchars($fechas_reservas_json, ENT_QUOTES, 'UTF-8'); ?>"
                                         class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
                                             class="fas fa-download fa-sm text-white-50"></i>Realizar un prestamo</button>
                                 </div>
