@@ -461,7 +461,6 @@ $reservas_json = json_encode($reservas, JSON_UNESCAPED_UNICODE);
                                                 <thead>
                                                     <tr>
                                                         <th>ID prestamo</th>
-                                                        <th>Fecha reserva</th>
                                                         <th>Fecha prestamo</th>
                                                         <th>Fecha devolución</th>
                                                         <th>Nombre usuario</th>
@@ -472,7 +471,6 @@ $reservas_json = json_encode($reservas, JSON_UNESCAPED_UNICODE);
                                                     <?php while ($fila = $prestamos_usuario->fetch_assoc()): ?>
                                                         <tr>
                                                             <th><?php echo $fila["id_prestamo"]; ?></th>
-                                                            <th><?php echo $fila["fecha_reserva"]; ?></th>
                                                             <th><?php echo $fila["fecha_prestamo"]; ?></th>
                                                             <th><?php echo $fila["fecha_devolucion"]; ?></th>
                                                             <th><?php echo $fila["nombre_usuario"]; ?></th>
