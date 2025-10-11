@@ -6,10 +6,12 @@ $sql = new MySQL();
 $sql->conectar();
 $id_usuario = intval($_SESSION["id_usuario"]);
 
-$consulta = "SELECT r.id_reserva, r.fecha_reserva, r.estado_reserva,
-                    u.nombre_usuario, l.titulo_libro FROM reservas AS r INNER JOIN
+$consulta = "SELECT r.id_reserva, r.fecha_reserva, r.estado_reserva, rl.cantidad_libros,
+                    u.nombre_usuario, l.titulo_libro FROM reservas AS r 
+                    INNER JOIN reservas_has_libros rl 
+                    ON rl.reservas_id_reserva = r.id_reserva INNER JOIN
                     usuarios AS u ON r.usuarios_id_usuario = u.id_usuario
-                    INNER JOIN libros AS l ON r.libros_id_libro = l.id_libro
+                    INNER JOIN libros AS l ON rl.libros_id_libro = l.id_libro
                     WHERE r.estado_reserva = 'Pendiente'";
 
 switch ($_SESSION["tipo_usuario"]) {
@@ -444,6 +446,7 @@ $libros_json = json_encode($titulo_libro, JSON_UNESCAPED_UNICODE);
                                                     <th>Estado</th>
                                                     <th>Nombre usuario</th>
                                                     <th>Titulo libro</th>
+                                                    <th>Cantidad del libro</th>
                                                     <?php switch ($_SESSION["tipo_usuario"]):
                                                         case "1": ?>
                                                             <th class="text-center">Acción frente a la reserva</th>
@@ -462,6 +465,7 @@ $libros_json = json_encode($titulo_libro, JSON_UNESCAPED_UNICODE);
                                                         <th><?php echo $fila["estado_reserva"]; ?></th>
                                                         <th><?php echo $fila["nombre_usuario"]; ?></th>
                                                         <th><?php echo $fila["titulo_libro"]; ?></th>
+                                                        <th><?php echo $fila["cantidad_libros"]; ?></th>
 
                                                         <td class="text-center">
                                                             <?php switch ($_SESSION["tipo_usuario"]):
@@ -551,7 +555,7 @@ $libros_json = json_encode($titulo_libro, JSON_UNESCAPED_UNICODE);
                                 WHERE disponibilidad_libro = 'Disponible'
                             ");
                                                 $total = $total_result->fetch_assoc();
-                                                echo $total['total_libros'];
+                                                echo $total['total_libros'] ?? 0;
                                                 ?>
                                             </div>
                                         </div>
@@ -577,12 +581,13 @@ $libros_json = json_encode($titulo_libro, JSON_UNESCAPED_UNICODE);
                                                 $titulo_max_result = $sql->efectuarConsulta("
                                 SELECT l.titulo_libro, COUNT(r.id_reserva) AS cantidad
                                 FROM libros l
-                                INNER JOIN reservas r ON r.libros_id_libro = l.id_libro
+                                INNER JOIN reservas_has_libros rl ON rl.libros_id_libro = l.id_libro
+                                INNER JOIN reservas r ON rl.reservas_id_reserva = r.id_reserva
                                 GROUP BY l.id_libro
                                 ORDER BY cantidad ASC
                             ");
                                                 $titulo_max = $titulo_max_result->fetch_assoc();
-                                                echo $titulo_max['titulo_libro'];
+                                                echo $titulo_max['titulo_libro'] ?? "";
                                                 ?>
                                             </div>
                                         </div>
@@ -612,7 +617,7 @@ $libros_json = json_encode($titulo_libro, JSON_UNESCAPED_UNICODE);
                                 ORDER BY cantidad DESC
                             ");
                                                 $autor_max = $autor_max_result->fetch_assoc();
-                                                echo $autor_max['autor_libro'];
+                                                echo $autor_max['autor_libro'] ?? "";
                                                 ?>
                                             </div>
                                         </div>

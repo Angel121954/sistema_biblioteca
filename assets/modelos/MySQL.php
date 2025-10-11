@@ -44,5 +44,10 @@ class MySQL {
 
         return $resultado;
     }
+
+    public function ultimoIdInsertado()
+    {
+        return mysqli_insert_id($this->conexion);
+    }
 }
 ?>

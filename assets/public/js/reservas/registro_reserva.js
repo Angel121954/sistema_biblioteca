@@ -1,67 +1,129 @@
 document
-  .querySelector("#btn_registro_reserva")
-  .addEventListener("click", () => {
-    const libros = JSON.parse(
-      document.querySelector("#btn_registro_reserva").dataset.libros
-    );
-    let opcionesLibros =
-      '<option value="" disabled selected>Seleccione un libro</option>';
-    libros.forEach((l) => {
-      opcionesLibros += `<option value="${l.id_libro}">${l.titulo_libro}</option>`;
-    });
+  .getElementById("btn_registro_reserva")
+  .addEventListener("click", function (e) {
+    console.log("boton detectado");
+    const btn = e.currentTarget;
+    const libros = JSON.parse(btn.dataset.libros); // Recibe los libros del atributo data-libros
 
     Swal.fire({
-      title: '<h2 class="fw-bold mb-3 text-primary">Registro de reserva</h2>',
+      title: "Nueva reserva",
       html: `
-        <form id="frm_registro_reserva" class="text-start" novalidate style="max-width: 450px; margin: 0 auto;">
-          <div class="form-floating mb-4">
-            <select name="id_libro" id="id_libro" class="form-select" required>
-              ${opcionesLibros}
-            </select>
-            <label for="id_libro"><i class="bi bi-book"></i> Libro</label>
+        <form id="formReserva">
+          <div id="librosContainer">
+            <div class="libro-item mb-2">
+              <select name="id_libro[]" id="libros" class="form-control mb-2">
+                <option disabled selected>Seleccione un libro</option>
+              </select>
+              <input type="number" name="cantidad[]" class="form-control mb-2" min="1" placeholder="Cantidad">
+            </div>
           </div>
-
-          <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold">
-            Guardar reserva
-          </button>
+          <button type="button" id="btnAgregar" class="swal2-confirm swal2-styled" style="background-color:#3085d6;">+ Agregar libro</button>
         </form>
       `,
-      showConfirmButton: false,
-      width: 600,
-      background: "#fdfdfd",
-      customClass: {
-        popup: "shadow-lg rounded-4 border-0",
-      },
+      showCancelButton: true,
+      confirmButtonText: "Guardar reserva",
+      cancelButtonText: "Cancelar",
+
       didOpen: () => {
-        const form = document.querySelector("#frm_registro_reserva");
+        // Llenar el primer select con los libros del dataset
+        const selectLibro = document.querySelector("#libros");
+        libros.forEach((l) => {
+          const option = document.createElement("option");
+          option.value = l.id_libro;
+          option.textContent = l.titulo_libro;
+          selectLibro.appendChild(option);
+        });
 
-        form.addEventListener("submit", (e) => {
-          e.preventDefault();
+        // Botón para agregar más selects dinámicos
+        document.querySelector("#btnAgregar").addEventListener("click", () => {
+          const container = document.querySelector("#librosContainer");
+          const nuevoLibro = document.createElement("div");
+          nuevoLibro.classList.add("libro-item", "mb-2");
 
-          const formData = new FormData(form);
+          nuevoLibro.innerHTML = `
+            <select name="id_libro[]" class="form-control mb-2">
+              <option disabled selected>Seleccione un libro</option>
+              ${libros
+                .map(
+                  (l) =>
+                    `<option value="${l.id_libro}">${l.titulo_libro}</option>`
+                )
+                .join("")}
+            </select>
+            <input type="number" name="cantidad[]" class="form-control mb-2" min="1" placeholder="Cantidad">
+            <button type="button" class="btnEliminar btn btn-danger btn-sm mb-2">Eliminar</button>
+          `;
 
-          fetch("assets/controladores/reservas/registro_reserva.php", {
-            method: "POST",
-            body: formData,
-          })
-            .then((r) => r.text())
-            .then((res) => {
-              console.log("Respuesta del servidor:", res);
+          container.appendChild(nuevoLibro);
 
-              if (res.trim() === "ok") {
-                Swal.fire(
-                  "¡Éxito!",
-                  "Reserva registrada correctamente",
-                  "success"
-                ).then(() => location.reload());
-              } else {
-                Swal.fire("Error", res, "error");
-              }
-            })
-            .catch(() => {
-              Swal.fire("Error", "Hubo un problema con la petición", "error");
+          // Evento eliminar
+          nuevoLibro
+            .querySelector(".btnEliminar")
+            .addEventListener("click", () => {
+              container.removeChild(nuevoLibro);
             });
         });
       },
+
+      preConfirm: () => {
+        console.log("enviando datos al servidor..");
+        const formData = new FormData();
+
+        // Puedes dejar id_usuario en 0, PHP lo ignora y usa $_SESSION
+        formData.append("id_usuario", 0);
+
+        const selects = document.querySelectorAll(
+          ".libro-item select[name='id_libro[]']"
+        );
+        const cantidades = document.querySelectorAll(
+          ".libro-item input[name='cantidad[]']"
+        );
+
+        let valid = false;
+
+        selects.forEach((select, i) => {
+          const idLibro = select.value;
+          const cantidad = cantidades[i].value;
+          if (idLibro && cantidad > 0) {
+            formData.append("id_libro[]", idLibro);
+            formData.append("cantidad[]", cantidad);
+            valid = true;
+          }
+        });
+
+        if (!valid) {
+          Swal.showValidationMessage(
+            "Debe agregar al menos un libro con cantidad válida"
+          );
+          return false;
+        }
+
+        // Enviar al PHP
+        return fetch("assets/controladores/reservas/registro_reserva.php", {
+          method: "POST",
+          body: formData,
+        })
+          .then((response) => response.text())
+          .then((data) => {
+            console.log("Respuesta del servidor:", data);
+            if (data.trim() !== "ok") {
+              throw new Error("Error en el servidor: " + data);
+            }
+          })
+          .catch((error) => {
+            console.error("Error en fetch:", error);
+            Swal.showValidationMessage("Error al registrar la reserva");
+          });
+      },
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire(
+          "¡Reserva registrada!",
+          "Los libros fueron añadidos correctamente.",
+          "success"
+        ).then(() => {
+          location.reload(); // Recarga para actualizar lista de reservas
+        });
+      }
     });
   });

@@ -4,22 +4,41 @@ require_once "../../modelos/MySQL.php";
 $sql = new MySQL();
 $sql->conectar();
 
-if (
-    isset(
-        $_SESSION["id_usuario"],
-        $_POST["id_libro"]
-    ) && !empty($_SESSION["id_usuario"])
-    && !empty($_POST["id_libro"])
-) {
-    //* variables
-    $id_usuario = filter_var($_SESSION["id_usuario"], FILTER_SANITIZE_NUMBER_INT);
-    $id_libro = filter_var($_POST["id_libro"], FILTER_SANITIZE_NUMBER_INT);
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
-    $sql->efectuarConsulta("INSERT INTO reservas(fecha_reserva,
-                        estado_reserva, usuarios_id_usuario, libros_id_libro)
-                        VALUES(NOW(), 'Pendiente', $id_usuario, $id_libro)");
+    // Validar que existan los campos necesarios
+    if (isset($_POST["id_usuario"], $_POST["id_libro"], $_POST["cantidad"])) {
 
-    echo "ok";
+        // Usamos el ID del usuario de la sesión
+        $id_usuario = intval($_SESSION['id_usuario'] ?? 0);
+        $libros = $_POST['id_libro'];
+        $cantidades = $_POST['cantidad'];
+
+        // Validar que existan libros y cantidades
+        if ($id_usuario > 0 && !empty($libros) && !empty($cantidades)) {
+
+            // Insertar la reserva principal
+            $sql->efectuarConsulta("INSERT INTO reservas (estado_reserva, fecha_reserva, usuarios_id_usuario)
+                                    VALUES ('Pendiente', NOW(), $id_usuario)");
+            $id_reserva = $sql->ultimoIdInsertado();
+
+            // Insertar los detalles de la reserva
+            for ($i = 0; $i < count($libros); $i++) {
+                $id_libro = intval($libros[$i]);
+                $cantidad = intval($cantidades[$i]);
+
+                $sql->efectuarConsulta("INSERT INTO reservas_has_libros
+                    (reservas_id_reserva, libros_id_libro, cantidad_libros)
+                    VALUES ($id_reserva, $id_libro, $cantidad)");
+            }
+            echo "ok";
+            exit;
+        } else {
+            echo json_encode(["status" => "error", "mensaje" => "Datos incompletos o usuario no autenticado"]);
+            exit;
+        }
+    } else {
+        echo json_encode(["status" => "error", "mensaje" => "Parámetros no válidos"]);
+        exit;
+    }
 }
-
-$sql->desconectar();

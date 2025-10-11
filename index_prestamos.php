@@ -12,7 +12,8 @@ $presta = $sql->efectuarConsulta("SELECT p.id_prestamo, p.fecha_prestamo, p.fech
                         FROM prestamos p INNER JOIN reservas r 
                         ON p.reservas_id_reserva = r.id_reserva
                         INNER JOIN usuarios u ON r.usuarios_id_usuario = u.id_usuario
-                        INNER JOIN libros l ON r.libros_id_libro = l.id_libro
+                        INNER JOIN reservas_has_libros rl ON rl.reservas_id_reserva = r.id_reserva
+                        INNER JOIN libros l ON rl.libros_id_libro = l.id_libro
                         ORDER BY p.id_prestamo");
 
 $prestamos_usuario = $sql->efectuarConsulta("SELECT p.id_prestamo, p.fecha_prestamo, p.fecha_devolucion,
@@ -20,7 +21,8 @@ $prestamos_usuario = $sql->efectuarConsulta("SELECT p.id_prestamo, p.fecha_prest
                         FROM prestamos p INNER JOIN reservas r 
                         ON p.reservas_id_reserva = r.id_reserva
                         INNER JOIN usuarios u ON r.usuarios_id_usuario = u.id_usuario
-                        INNER JOIN libros l ON r.libros_id_libro = l.id_libro
+                        INNER JOIN reservas_has_libros rl ON rl.reservas_id_reserva = r.id_reserva
+                        INNER JOIN libros l ON rl.libros_id_libro = l.id_libro
                         WHERE u.id_usuario = $id_usuario
                         ORDER BY p.id_prestamo");
 
@@ -30,7 +32,8 @@ $usuario = $usuario_result->fetch_assoc();
 $fechas_reservas_result = $sql->efectuarConsulta("SELECT r.id_reserva, r.fecha_reserva AS fecha,
                                         u.nombre_usuario, u.apellido_usuario, l.titulo_libro FROM reservas r
                                         INNER JOIN usuarios u ON r.usuarios_id_usuario = u.id_usuario
-                                        INNER JOIN libros l ON r.libros_id_libro = l.id_libro");
+                                        INNER JOIN reservas_has_libros rl ON rl.reservas_id_reserva = r.id_reserva
+                                        INNER JOIN libros l ON rl.libros_id_libro = l.id_libro");
 
 $fechas_reservas = [];
 
@@ -510,7 +513,7 @@ $fechas_reservas_json = json_encode($fechas_reservas, JSON_UNESCAPED_UNICODE);
                                                                                         FROM libros
                                                                                         WHERE categoria_libro = 'Historia'");
                                                 $historia = $historia_result->fetch_assoc();
-                                                echo $historia['cantidad_historia'];
+                                                echo $historia['cantidad_historia'] ?? 0;
                                                 ?>
                                             </div>
                                         </div>
@@ -537,7 +540,7 @@ $fechas_reservas_json = json_encode($fechas_reservas, JSON_UNESCAPED_UNICODE);
                                                                                         FROM libros
                                                                                         WHERE disponibilidad_libro = 'Disponible'");
                                                 $total = $total_result->fetch_assoc();
-                                                echo $total['total_libros'];
+                                                echo $total['total_libros'] ?? 0;
                                                 ?>
                                             </div>
                                         </div>
@@ -560,13 +563,16 @@ $fechas_reservas_json = json_encode($fechas_reservas, JSON_UNESCAPED_UNICODE);
                                             </div>
                                             <div class="h5 mb-0 font-weight-bold text-gray-800">
                                                 <?php
-                                                $titulo_max_result = $sql->efectuarConsulta("SELECT l.titulo_libro, COUNT(r.id_reserva) AS cantidad
-                                                                            FROM libros l
-                                                                            INNER JOIN reservas r ON r.libros_id_libro = l.id_libro
-                                                                            GROUP BY l.id_libro
-                                                                            ORDER BY cantidad DESC");
+                                                $titulo_max_result = $sql->efectuarConsulta("
+                                SELECT l.titulo_libro, COUNT(r.id_reserva) AS cantidad
+                                FROM libros l
+                                INNER JOIN reservas_has_libros rl ON rl.libros_id_libro = l.id_libro
+                                INNER JOIN reservas r ON rl.reservas_id_reserva = r.id_reserva
+                                GROUP BY l.id_libro
+                                ORDER BY cantidad ASC
+                            ");
                                                 $titulo_max = $titulo_max_result->fetch_assoc();
-                                                echo $titulo_max['titulo_libro'];
+                                                echo $titulo_max['titulo_libro'] ?? "";
                                                 ?>
                                             </div>
                                         </div>
@@ -594,7 +600,7 @@ $fechas_reservas_json = json_encode($fechas_reservas, JSON_UNESCAPED_UNICODE);
                                                                                                 GROUP BY autor_libro
                                                                                                 ORDER BY cantidad DESC");
                                                 $autor_max = $autor_max_result->fetch_assoc();
-                                                echo $autor_max['autor_libro'];
+                                                echo $autor_max['autor_libro'] ?? "";
                                                 ?>
                                             </div>
                                         </div>

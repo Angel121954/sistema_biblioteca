@@ -423,7 +423,7 @@ $usuario = $usuario_result->fetch_assoc();
                                 </div>
                                 <div class="card-body">
                                     <div class="table-responsive">
-                                        <table class="table table-bordered tabla_dt" id="dataTable" width="100%" cellspacing="0">
+                                        <table class="table table-bordered tabla_dt" id="tbl_usuarios" width="100%" cellspacing="0">
                                             <thead>
                                                 <tr>
                                                     <th>ID usuario</th>
@@ -534,7 +534,7 @@ $usuario = $usuario_result->fetch_assoc();
                                 WHERE disponibilidad_libro = 'Disponible'
                             ");
                                                 $total = $total_result->fetch_assoc();
-                                                echo $total['total_libros'];
+                                                echo $total['total_libros'] ?? 0;
                                                 ?>
                                             </div>
                                         </div>
@@ -560,12 +560,13 @@ $usuario = $usuario_result->fetch_assoc();
                                                 $titulo_max_result = $sql->efectuarConsulta("
                                 SELECT l.titulo_libro, COUNT(r.id_reserva) AS cantidad
                                 FROM libros l
-                                INNER JOIN reservas r ON r.libros_id_libro = l.id_libro
+                                INNER JOIN reservas_has_libros rl ON rl.libros_id_libro = l.id_libro
+                                INNER JOIN reservas r ON rl.reservas_id_reserva = r.id_reserva
                                 GROUP BY l.id_libro
                                 ORDER BY cantidad ASC
                             ");
                                                 $titulo_max = $titulo_max_result->fetch_assoc();
-                                                echo $titulo_max['titulo_libro'];
+                                                echo $titulo_max['titulo_libro'] ?? "";
                                                 ?>
                                             </div>
                                         </div>
@@ -595,7 +596,7 @@ $usuario = $usuario_result->fetch_assoc();
                                 ORDER BY cantidad DESC
                             ");
                                                 $autor_max = $autor_max_result->fetch_assoc();
-                                                echo $autor_max['autor_libro'];
+                                                echo $autor_max['autor_libro'] ?? "";
                                                 ?>
                                             </div>
                                         </div>

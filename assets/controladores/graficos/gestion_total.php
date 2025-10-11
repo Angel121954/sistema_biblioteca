@@ -12,7 +12,8 @@ $resultado = $sql->efectuarConsulta("
     FROM usuarios u
     LEFT JOIN reservas r ON r.usuarios_id_usuario = u.id_usuario
     LEFT JOIN prestamos p ON p.reservas_id_reserva = r.id_reserva
-    LEFT JOIN libros l ON r.libros_id_libro = l.id_libro
+    LEFT JOIN reservas_has_libros rl ON rl.reservas_id_reserva = r.id_reserva 
+    LEFT JOIN libros l ON rl.libros_id_libro = l.id_libro
 ");
 
 $datos = $resultado->fetch_assoc();
