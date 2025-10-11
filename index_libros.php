@@ -138,7 +138,7 @@ $usuario = $usuario_result->fetch_assoc();
                 default: ?>
                     <li class="nav-item">
                         <a class="nav-link" href="index_reservas.php">
-                            <i class="bi bi-people-fill"></i>
+                            <i class="fas fa-fw fa-book-open"></i>
                             <span>Reservas</span>
                         </a>
                     </li>
@@ -542,14 +542,14 @@ $usuario = $usuario_result->fetch_assoc();
                             </div>
                         </div>
 
-                        <!-- Libro más solicitado -->
+                        <!-- Libro más prestado -->
                         <div class="col-xl-3 col-md-6 mb-4">
                             <div class="card border-left-info shadow py-2">
                                 <div class="card-body">
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                                                Libro más solicitado
+                                                Libro más prestado
                                             </div>
                                             <div class="h5 mb-0 font-weight-bold text-gray-800">
                                                 <?php
@@ -559,7 +559,7 @@ $usuario = $usuario_result->fetch_assoc();
                                 INNER JOIN reservas_has_libros rl ON rl.libros_id_libro = l.id_libro
                                 INNER JOIN reservas r ON rl.reservas_id_reserva = r.id_reserva
                                 GROUP BY l.id_libro
-                                ORDER BY cantidad ASC
+                                ORDER BY cantidad DESC
                             ");
                                                 $titulo_max = $titulo_max_result->fetch_assoc();
                                                 echo $titulo_max['titulo_libro'] ?? "";

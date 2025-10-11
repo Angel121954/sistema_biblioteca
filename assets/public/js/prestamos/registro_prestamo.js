@@ -1,35 +1,39 @@
 document.addEventListener("DOMContentLoaded", () => {
   const btn = document.querySelector("#btn_registro_prestamo");
 
-  btn.addEventListener("click", () => {
-    const reservas = JSON.parse(btn.dataset.reserva);
+  if (!btn) return; // Previene errores si no existe el botón
 
+  btn.addEventListener("click", () => {
+    const reservasUsuarios = JSON.parse(btn.dataset.reserva || "[]");
+
+    if (reservasUsuarios.length === 0) {
+      Swal.fire(
+        "Sin reservas",
+        "No hay reservas disponibles para préstamo.",
+        "info"
+      );
+      return;
+    }
+
+    // Construir opciones del select
     let opcionesReservas =
       '<option value="" disabled selected>Seleccione una reserva</option>';
-    reservas.forEach((r) => {
-      const fecha = new Date(r.fecha).toLocaleString("es-CO");
-      opcionesReservas += `<option value="${r.id_reserva}">${fecha}</option>`;
+    reservasUsuarios.forEach((r) => {
+      opcionesReservas += `<option value="${r.id_reserva}">${
+        r.nombre_usuario
+      } ${r.apellido_usuario ?? ""} - ${r.titulo_libro}</option>`;
     });
 
+    // Mostrar modal
     Swal.fire({
       title: '<h2 class="fw-bold mb-3 text-primary">Registro de préstamo</h2>',
       html: `
         <form id="frm_registro_prestamo" class="text-start" novalidate style="max-width: 450px; margin: 0 auto;">
           <div class="form-floating mb-3">
-            <input name="fecha_prestamo" id="fecha_prestamo" type="datetime-local" class="form-control" required>
-            <label for="fecha_prestamo"><i class="bi bi-calendar-event"></i> Fecha del préstamo</label>
-          </div>
-
-          <div class="form-floating mb-3">
-            <input name="fecha_devolucion" id="fecha_devolucion" type="datetime-local" class="form-control" required>
-            <label for="fecha_devolucion"><i class="bi bi-calendar-check"></i> Fecha de devolución</label>
-          </div>
-
-          <div class="form-floating mb-3">
-            <select name="reservas_id_reserva" id="reservas_id_reserva" class="form-select" required>
+            <select name="reservas_id_reserva" id="reservas_id_reserva" class="form-control" required>
               ${opcionesReservas}
             </select>
-            <label for="reservas_id_reserva"><i class="bi bi-journal-bookmark"></i> Reserva</label>
+            <label for="reservas_id_reserva" class="mt-2"><i class="bi bi-journal-bookmark"></i> Reserva</label>
           </div>
 
           <!-- Información dinámica -->
@@ -51,23 +55,32 @@ document.addEventListener("DOMContentLoaded", () => {
         const selectReserva = document.querySelector("#reservas_id_reserva");
         const infoDiv = document.querySelector("#info_reserva");
 
+        // Mostrar información de la reserva seleccionada
         selectReserva.addEventListener("change", (e) => {
           const idSeleccionado = e.target.value;
-          const reserva = reservas.find((r) => r.id_reserva == idSeleccionado);
+          const reserva = reservasUsuarios.find(
+            (r) => r.id_reserva == idSeleccionado
+          );
 
           if (reserva) {
-            infoDiv.innerHTML = `
-              <div class="border rounded-3 p-3 bg-light">
-                <p class="mb-1"><i class="bi bi-person-circle"></i> <b>Usuario:</b> ${
-                  reserva.nombre_usuario + " " + reserva.apellido_usuario
-                }</p>
-                <p class="mb-0"><i class="bi bi-book"></i> <b>Libro:</b> ${
-                  reserva.titulo_libro
-                }</p>
-              </div>
-            `;
+            infoDiv.innerHTML = `<div class="border rounded-4 p-4 bg-light shadow-sm">
+                      <ul class="list-unstyled mb-0">
+                        <li class="mb-2">
+                          <i class="bi bi-calendar-date text-secondary me-2 mb-1"></i>
+                          <b>Fecha de reserva:</b><br>
+                          <span class="text-muted mb-2">${reserva.fecha_reserva}</span>
+                        </li>
+                        <li>
+                          <i class="bi bi-book text-secondary me-2"></i>
+                          <b>Cantidad de libros:</b><br>
+                          <span class="text-muted">${reserva.cantidad_libros}</span>
+                        </li>
+                      </ul>
+                    </div>`;
           }
         });
+
+        // Envío del formulario
         form.addEventListener("submit", (e) => {
           e.preventDefault();
           const formData = new FormData(form);
@@ -79,18 +92,28 @@ document.addEventListener("DOMContentLoaded", () => {
             .then((r) => r.text())
             .then((res) => {
               console.log("Respuesta del servidor:", res);
-              if (res.trim() === "ok") {
+
+              if (res.status === "ok") {
                 Swal.fire(
                   "¡Éxito!",
-                  "Préstamo registrado correctamente",
+                  res.mensaje || "Préstamo registrado correctamente.",
                   "success"
                 ).then(() => location.reload());
               } else {
-                Swal.fire("Error", res, "error");
+                Swal.fire(
+                  "Error",
+                  res.mensaje || "Error al registrar préstamo.",
+                  "error"
+                );
               }
             })
-            .catch(() => {
-              Swal.fire("Error", "Hubo un problema con la petición", "error");
+            .catch((error) => {
+              console.error("Error en fetch:", error);
+              Swal.fire(
+                "Error",
+                "Hubo un problema con la petición al servidor.",
+                "error"
+              );
             });
         });
       },

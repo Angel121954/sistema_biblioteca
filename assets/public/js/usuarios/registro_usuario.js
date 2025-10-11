@@ -29,7 +29,7 @@ document
         </div>
 
         <div class="form-floating mb-3">
-          <select id="tipo_usuario" name="tipo_usuario" class="form-select" required>
+          <select id="tipo_usuario" name="tipo_usuario" class="form-control" required>
             <option disabled selected>Seleccione el tipo de usuario</option>
           </select>
           <label for="tipo_usuario">Tipo de usuario</label>

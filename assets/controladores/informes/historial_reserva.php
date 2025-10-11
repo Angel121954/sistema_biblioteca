@@ -16,7 +16,9 @@ $consulta = "
         r.fecha_reserva
     FROM reservas r
     INNER JOIN usuarios u ON r.usuarios_id_usuario = u.id_usuario
-    INNER JOIN libros l ON r.libros_id_libro = l.id_libro
+    INNER JOIN reservas_has_libros rl 
+    ON rl.reservas_id_reserva = r.id_reserva
+    INNER JOIN libros l ON rl.libros_id_libro = l.id_libro
     ORDER BY r.fecha_reserva DESC
 ";
 

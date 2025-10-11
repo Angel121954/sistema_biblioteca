@@ -29,20 +29,21 @@ $prestamos_usuario = $sql->efectuarConsulta("SELECT p.id_prestamo, p.fecha_prest
 $usuario_result = $sql->efectuarConsulta("SELECT * FROM usuarios WHERE id_usuario = $id_usuario");
 $usuario = $usuario_result->fetch_assoc();
 
-$fechas_reservas_result = $sql->efectuarConsulta("SELECT r.id_reserva, r.fecha_reserva AS fecha,
-                                        u.nombre_usuario, u.apellido_usuario, l.titulo_libro FROM reservas r
+$reservas_result = $sql->efectuarConsulta("SELECT r.id_reserva, u.id_usuario, u.nombre_usuario,
+                                        r.fecha_reserva, rl.cantidad_libros, l.titulo_libro FROM reservas r
                                         INNER JOIN usuarios u ON r.usuarios_id_usuario = u.id_usuario
                                         INNER JOIN reservas_has_libros rl ON rl.reservas_id_reserva = r.id_reserva
-                                        INNER JOIN libros l ON rl.libros_id_libro = l.id_libro");
+                                        INNER JOIN libros l ON rl.libros_id_libro = l.id_libro
+                                        WHERE r.estado_reserva = 'Aceptada'");
 
-$fechas_reservas = [];
+$reservas = [];
 
-while ($valor = $fechas_reservas_result->fetch_assoc()) {
-    $fechas_reservas[] = $valor;
+while ($valor = $reservas_result->fetch_assoc()) {
+    $reservas[] = $valor;
 }
 
 //* convertir las fechas en formato JSON para poderlo leer en el public/js/prestamos/registro_prestamo.js
-$fechas_reservas_json = json_encode($fechas_reservas, JSON_UNESCAPED_UNICODE);
+$reservas_json = json_encode($reservas, JSON_UNESCAPED_UNICODE);
 
 ?>
 
@@ -170,7 +171,7 @@ $fechas_reservas_json = json_encode($fechas_reservas, JSON_UNESCAPED_UNICODE);
                 default: ?>
                     <li class="nav-item">
                         <a class="nav-link" href="index_reservas.php">
-                            <i class="bi bi-people-fill"></i>
+                            <i class="fas fa-fw fa-book-open"></i>
                             <span>Reservas</span>
                         </a>
                     </li>
@@ -419,7 +420,7 @@ $fechas_reservas_json = json_encode($fechas_reservas, JSON_UNESCAPED_UNICODE);
                             <?php if ($_SESSION["tipo_usuario"] === "1"): ?>
                                 <div class="d-sm-flex align-items-center justify-content-between mb-4">
                                     <h1 class="h3 mb-0 text-gray-800">Gestión de Prestamos</h1>
-                                    <button id="btn_registro_prestamo" data-reserva="<?php echo htmlspecialchars($fechas_reservas_json, ENT_QUOTES, 'UTF-8'); ?>"
+                                    <button id="btn_registro_prestamo" data-reserva="<?php echo htmlspecialchars($reservas_json, ENT_QUOTES, 'UTF-8'); ?>"
                                         class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="bi bi-file-earmark-plus text-white-50 mx-1"></i>Realizar un prestamo</button>
                                 </div>
                             <?php endif; ?>
@@ -552,14 +553,14 @@ $fechas_reservas_json = json_encode($fechas_reservas, JSON_UNESCAPED_UNICODE);
                             </div>
                         </div>
 
-                        <!-- Libro más solicitado -->
+                        <!-- Libro más prestado -->
                         <div class="col-xl-3 col-md-6 mb-4">
                             <div class="card border-left-info shadow py-2">
                                 <div class="card-body">
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                                                Libro más solicitado
+                                                Libro más prestado
                                             </div>
                                             <div class="h5 mb-0 font-weight-bold text-gray-800">
                                                 <?php
@@ -568,8 +569,9 @@ $fechas_reservas_json = json_encode($fechas_reservas, JSON_UNESCAPED_UNICODE);
                                 FROM libros l
                                 INNER JOIN reservas_has_libros rl ON rl.libros_id_libro = l.id_libro
                                 INNER JOIN reservas r ON rl.reservas_id_reserva = r.id_reserva
+                                INNER JOIN prestamos p ON p.reservas_id_reserva = r.id_reserva
                                 GROUP BY l.id_libro
-                                ORDER BY cantidad ASC
+                                ORDER BY cantidad DESC
                             ");
                                                 $titulo_max = $titulo_max_result->fetch_assoc();
                                                 echo $titulo_max['titulo_libro'] ?? "";
