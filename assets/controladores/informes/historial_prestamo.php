@@ -9,7 +9,8 @@ $resultado = $sql->efectuarConsulta("SELECT u.nombre_usuario, u.apellido_usuario
         l.titulo_libro, l.autor_libro, p.fecha_prestamo, p.fecha_devolucion
         FROM prestamos p INNER JOIN reservas r ON p.reservas_id_reserva = r.id_reserva
         INNER JOIN usuarios u ON r.usuarios_id_usuario = u.id_usuario
-        INNER JOIN libros l ON r.libros_id_libro = l.id_libro
+        INNER JOIN reservas_has_libros rl ON rl.reservas_id_reserva = r.id_reserva
+        INNER JOIN libros l ON rl.libros_id_libro = l.id_libro
         ORDER BY p.fecha_prestamo DESC");
 
 $pdf = new FPDF();
