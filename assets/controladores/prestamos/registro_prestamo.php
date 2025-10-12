@@ -10,8 +10,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         if ($id_reserva > 0) {
             $sql->efectuarConsulta("INSERT INTO prestamos (fecha_prestamo, 
-                                    fecha_devolucion, reservas_id_reserva)
-                                    VALUES (NOW(), DATE_ADD(NOW(), INTERVAL 15 DAY), $id_reserva)");
+                                    fecha_devolucion, reservas_id_reserva, estado_prestamo)
+                                    VALUES (NOW(), DATE_ADD(NOW(), INTERVAL 15 DAY), $id_reserva,
+                                    'Aceptado')");
 
             echo "ok";
         }

@@ -5,11 +5,13 @@ require_once "../../libs/fpdf/fpdf.php";
 $sql = new MySQL();
 $sql->conectar();
 
-$libros_result = $sql->efectuarConsulta("SELECT l.id_libro, l.titulo_libro, l.autor_libro,
+$libros_result = $sql->efectuarConsulta("SELECT p.id_prestamo, l.titulo_libro, l.autor_libro,
                                 l.isbn_libro, l.categoria_libro, l.disponibilidad_libro,
-                                cantidad_libro FROM prestamos p INNER JOIN reservas r ON
-                                p.reservas_id_reserva = r.id_reserva INNER JOIN libros l ON
-                                r.libros_id_libro = l.id_libro");
+                                rl.cantidad_libros FROM prestamos p INNER JOIN reservas r ON
+                                p.reservas_id_reserva = r.id_reserva INNER JOIN 
+                                reservas_has_libros rl ON rl.reservas_id_reserva = r.id_reserva
+                                INNER JOIN libros l ON
+                                rl.libros_id_libro = l.id_libro");
 
 $pdf = new FPDF();
 $pdf->AddPage();
@@ -34,12 +36,12 @@ $pdf->SetTextColor(0, 0, 0);
 
 if ($libros_result->num_rows > 0) {
     while ($libro = $libros_result->fetch_assoc()) {
-        $pdf->Cell(10, 8, $libro['id_libro'], 1, 0, 'C');
+        $pdf->Cell(10, 8, $libro['id_prestamo'], 1, 0, 'C');
         $pdf->Cell(50, 8, utf8_decode($libro['titulo_libro']), 1, 0, 'L');
         $pdf->Cell(52, 8, utf8_decode($libro['autor_libro']), 1, 0, 'L');
         $pdf->Cell(28, 8, $libro['isbn_libro'], 1, 0, 'C');
         $pdf->Cell(30, 8, utf8_decode($libro['categoria_libro']), 1, 0, 'C');
-        $pdf->Cell(20, 8, $libro['cantidad_libro'], 1, 1, 'C');
+        $pdf->Cell(20, 8, $libro['cantidad_libros'], 1, 1, 'C');
     }
 } else {
     $pdf->Cell(0, 10, utf8_decode('No hay libros prestados actualmente.'), 1, 1, 'C');

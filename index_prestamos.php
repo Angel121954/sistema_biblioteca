@@ -140,6 +140,13 @@ $reservas_json = json_encode($reservas, JSON_UNESCAPED_UNICODE);
                     </a>
                 </li>
             <?php endif; ?>
+                <!-- Enlace: usuarios -->
+                <li class="nav-item">
+                    <a class="nav-link" href="assets/controladores/informes_excel/registro_inventario.php">
+                        <i class="bi bi-people-fill"></i>
+                        <span>Algo</span>
+                    </a>
+                </li>
 
             <!-- Enlace: libros -->
             <li class="nav-item">
@@ -427,7 +434,14 @@ $reservas_json = json_encode($reservas, JSON_UNESCAPED_UNICODE);
                             <!-- DataTales Example -->
                             <div class="card shadow mb-4">
                                 <div class="card-header py-3">
-                                    <h6 class="m-0 font-weight-bold text-primary">Tabla de los prestamos</h6>
+                                    <?php switch ($_SESSION["tipo_usuario"]):
+                                        case "1": ?>
+                                            <h6 class="m-0 font-weight-bold text-primary">Tabla de los prestamos</h6>
+                                        <?php break;
+                                        default: ?>
+                                            <h6 class="m-0 font-weight-bold text-primary">Tabla de mis prestamos</h6>
+                                    <?php break;
+                                    endswitch; ?>
                                 </div>
                                 <div class="card-body">
                                     <div class="table-responsive">
