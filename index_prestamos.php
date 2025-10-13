@@ -74,6 +74,76 @@ $reservas_json = json_encode($reservas, JSON_UNESCAPED_UNICODE);
 
     <!--DataTable local-->
     <link href="assets/libs/datatables/datatables.min.css" rel="stylesheet">
+
+    <style>
+        /* ======= Estilos generales ======= */
+        .toast-notificacion {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            background: #1e1e2f;
+            color: #fff;
+            padding: 14px 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: "Segoe UI", sans-serif;
+            font-size: 15px;
+            animation: slideIn 0.5s ease forwards;
+            opacity: 0;
+            z-index: 9999;
+        }
+
+        /* Ícono */
+        .toast-notificacion i {
+            font-size: 18px;
+            color: #4ade80;
+            /* verde moderno */
+        }
+
+        /* Botón de cerrar */
+        .toast-notificacion button {
+            background: none;
+            border: none;
+            color: #aaa;
+            font-size: 18px;
+            cursor: pointer;
+            margin-left: auto;
+            transition: 0.3s;
+        }
+
+        .toast-notificacion button:hover {
+            color: #fff;
+        }
+
+        /* Animaciones */
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOut {
+            from {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            to {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+        }
+    </style>
 </head>
 
 <body id="page-top">
@@ -140,13 +210,6 @@ $reservas_json = json_encode($reservas, JSON_UNESCAPED_UNICODE);
                     </a>
                 </li>
             <?php endif; ?>
-                <!-- Enlace: usuarios -->
-                <li class="nav-item">
-                    <a class="nav-link" href="assets/controladores/informes_excel/registro_inventario.php">
-                        <i class="bi bi-people-fill"></i>
-                        <span>Algo</span>
-                    </a>
-                </li>
 
             <!-- Enlace: libros -->
             <li class="nav-item">
@@ -904,6 +967,15 @@ $reservas_json = json_encode($reservas, JSON_UNESCAPED_UNICODE);
             </div>
         </div>
     </div>
+    <?php if ($_SESSION["tipo_usuario"] !== "1"): ?>
+        <!-- ======= Contenedor del mensaje ======= -->
+        <div id="toast" class="toast-notificacion" style="display:none;">
+            <i class="fas fa-book-reader"></i>
+            <span>Recuerde usuario <?= $_SESSION["nombre_usuario"]; ?> la fecha de devolución de libro correspondiente. Gracias</span>
+
+            <button id="cerrarToast">&times;</button>
+        </div>
+    <?php endif; ?>
     <?php $sql->desconectar(); ?>
 
     <!-- ============================ -->
@@ -945,6 +1017,29 @@ $reservas_json = json_encode($reservas, JSON_UNESCAPED_UNICODE);
     <!--DataTables local-->
     <script src="assets/libs/datatables/datatables.min.js"></script>
     <script src="assets/funcionalidad/tablas.js"></script>
+    <?php if ($_SESSION["tipo_usuario"] !== "1"): ?>
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                const toast = document.getElementById("toast");
+                const btnCerrar = document.getElementById("cerrarToast");
+
+                // Mostrar mensaje
+                toast.style.display = "flex";
+                setTimeout(() => toast.style.opacity = "1", 10);
+
+                // Ocultar después de 5s
+                setTimeout(() => cerrarToast(), 5000);
+
+                // Cerrar manualmente
+                btnCerrar.addEventListener("click", cerrarToast);
+
+                function cerrarToast() {
+                    toast.style.animation = "slideOut 0.5s ease forwards";
+                    setTimeout(() => toast.style.display = "none", 500);
+                }
+            });
+        </script>
+    <?php endif; ?>
 </body>
 
 </html>

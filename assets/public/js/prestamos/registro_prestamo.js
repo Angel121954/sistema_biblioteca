@@ -7,11 +7,17 @@ document.addEventListener("DOMContentLoaded", () => {
     let reservasUsuarios = JSON.parse(btn.dataset.reserva);
 
     if (reservasUsuarios.length === 0) {
-      Swal.fire(
-        "Sin reservas",
-        "No hay reservas disponibles para préstamo.",
-        "info"
-      );
+      Swal.fire({
+        title: "Sin reservas",
+        text: "No hay reservas disponibles para préstamo.",
+        icon: "warning",
+        iconColor: "#00c3ff",
+        confirmButtonColor: "#4e73df",
+        background: "#fdfdfd",
+        customClass: {
+          popup: "shadow-lg rounded-4 border-0",
+        },
+      });
       return;
     }
 
@@ -49,8 +55,10 @@ document.addEventListener("DOMContentLoaded", () => {
         width: 600,
         background: "#fdfdfd",
         customClass: {
-          popup: "shadow-lg rounded-4 border-0",
+          popup:
+            "animate__animated animate__fadeInUp shadow-lg rounded-4 border-0",
         },
+
         didOpen: () => {
           const form = document.querySelector("#frm_registro_prestamo");
           const selectReserva = document.querySelector("#reservas_id_reserva");
@@ -77,7 +85,8 @@ document.addEventListener("DOMContentLoaded", () => {
                       <span class="text-muted">${reserva.cantidad_libros}</span>
                     </li>
                   </ul>
-                </div>`;
+                </div>
+              `;
             }
           });
 
@@ -86,38 +95,50 @@ document.addEventListener("DOMContentLoaded", () => {
             const formData = new FormData(form);
             const idSeleccionado = formData.get("reservas_id_reserva");
 
+            if (!idSeleccionado) {
+              Swal.fire(
+                "Atención",
+                "Seleccione una reserva antes de continuar.",
+                "warning"
+              );
+              return;
+            }
+
+            Swal.fire({
+              title: "Registrando préstamo...",
+              text: "Por favor espere un momento.",
+              allowOutsideClick: false,
+              didOpen: () => Swal.showLoading(),
+            });
+
             fetch("assets/controladores/prestamos/registro_prestamo.php", {
               method: "POST",
               body: formData,
             })
               .then((r) => r.text())
               .then((res) => {
-                if (res.trim() === "ok") {
-                  reservasUsuarios = reservasUsuarios.filter(
-                    (r) => r.id_reserva != idSeleccionado
-                  );
+                Swal.close();
 
-                  Swal.fire(
-                    "¡Éxito!",
-                    "Préstamo registrado correctamente.",
-                    "success"
-                  ).then(() => {
-                    if (reservasUsuarios.length > 0) {
-                      mostrarModal();
-                    } else {
-                      Swal.fire(
-                        "Completado",
-                        "Ya no hay más reservas disponibles.",
-                        "info"
-                      );
-                    }
+                if (res.trim() === "ok") {
+                  Swal.fire({
+                    title: "¡Éxito!",
+                    text: "Préstamo registrado correctamente.",
+                    icon: "success",
+                    confirmButtonText: "Aceptar",
+                    confirmButtonColor: "#4e73df",
+                    background: "#fdfdfd",
+                    customClass: {
+                      popup: "shadow-lg rounded-4 border-0",
+                    },
+                  }).then(() => {
+                    location.reload();
                   });
-                  location.reload();
                 } else {
                   Swal.fire("Error", "Error al registrar préstamo.", "error");
                 }
               })
               .catch((error) => {
+                Swal.close();
                 console.error("Error en fetch:", error);
                 Swal.fire(
                   "Error",

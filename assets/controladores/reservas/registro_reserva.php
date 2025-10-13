@@ -5,24 +5,20 @@ $sql = new MySQL();
 $sql->conectar();
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-
-    // Validar que existan los campos necesarios
     if (isset($_POST["id_usuario"], $_POST["id_libro"], $_POST["cantidad"])) {
-
-        // Usamos el ID del usuario de la sesión
+        //* variables
         $id_usuario = intval($_SESSION['id_usuario'] ?? 0);
         $libros = $_POST['id_libro'];
         $cantidades = $_POST['cantidad'];
 
-        // Validar que existan libros y cantidades
         if ($id_usuario > 0 && !empty($libros) && !empty($cantidades)) {
 
-            // Insertar la reserva principal
+            //* Insertar la reserva principal
             $sql->efectuarConsulta("INSERT INTO reservas (estado_reserva, fecha_reserva, usuarios_id_usuario)
                                     VALUES ('Pendiente', NOW(), $id_usuario)");
             $id_reserva = $sql->ultimoIdInsertado();
 
-            // Insertar los detalles de la reserva
+            //* Insertar en la tabla pivote de reservas_has_libros
             for ($i = 0; $i < count($libros); $i++) {
                 $id_libro = intval($libros[$i]);
                 $cantidad = intval($cantidades[$i]);

@@ -14,6 +14,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                                     VALUES (NOW(), DATE_ADD(NOW(), INTERVAL 15 DAY), $id_reserva,
                                     'Aceptado')");
 
+            $sql->efectuarConsulta("UPDATE reservas SET estado_reserva = 'Finalizada'
+                                    WHERE id_reserva = $id_reserva");
+
             echo "ok";
         }
 
