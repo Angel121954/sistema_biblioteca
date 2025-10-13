@@ -14,7 +14,7 @@ while ($libro = $resultado->fetch_assoc()) {
     $id_libro = intval($libro["id_libro"]);
     $cantidad = intval($libro["cantidad_libro"]);
 
-    if ($cantidad === 0) {
+    if ($cantidad <= 0) {
         $sql->efectuarConsulta("UPDATE libros 
                                 SET disponibilidad_libro = 'No disponible'
                                 WHERE id_libro = $id_libro");

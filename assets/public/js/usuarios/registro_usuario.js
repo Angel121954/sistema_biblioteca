@@ -54,6 +54,13 @@ document
             e.preventDefault();
             const formData = new FormData(this);
 
+            Swal.fire({
+              title: "Registrando usuario...",
+              text: "Por favor espere un momento.",
+              allowOutsideClick: false,
+              didOpen: () => Swal.showLoading(),
+            });
+
             fetch("assets/controladores/usuarios/registro_usuario.php", {
               method: "POST",
               body: formData,

@@ -53,6 +53,13 @@ document.querySelector("#btn_registro_libro").addEventListener("click", () => {
 
         const formData = new FormData(form);
 
+        Swal.fire({
+          title: "Registrando libro...",
+          text: "Por favor espere un momento.",
+          allowOutsideClick: false,
+          didOpen: () => Swal.showLoading(),
+        });
+
         fetch("assets/controladores/libros/registro_libro.php", {
           method: "POST",
           body: formData,

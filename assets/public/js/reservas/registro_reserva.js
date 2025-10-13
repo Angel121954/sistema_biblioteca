@@ -98,6 +98,13 @@ document
           return false;
         }
 
+        Swal.fire({
+          title: "Registrando reserva...",
+          text: "Por favor espere un momento.",
+          allowOutsideClick: false,
+          didOpen: () => Swal.showLoading(),
+        });
+
         // Enviar al PHP
         return fetch("assets/controladores/reservas/registro_reserva.php", {
           method: "POST",
