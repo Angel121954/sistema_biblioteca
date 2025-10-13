@@ -3,10 +3,10 @@
 class MySQL {
 
     // Datos de conexión
-    private $ipServidor = "localhost";
-    private $usuarioBase = "root";
-    private $contrasena = "";
-    private $nombreBaseDatos = "proyecto_biblioteca";
+    private $ipServidor = "bn0ekmrsqfd6etlfpxbv-mysql.services.clever-cloud.com";
+    private $usuarioBase = "ucjt7baer4zjgqyj";
+    private $contrasena = "4mTq2iAf1FllsBoDqIDU";
+    private $nombreBaseDatos = "bn0ekmrsqfd6etlfpxbv";
 
     private $conexion;
 
