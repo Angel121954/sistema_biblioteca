@@ -11,6 +11,13 @@ function actualizarReserva(id_reserva, accion) {
       formData.append("id_reserva", id_reserva);
       formData.append("accion", accion);
 
+      Swal.fire({
+        title: "Actualizando reserva...",
+        text: "Por favor espere un momento.",
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading(),
+      });
+
       const respuesta = await fetch(
         "assets/controladores/reservas/actualizar_reserva.php",
         {
