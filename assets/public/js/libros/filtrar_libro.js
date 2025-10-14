@@ -18,6 +18,14 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
+    Swal.fire({
+      position: "top-end",
+      title: "Filtrando libros...",
+      text: "Por favor espere un momento.",
+      allowOutsideClick: false,
+      didOpen: () => Swal.showLoading(),
+    });
+
     fetch("assets/controladores/libros/filtrar_libro.php", {
       method: "POST",
       headers: {
