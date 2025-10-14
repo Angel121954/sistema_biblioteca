@@ -52,7 +52,7 @@ function editarUsuario(
 
         <div class="mb-4">
           <label for="tipo_usuario" class="form-label fw-semibold">Tipo de usuario</label>
-          <select id="tipo_usuario" name="tipo_usuario" class="form-select form-select-lg shadow-sm" required>
+          <select id="tipo_usuario" name="tipo_usuario" class="form-control form-select-lg shadow-sm" required>
             ${opcionesTiposUsuario}
           </select>
         </div>
