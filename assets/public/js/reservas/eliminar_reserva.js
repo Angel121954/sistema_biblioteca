@@ -1,40 +1,42 @@
-function eliminarReserva(id) {
+function eliminarReserva(id_reserva) {
   Swal.fire({
-    title: "¿Estás seguro?",
-    text: "Esta acción eliminará la reserva permanentemente.",
+    title: "¿Eliminar reserva?",
+    text: "Esta acción no se puede deshacer.",
     icon: "warning",
     showCancelButton: true,
     confirmButtonColor: "#d33",
     cancelButtonColor: "#6c757d",
     confirmButtonText: "Sí, eliminar",
     cancelButtonText: "Cancelar",
-  }).then((result) => {
+  }).then(async (result) => {
     if (result.isConfirmed) {
-      fetch(
-        `assets/controladores/reservas/eliminar_reserva.php?id_reserva=${id}`,
+      const fd = new FormData();
+      fd.append("id_reserva", id_reserva);
+
+      Swal.fire({
+        title: "Eliminando reserva...",
+        text: "Por favor espere un momento.",
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading(),
+      });
+
+      const respuesta = await fetch(
+        "assets/controladores/reservas/eliminar_reserva.php",
         {
-          method: "GET",
+          method: "POST",
+          body: fd,
         }
-      )
-        .then((response) => response.text())
-        .then((data) => {
-          Swal.fire({
-            title: "¡Eliminado!",
-            text: "La reserva ha sido eliminada correctamente.",
-            icon: "success",
-            confirmButtonColor: "#3085d6",
-          }).then(() => {
-            location.reload();
-          });
-        })
-        .catch((error) => {
-          Swal.fire({
-            title: "Error",
-            text: "Ocurrió un problema al eliminar la reserva.",
-            icon: "error",
-            confirmButtonColor: "#3085d6",
-          });
-        });
+      );
+      const res = await respuesta.text();
+      if (res.trim() === "ok") {
+        Swal.fire(
+          "Eliminado",
+          "Reserva eliminada correctamente.",
+          "success"
+        ).then(() => location.reload());
+      } else {
+        Swal.fire("Error", res, "error");
+      }
     }
   });
 }

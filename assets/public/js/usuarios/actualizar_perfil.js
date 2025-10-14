@@ -34,7 +34,7 @@ function actualizarPerfil(id, nombre, apellido, email) {
 
       return { nombre, apellido, email, pass1 };
     },
-  }).then((result) => {
+  }).then(async (result) => {
     if (result.isConfirmed) {
       const datos = new FormData();
       datos.append("id_usuario", id);
@@ -43,27 +43,30 @@ function actualizarPerfil(id, nombre, apellido, email) {
       datos.append("email", result.value.email);
       datos.append("contrasena", result.value.pass1);
 
-      fetch("assets/controladores/usuarios/actualizar_perfil.php", {
-        method: "POST",
-        body: datos,
-      })
-        .then((res) => res.text())
-        .then((respuesta) => {
-          Swal.fire({
-            icon: "success",
-            title: "Perfil actualizado",
-            text: "Los cambios se han guardado correctamente.",
-            timer: 2000,
-            showConfirmButton: false,
-          }).then(() => location.reload());
-        })
-        .catch((error) => {
-          Swal.fire({
-            icon: "error",
-            title: "Error",
-            text: "Hubo un problema al actualizar el perfil.",
-          });
-        });
+      Swal.fire({
+        title: "Actualizando perfil...",
+        text: "Por favor espere un momento.",
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading(),
+      });
+
+      const respuesta = await fetch(
+        "assets/controladores/usuarios/actualizar_perfil.php",
+        {
+          method: "POST",
+          body: datos,
+        }
+      );
+      const res = await respuesta.text();
+      if (res.trim() === "ok") {
+        Swal.fire({
+          icon: "success",
+          title: "Perfil actualizado",
+          text: "Los cambios se han guardado correctamente.",
+          timer: 2000,
+          showConfirmButton: false,
+        }).then(() => location.reload());
+      }
     }
   });
 }

@@ -72,33 +72,38 @@ function editarUsuario(
     didOpen: () => {
       const form = document.querySelector("#frm_editar_usuario");
 
-      form.addEventListener("submit", (e) => {
+      form.addEventListener("submit", async (e) => {
         e.preventDefault();
 
         const formData = new FormData(form);
 
-        fetch("assets/controladores/usuarios/editar_usuario.php", {
-          method: "POST",
-          body: formData,
-        })
-          .then((r) => r.text())
-          .then((res) => {
-            console.log("Respuesta del servidor:", res);
+        Swal.fire({
+          title: "Editando usuario...",
+          text: "Por favor espere un momento.",
+          allowOutsideClick: false,
+          didOpen: () => Swal.showLoading(),
+        });
 
-            if (res.trim() === "ok") {
-              Swal.fire({
-                title: "Actualización exitosa",
-                text: "El usuario ha sido modificado correctamente.",
-                icon: "success",
-                confirmButtonText: "Aceptar",
-              }).then(() => location.reload());
-            } else {
-              Swal.fire("Error", res, "error");
-            }
-          })
-          .catch(() => {
-            Swal.fire("Error", "Hubo un problema con la petición", "error");
-          });
+        const respuesta = await fetch(
+          "assets/controladores/usuarios/editar_usuario.php",
+          {
+            method: "POST",
+            body: formData,
+          }
+        );
+        const res = await respuesta.text();
+        console.log("Respuesta del servidor:", res);
+
+        if (res.trim() === "ok") {
+          Swal.fire({
+            title: "Actualización exitosa",
+            text: "El usuario ha sido modificado correctamente.",
+            icon: "success",
+            confirmButtonText: "Aceptar",
+          }).then(() => location.reload());
+        } else {
+          Swal.fire("Error", res, "error");
+        }
       });
     },
   });

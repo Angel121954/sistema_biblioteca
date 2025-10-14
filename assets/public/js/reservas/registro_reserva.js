@@ -98,39 +98,40 @@ document
           return false;
         }
 
-        Swal.fire({
-          title: "Registrando reserva...",
-          text: "Por favor espere un momento.",
-          allowOutsideClick: false,
-          didOpen: () => Swal.showLoading(),
-        });
+        registrarReserva(); ////Hoisting
+        async function registrarReserva() {
+          try {
+            Swal.fire({
+              title: "Registrando reserva...",
+              text: "Por favor espere un momento.",
+              allowOutsideClick: false,
+              didOpen: () => Swal.showLoading(),
+            });
 
-        // Enviar al PHP
-        return fetch("assets/controladores/reservas/registro_reserva.php", {
-          method: "POST",
-          body: formData,
-        })
-          .then((response) => response.text())
-          .then((data) => {
-            console.log("Respuesta del servidor:", data);
-            if (data.trim() !== "ok") {
-              throw new Error("Error en el servidor: " + data);
+            const respuesta = await fetch(
+              "assets/controladores/reservas/registro_reserva.php",
+              { method: "POST", body: formData }
+            );
+
+            const data = await respuesta.text();
+
+            Swal.close();
+
+            if (data.trim() === "ok") {
+              Swal.fire(
+                "Agregada!",
+                "Reserva registrada correctamente.",
+                "success"
+              );
+              location.reload();
+            } else {
+              Swal.fire("Error", data, "error");
             }
-          })
-          .catch((error) => {
-            console.error("Error en fetch:", error);
-            Swal.showValidationMessage("Error al registrar la reserva");
-          });
+          } catch (error) {
+            Swal.close();
+            Swal.fire("Error", error.message, "error");
+          }
+        }
       },
-    }).then((result) => {
-      if (result.isConfirmed) {
-        Swal.fire(
-          "¡Reserva registrada!",
-          "Los libros fueron añadidos correctamente.",
-          "success"
-        ).then(() => {
-          location.reload(); // Recarga para actualizar lista de reservas
-        });
-      }
     });
   });

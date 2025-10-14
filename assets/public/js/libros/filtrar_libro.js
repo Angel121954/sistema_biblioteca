@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const inputFiltro = document.querySelector("#filtrar_libro");
   const contenedor = document.querySelector("#tbl_libros");
 
-  btnFiltrar.addEventListener("click", () => {
+  btnFiltrar.addEventListener("click", async () => {
     const filtro = inputFiltro.value.trim();
 
     if (filtro === "") {
@@ -26,34 +26,25 @@ document.addEventListener("DOMContentLoaded", () => {
       didOpen: () => Swal.showLoading(),
     });
 
-    fetch("assets/controladores/libros/filtrar_libro.php", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: `filtro=${encodeURIComponent(filtro)}`,
-    })
-      .then((response) => response.text())
-      .then((data) => {
-        contenedor.innerHTML = data;
+    const respuesta = await fetch(
+      "assets/controladores/libros/filtrar_libro.php",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: `filtro=${encodeURIComponent(filtro)}`,
+      }
+    );
+    const data = await respuesta.text();
+    contenedor.innerHTML = data;
 
-        Swal.fire({
-          position: "top-end",
-          icon: "success",
-          title: "Libros filtrados correctamente",
-          showConfirmButton: false,
-          timer: 1500,
-        });
-      })
-      .catch(() => {
-        Swal.fire({
-          position: "top-end",
-          icon: "error",
-          title: "Error",
-          text: "No se pudo filtrar los libros",
-          showConfirmButton: false,
-          timer: 2000,
-        });
-      });
+    Swal.fire({
+      position: "top-end",
+      icon: "success",
+      title: "Libros filtrados correctamente",
+      showConfirmButton: false,
+      timer: 1500,
+    });
   });
 });

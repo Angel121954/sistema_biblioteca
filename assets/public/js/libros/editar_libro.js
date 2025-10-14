@@ -68,29 +68,34 @@ function editarLibro(id, titulo, autor, isbn, categoria, cantidad) {
 
       return fd;
     },
-  }).then((result) => {
+  }).then(async (result) => {
     if (result.isConfirmed) {
-      fetch("assets/controladores/libros/editar_libro.php", {
-        method: "POST",
-        body: result.value,
-      })
-        .then((r) => r.text())
-        .then((res) => {
-          console.log("Respuesta del servidor:", res);
-          if (res.trim() === "ok") {
-            Swal.fire({
-              title: "¡Actualizado!",
-              text: "Libro modificado correctamente",
-              icon: "success",
-              confirmButtonColor: "#3085d6",
-            }).then(() => location.reload());
-          } else {
-            Swal.fire("Error", res, "error");
-          }
-        })
-        .catch(() => {
-          Swal.fire("Error", "No se pudo conectar con el servidor", "error");
-        });
+      Swal.fire({
+        title: "Editando libro...",
+        text: "Por favor espere un momento.",
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading(),
+      });
+
+      const respuesta = await fetch(
+        "assets/controladores/libros/editar_libro.php",
+        {
+          method: "POST",
+          body: result.value,
+        }
+      );
+      const res = await respuesta.text();
+      console.log("Respuesta del servidor:", res);
+      if (res.trim() === "ok") {
+        Swal.fire({
+          title: "¡Actualizado!",
+          text: "Libro modificado correctamente",
+          icon: "success",
+          confirmButtonColor: "#3085d6",
+        }).then(() => location.reload());
+      } else {
+        Swal.fire("Error", res, "error");
+      }
     }
   });
 }

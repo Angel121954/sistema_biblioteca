@@ -111,41 +111,35 @@ document.addEventListener("DOMContentLoaded", () => {
               didOpen: () => Swal.showLoading(),
             });
 
-            fetch("assets/controladores/prestamos/registro_prestamo.php", {
-              method: "POST",
-              body: formData,
-            })
-              .then((r) => r.text())
-              .then((res) => {
-                Swal.close();
-
-                if (res.trim() === "ok") {
-                  Swal.fire({
-                    title: "¡Éxito!",
-                    text: "Préstamo registrado correctamente.",
-                    icon: "success",
-                    confirmButtonText: "Aceptar",
-                    confirmButtonColor: "#4e73df",
-                    background: "#fdfdfd",
-                    customClass: {
-                      popup: "shadow-lg rounded-4 border-0",
-                    },
-                  }).then(() => {
-                    location.reload();
-                  });
-                } else {
-                  Swal.fire("Error", "Error al registrar préstamo.", "error");
+            registrarPrestamo(); //* Hoisting
+            async function registrarPrestamo() {
+              const respuesta = await fetch(
+                "assets/controladores/prestamos/registro_prestamo.php",
+                {
+                  method: "POST",
+                  body: formData,
                 }
-              })
-              .catch((error) => {
-                Swal.close();
-                console.error("Error en fetch:", error);
-                Swal.fire(
-                  "Error",
-                  "Hubo un problema con la petición al servidor.",
-                  "error"
-                );
-              });
+              );
+              const res = await respuesta.text();
+
+              if (res.trim() === "ok") {
+                Swal.fire({
+                  title: "¡Éxito!",
+                  text: "Préstamo registrado correctamente.",
+                  icon: "success",
+                  confirmButtonText: "Aceptar",
+                  confirmButtonColor: "#4e73df",
+                  background: "#fdfdfd",
+                  customClass: {
+                    popup: "shadow-lg rounded-4 border-0",
+                  },
+                }).then(() => {
+                  location.reload();
+                });
+              } else {
+                Swal.fire("Error", "Error al registrar préstamo.", "error");
+              }
+            }
           });
         },
       });

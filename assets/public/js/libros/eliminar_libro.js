@@ -8,30 +8,35 @@ function eliminarLibro(id_libro) {
     cancelButtonColor: "#6c757d",
     confirmButtonText: "Sí, eliminar",
     cancelButtonText: "Cancelar",
-  }).then((result) => {
+  }).then(async (result) => {
     if (result.isConfirmed) {
       const fd = new FormData();
       fd.append("id_libro", id_libro);
 
-      fetch("assets/controladores/libros/eliminar_libro.php", {
-        method: "POST",
-        body: fd,
-      })
-        .then((r) => r.text())
-        .then((res) => {
-          if (res.trim() === "ok") {
-            Swal.fire(
-              "Eliminado",
-              "Libro eliminado correctamente.",
-              "success"
-            ).then(() => location.reload());
-          } else {
-            Swal.fire("Error", res, "error");
-          }
-        })
-        .catch(() =>
-          Swal.fire("Error", "Hubo un problema con la petición", "error")
-        );
+      Swal.fire({
+        title: "Eliminando libro...",
+        text: "Por favor espere un momento.",
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading(),
+      });
+
+      const respuesta = await fetch(
+        "assets/controladores/libros/eliminar_libro.php",
+        {
+          method: "POST",
+          body: fd,
+        }
+      );
+      const res = await respuesta.text();
+      if (res.trim() === "ok") {
+        Swal.fire(
+          "Eliminado",
+          "Libro eliminado correctamente.",
+          "success"
+        ).then(() => location.reload());
+      } else {
+        Swal.fire("Error", res, "error");
+      }
     }
   });
 }

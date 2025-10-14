@@ -59,28 +59,28 @@ document.querySelector("#btn_registro_libro").addEventListener("click", () => {
           allowOutsideClick: false,
           didOpen: () => Swal.showLoading(),
         });
-
-        fetch("assets/controladores/libros/registro_libro.php", {
-          method: "POST",
-          body: formData,
-        })
-          .then((r) => r.text())
-          .then((res) => {
-            console.log("Respuesta del servidor:", res);
-
-            if (res.trim() === "ok") {
-              Swal.fire(
-                "¡Actualizado!",
-                "Libro agregado correctamente",
-                "success"
-              ).then(() => location.reload());
-            } else {
-              Swal.fire("Error", res, "error");
+        registroLibro(); //* Hoisting
+        async function registroLibro() {
+          const respuesta = await fetch(
+            "assets/controladores/libros/registro_libro.php",
+            {
+              method: "POST",
+              body: formData,
             }
-          })
-          .catch(() => {
-            Swal.fire("Error", "Hubo un problema con la petición", "error");
-          });
+          );
+          const res = await respuesta.text();
+          console.log("Respuesta del servidor:", res);
+
+          if (res.trim() === "ok") {
+            Swal.fire(
+              "¡Actualizado!",
+              "Libro agregado correctamente",
+              "success"
+            ).then(() => location.reload());
+          } else {
+            Swal.fire("Error", res, "error");
+          }
+        }
       });
     },
   });

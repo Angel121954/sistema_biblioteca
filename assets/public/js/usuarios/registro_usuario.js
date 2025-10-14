@@ -61,26 +61,27 @@ document
               didOpen: () => Swal.showLoading(),
             });
 
-            fetch("assets/controladores/usuarios/registro_usuario.php", {
-              method: "POST",
-              body: formData,
-            })
-              .then((r) => r.text())
-              .then((res) => {
-                console.log("Respuesta del servidor:", res);
-                if (res.trim() === "ok") {
-                  Swal.fire(
-                    "Éxito",
-                    "Usuario agregado correctamente",
-                    "success"
-                  ).then(() => location.reload());
-                } else {
-                  Swal.fire("Error", res, "error");
+            registroUsuario(); //* Hoisting
+            async function registroUsuario() {
+              const respuesta = await fetch(
+                "assets/controladores/usuarios/registro_usuario.php",
+                {
+                  method: "POST",
+                  body: formData,
                 }
-              })
-              .catch(() =>
-                Swal.fire("Error", "Hubo un problema con la petición", "error")
               );
+              const res = await respuesta.text();
+              console.log("Respuesta del servidor:", res);
+              if (res.trim() === "ok") {
+                Swal.fire(
+                  "Éxito",
+                  "Usuario agregado correctamente",
+                  "success"
+                ).then(() => location.reload());
+              } else {
+                Swal.fire("Error", res, "error");
+              }
+            }
           });
       },
     });

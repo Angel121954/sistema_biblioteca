@@ -8,30 +8,35 @@ function eliminarUsuario(id_usuario) {
     cancelButtonColor: "#6c757d",
     confirmButtonText: "Sí, eliminar",
     cancelButtonText: "Cancelar",
-  }).then((result) => {
+  }).then(async (result) => {
     if (result.isConfirmed) {
       const fd = new FormData();
       fd.append("id_usuario", id_usuario);
 
-      fetch("assets/controladores/usuarios/eliminar_usuario.php", {
-        method: "POST",
-        body: fd,
-      })
-        .then((r) => r.text())
-        .then((res) => {
-          if (res.trim() === "ok") {
-            Swal.fire(
-              "Eliminado",
-              "Usuario eliminado correctamente.",
-              "success"
-            ).then(() => location.reload());
-          } else {
-            Swal.fire("Error", res, "error");
-          }
-        })
-        .catch(() =>
-          Swal.fire("Error", "Hubo un problema con la petición", "error")
-        );
+      Swal.fire({
+        title: "Eliminando usuario...",
+        text: "Por favor espere un momento.",
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading(),
+      });
+
+      const respuesta = await fetch(
+        "assets/controladores/usuarios/eliminar_usuario.php",
+        {
+          method: "POST",
+          body: fd,
+        }
+      );
+      const res = await respuesta.text();
+      if (res.trim() === "ok") {
+        Swal.fire(
+          "Eliminado",
+          "Usuario eliminado correctamente.",
+          "success"
+        ).then(() => location.reload());
+      } else {
+        Swal.fire("Error", res, "error");
+      }
     }
   });
 }
