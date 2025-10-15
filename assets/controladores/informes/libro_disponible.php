@@ -41,7 +41,7 @@ if ($libros_result->num_rows > 0) {
         $pdf->Cell(20, 8, $libro['cantidad_libro'], 1, 1, 'C');
     }
 } else {
-    $pdf->Cell(0, 10, utf8_decode('No hay libros disponibles actualmente.'), 1, 1, 'C');
+    $pdf->Cell(190, 10, utf8_decode('No hay libros disponibles actualmente.'), 1, 1, 'C');
 }
 
 $pdf->Ln(10);

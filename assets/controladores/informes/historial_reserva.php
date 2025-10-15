@@ -39,7 +39,7 @@ $pdf->SetFont('Arial', 'B', 11);
 $pdf->SetFillColor(41, 128, 185);  //* Azul
 $pdf->SetTextColor(255, 255, 255); //* Blanco
 
-$pdf->Cell(45, 8, utf8_decode('Nombre y Apellido'), 1, 0, 'C', true);
+$pdf->Cell(50, 8, utf8_decode('Nombre y Apellido'), 1, 0, 'C', true);
 $pdf->Cell(50, 8, utf8_decode('Título del libro'), 1, 0, 'C', true);
 $pdf->Cell(55, 8, utf8_decode('Autor'), 1, 0, 'C', true);
 $pdf->Cell(35, 8, utf8_decode('Fecha reserva'), 1, 1, 'C', true);
@@ -55,13 +55,13 @@ if ($resultado && $resultado->num_rows > 0) {
         $autor = utf8_decode($fila['autor_libro']);
         $fecha = utf8_decode($fila['fecha_reserva']);
 
-        $pdf->Cell(45, 8, $usuario, 1, 0, 'L');
+        $pdf->Cell(50, 8, $usuario, 1, 0, 'L');
         $pdf->Cell(50, 8, $libro, 1, 0, 'L');
         $pdf->Cell(55, 8, $autor, 1, 0, 'L');
         $pdf->Cell(35, 8, $fecha, 1, 1, 'C');
     }
 } else {
-    $pdf->Cell(0, 10, utf8_decode('No se encontraron reservas realizadas.'), 1, 1, 'C');
+    $pdf->Cell(190, 10, utf8_decode('No se encontraron reservas realizadas.'), 1, 1, 'C');
 }
 
 //* Pie de página
