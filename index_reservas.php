@@ -27,7 +27,7 @@ $usuario_result = $sql->efectuarConsulta("SELECT * FROM usuarios WHERE id_usuari
 $usuario = $usuario_result->fetch_assoc();
 
 $titulos = $sql->efectuarConsulta("SELECT id_libro, titulo_libro FROM libros
-                                WHERE disponibilidad_libro = 'Disponible'");
+                                WHERE disponibilidad_libro = 'Disponible' AND estado_libro = 'Activo'");
 $titulo_libro = [];
 while ($valor = $titulos->fetch_assoc()) {
     $titulo_libro[] = $valor;
