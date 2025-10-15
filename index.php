@@ -500,11 +500,10 @@ $usuario = $usuario_result->fetch_assoc();
                                             </div>
                                             <div class="h5 mb-0 font-weight-bold text-gray-800">
                                                 <?php
-                                                $historia_result = $sql->efectuarConsulta("
-                                SELECT COUNT(*) AS cantidad_historia
-                                FROM libros
-                                WHERE categoria_libro = 'Historia'
-                            ");
+                                                $historia_result = $sql->efectuarConsulta("SELECT COUNT(*) AS cantidad_historia
+                                                                                        FROM libros
+                                                                                        WHERE categoria_libro = 'Historia'
+                                                                                        AND estado_libro = 'Activo'");
                                                 $historia = $historia_result->fetch_assoc();
                                                 echo $historia['cantidad_historia'] ?? 0;
                                                 ?>
@@ -529,11 +528,10 @@ $usuario = $usuario_result->fetch_assoc();
                                             </div>
                                             <div class="h5 mb-0 font-weight-bold text-gray-800">
                                                 <?php
-                                                $total_result = $sql->efectuarConsulta("
-                                SELECT SUM(cantidad_libro) AS total_libros
-                                FROM libros
-                                WHERE disponibilidad_libro = 'Disponible'
-                            ");
+                                                $total_result = $sql->efectuarConsulta("SELECT SUM(cantidad_libro) AS total_libros
+                                                                                        FROM libros
+                                                                                        WHERE disponibilidad_libro = 'Disponible'
+                                                                                        AND estado_libro = 'Activo'");
                                                 $total = $total_result->fetch_assoc();
                                                 echo $total['total_libros'] ?? 0;
                                                 ?>
@@ -563,7 +561,7 @@ $usuario = $usuario_result->fetch_assoc();
                                 FROM libros l
                                 INNER JOIN reservas_has_libros rl ON rl.libros_id_libro = l.id_libro
                                 INNER JOIN reservas r ON rl.reservas_id_reserva = r.id_reserva
-                                INNER JOIN prestamos p ON p.reservas_id_reserva = r.id_reserva
+                                WHERE estado_libro = 'Activo'
                                 GROUP BY l.id_libro
                                 ORDER BY cantidad DESC
                             ");
@@ -591,12 +589,11 @@ $usuario = $usuario_result->fetch_assoc();
                                             </div>
                                             <div class="h5 mb-0 font-weight-bold text-gray-800">
                                                 <?php
-                                                $autor_max_result = $sql->efectuarConsulta("
-                                SELECT autor_libro, COUNT(*) AS cantidad
-                                FROM libros
-                                GROUP BY autor_libro
-                                ORDER BY cantidad DESC
-                            ");
+                                                $autor_max_result = $sql->efectuarConsulta("SELECT autor_libro, COUNT(*) AS cantidad
+                                                                                                FROM libros
+                                                                                                WHERE estado_libro = 'Activo'
+                                                                                                GROUP BY autor_libro
+                                                                                                ORDER BY cantidad DESC");
                                                 $autor_max = $autor_max_result->fetch_assoc();
                                                 echo $autor_max['autor_libro'] ?? "";
                                                 ?>
