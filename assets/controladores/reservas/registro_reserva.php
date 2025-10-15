@@ -14,8 +14,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         if ($id_usuario > 0 && !empty($libros) && !empty($cantidades)) {
 
             //* Insertar la reserva principal
-            $sql->efectuarConsulta("INSERT INTO reservas (estado_reserva, fecha_reserva, usuarios_id_usuario)
-                                    VALUES ('Pendiente', NOW(), $id_usuario)");
+            $sql->efectuarConsulta("INSERT INTO reservas (fecha_reserva, usuarios_id_usuario)
+                                    VALUES (NOW(), $id_usuario)");
             $id_reserva = $sql->ultimoIdInsertado();
 
             //* Insertar en la tabla pivote de reservas_has_libros
@@ -24,8 +24,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 $cantidad = intval($cantidades[$i]);
 
                 $sql->efectuarConsulta("INSERT INTO reservas_has_libros
-                    (reservas_id_reserva, libros_id_libro, cantidad_libros)
-                    VALUES ($id_reserva, $id_libro, $cantidad)");
+                    (reservas_id_reserva, libros_id_libro, cantidad_libros, estado_has_reserva)
+                    VALUES ($id_reserva, $id_libro, $cantidad, 'Activa')");
             }
             echo "ok";
             exit;

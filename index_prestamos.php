@@ -34,7 +34,7 @@ $reservas_result = $sql->efectuarConsulta("SELECT r.id_reserva, u.id_usuario, u.
                                         INNER JOIN usuarios u ON r.usuarios_id_usuario = u.id_usuario
                                         INNER JOIN reservas_has_libros rl ON rl.reservas_id_reserva = r.id_reserva
                                         INNER JOIN libros l ON rl.libros_id_libro = l.id_libro
-                                        WHERE r.estado_reserva = 'Aceptada'");
+                                        WHERE rl.estado_has_reserva = 'Aceptada'");
 
 $reservas = [];
 

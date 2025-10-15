@@ -12,10 +12,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         if ($accion === "Aceptar") {
 
             //* Cambiar el estado de la reserva a Aceptada
-            $sql->efectuarConsulta("UPDATE reservas r
-                INNER JOIN reservas_has_libros rl ON
-                rl.reservas_id_reserva = r.id_reserva
-                SET r.estado_reserva = 'Aceptada' 
+            $sql->efectuarConsulta("UPDATE reservas_has_libros rl
+                SET rl.estado_has_reserva = 'Aceptada' 
                 WHERE rl.id_reserva_has_libro = $id_reserva");
 
             $resultado = $sql->efectuarConsulta("SELECT rl.libros_id_libro, rl.cantidad_libros
@@ -36,9 +34,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         //* Si la acción es Cancelar
         if ($accion === "Cancelar") {
-            $sql->efectuarConsulta("DELETE rl FROM reservas_has_libros rl
-                            INNER JOIN reservas r ON
-                            rl.reservas_id_reserva = r.id_reserva
+            $sql->efectuarConsulta("DELETE FROM reservas_has_libros
                             WHERE id_reserva_has_libro = $id_reserva");
             echo "ok";
         }

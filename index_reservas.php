@@ -6,13 +6,13 @@ $sql = new MySQL();
 $sql->conectar();
 $id_usuario = intval($_SESSION["id_usuario"]);
 
-$consulta = "SELECT rl.id_reserva_has_libro, r.id_reserva, r.fecha_reserva, r.estado_reserva, 
+$consulta = "SELECT rl.id_reserva_has_libro, r.id_reserva, r.fecha_reserva, rl.estado_has_reserva, 
                     rl.cantidad_libros, u.nombre_usuario, l.titulo_libro FROM reservas AS r 
                     INNER JOIN reservas_has_libros rl 
                     ON rl.reservas_id_reserva = r.id_reserva INNER JOIN
                     usuarios AS u ON r.usuarios_id_usuario = u.id_usuario
                     INNER JOIN libros AS l ON rl.libros_id_libro = l.id_libro
-                    WHERE r.estado_reserva = 'Pendiente'";
+                    WHERE rl.estado_has_reserva = 'Activa'";
 
 switch ($_SESSION["tipo_usuario"]) {
     case "1":
@@ -462,7 +462,7 @@ $libros_json = json_encode($titulo_libro, JSON_UNESCAPED_UNICODE);
                                                     <tr>
                                                         <th><?php echo $fila["id_reserva_has_libro"]; ?></th>
                                                         <th><?php echo $fila["fecha_reserva"]; ?></th>
-                                                        <th><?php echo $fila["estado_reserva"]; ?></th>
+                                                        <th><?php echo $fila["estado_has_reserva"]; ?></th>
                                                         <th><?php echo $fila["nombre_usuario"]; ?></th>
                                                         <th><?php echo $fila["titulo_libro"]; ?></th>
                                                         <th><?php echo $fila["cantidad_libros"]; ?></th>
