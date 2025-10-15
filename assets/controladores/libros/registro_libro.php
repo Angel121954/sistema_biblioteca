@@ -24,9 +24,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $cantidad       = floatval($_POST["cantidad_libro"]);
         if ($cantidad > 0):
             $sql->efectuarConsulta("INSERT INTO libros
-                (titulo_libro, autor_libro, isbn_libro, categoria_libro, disponibilidad_libro, cantidad_libro)
+                (titulo_libro, autor_libro, isbn_libro, categoria_libro, disponibilidad_libro, cantidad_libro
+                , estado_libro)
             VALUES
-                ('$titulo', '$autor', '$isbn', '$categoria', 'Disponible', $cantidad)");
+                ('$titulo', '$autor', '$isbn', '$categoria', 'Disponible', $cantidad, 'Activo')");
 
             echo "ok";
         endif;

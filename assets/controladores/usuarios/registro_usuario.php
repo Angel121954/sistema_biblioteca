@@ -25,8 +25,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $tipo = $_POST["tipo_usuario"];
 
         $sql->efectuarConsulta("INSERT INTO usuarios(nombre_usuario, apellido_usuario,
-                                    email_usuario, contrasena_usuario, fk_tipo_usuario) VALUES(
-                                        '$nombre', '$apellido', '$email', '$contrasena', '$tipo')");
+                                    email_usuario, contrasena_usuario, estado_usuario, fk_tipo_usuario) VALUES(
+                                        '$nombre', '$apellido', '$email', '$contrasena', 'Activo', '$tipo')");
         $sql->desconectar();
 
         echo "ok"; //? necesario para recibir la respuesta desde el SweetAlert del JS

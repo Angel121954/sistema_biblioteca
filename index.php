@@ -6,7 +6,8 @@ $sql = new MySQL();
 $sql->conectar();
 $fila = $sql->efectuarConsulta("SELECT u.id_usuario, u.nombre_usuario, u.apellido_usuario,
                     u.email_usuario, contrasena_usuario, u.fk_tipo_usuario, t.id_tipo_usuario, t.nombre_tipo_usuario 
-                    FROM usuarios AS u INNER JOIN tipos_usuarios AS t ON t.id_tipo_usuario = u.fk_tipo_usuario");
+                    FROM usuarios AS u INNER JOIN tipos_usuarios AS t ON t.id_tipo_usuario = u.fk_tipo_usuario
+                    WHERE estado_usuario = 'Activo'");
 
 $tipos_usuarios_c = $sql->efectuarConsulta("SELECT * FROM tipos_usuarios");
 $tipos_usuarios = [];

@@ -8,7 +8,7 @@ $sql->conectar();
 $resultado = $sql->efectuarConsulta("SELECT id_libro, cantidad_libro FROM libros");
 $fila = $sql->efectuarConsulta("SELECT l.id_libro, l.titulo_libro, l.autor_libro,
                     l.isbn_libro, l.categoria_libro, l.disponibilidad_libro, l.cantidad_libro 
-                    FROM libros AS l");
+                    FROM libros AS l WHERE estado_libro = 'Activo'");
 
 while ($libro = $resultado->fetch_assoc()) {
     $id_libro = intval($libro["id_libro"]);
@@ -438,9 +438,9 @@ $usuario = $usuario_result->fetch_assoc();
                                                     <th>Autor</th>
                                                     <th>Categoría</th>
                                                     <th>Disponibilidad</th>
+                                                    <th>Cantidad</th>
+                                                    <th>ISBN</th>
                                                     <?php if ($_SESSION["tipo_usuario"] === "1"): ?>
-                                                        <th>Cantidad</th>
-                                                        <th>ISBN</th>
                                                         <th class="text-center">Acciones</th>
                                                     <?php endif; ?>
                                                 </tr>
@@ -454,9 +454,9 @@ $usuario = $usuario_result->fetch_assoc();
                                                         <td><?php echo $filas["autor_libro"]; ?></td>
                                                         <td><?php echo $filas["categoria_libro"]; ?></td>
                                                         <td><?php echo $filas["disponibilidad_libro"]; ?></td>
+                                                        <td><?php echo $filas["cantidad_libro"]; ?></td>
+                                                        <td><?php echo $filas["isbn_libro"]; ?></td>
                                                         <?php if ($_SESSION["tipo_usuario"] === "1"): ?>
-                                                            <td><?php echo $filas["cantidad_libro"]; ?></td>
-                                                            <td><?php echo $filas["isbn_libro"]; ?></td>
                                                             <td class="text-center">
                                                                 <button
                                                                     class="btn btn-sm btn-warning"
@@ -473,7 +473,7 @@ $usuario = $usuario_result->fetch_assoc();
 
                                                                 <button
                                                                     class="btn btn-sm btn-danger"
-                                                                    onclick="eliminarLibro('<?php echo $filas['id_libro']; ?>')">
+                                                                    onclick="eliminarLibro('<?= $filas['id_libro']; ?>')">
                                                                     <i class="bi bi-trash"></i>
                                                                 </button>
                                                             </td>
@@ -919,9 +919,9 @@ $usuario = $usuario_result->fetch_assoc();
         <?php endif; ?>
         <?php if ($_SESSION["tipo_usuario"] === "1"): ?>
             <script src="assets/public/js/libros/registro_libro.js"></script>
+            <script src="assets/public/js/libros/editar_libro.js"></script>
+            <script src="assets/public/js/libros/eliminar_libro.js"></script>
         <?php endif; ?>
-        <script src="assets/public/js/libros/editar_libro.js"></script>
-        <script src="assets/public/js/libros/eliminar_libro.js"></script>
 
         <!-- ============================ -->
         <!-- 🔹 Script personalizado - Usuarios -->

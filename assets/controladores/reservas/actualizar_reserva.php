@@ -12,13 +12,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         if ($accion === "Aceptar") {
 
             //* Cambiar el estado de la reserva a Aceptada
-            $sql->efectuarConsulta("UPDATE reservas 
-                SET estado_reserva = 'Aceptada' 
-                WHERE id_reserva = $id_reserva");
+            $sql->efectuarConsulta("UPDATE reservas r
+                INNER JOIN reservas_has_libros rl ON
+                rl.reservas_id_reserva = r.id_reserva
+                SET r.estado_reserva = 'Aceptada' 
+                WHERE rl.id_reserva_has_libro = $id_reserva");
 
             $resultado = $sql->efectuarConsulta("SELECT rl.libros_id_libro, rl.cantidad_libros
                                                  FROM reservas_has_libros rl
-                                                 WHERE rl.reservas_id_reserva = $id_reserva");
+                                                 WHERE rl.id_reserva_has_libro = $id_reserva");
 
             while ($fila = $resultado->fetch_assoc()) {
                 $id_libro = intval($fila['libros_id_libro']);
@@ -34,9 +36,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         //* Si la acción es Cancelar
         if ($accion === "Cancelar") {
-            $sql->efectuarConsulta("UPDATE reservas 
-                SET estado_reserva = 'Cancelada' 
-                WHERE id_reserva = $id_reserva");
+            $sql->efectuarConsulta("DELETE rl FROM reservas_has_libros rl
+                            INNER JOIN reservas r ON
+                            rl.reservas_id_reserva = r.id_reserva
+                            WHERE id_reserva_has_libro = $id_reserva");
             echo "ok";
         }
 

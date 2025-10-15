@@ -6,8 +6,8 @@ $sql = new MySQL();
 $sql->conectar();
 $id_usuario = intval($_SESSION["id_usuario"]);
 
-$consulta = "SELECT r.id_reserva, r.fecha_reserva, r.estado_reserva, rl.cantidad_libros,
-                    u.nombre_usuario, l.titulo_libro FROM reservas AS r 
+$consulta = "SELECT rl.id_reserva_has_libro, r.id_reserva, r.fecha_reserva, r.estado_reserva, 
+                    rl.cantidad_libros, u.nombre_usuario, l.titulo_libro FROM reservas AS r 
                     INNER JOIN reservas_has_libros rl 
                     ON rl.reservas_id_reserva = r.id_reserva INNER JOIN
                     usuarios AS u ON r.usuarios_id_usuario = u.id_usuario
@@ -441,7 +441,7 @@ $libros_json = json_encode($titulo_libro, JSON_UNESCAPED_UNICODE);
                                         <table class="table table-bordered tabla_dt" id="tbl_reservas" width="100%" cellspacing="0">
                                             <thead>
                                                 <tr>
-                                                    <th>ID reserva</th>
+                                                    <th>ID reserva</th> <!--ID reserva tabla pivote-->
                                                     <th>Fecha</th>
                                                     <th>Estado</th>
                                                     <th>Nombre usuario</th>
@@ -460,7 +460,7 @@ $libros_json = json_encode($titulo_libro, JSON_UNESCAPED_UNICODE);
                                             <tbody>
                                                 <?php while ($fila = $reservas->fetch_assoc()): ?>
                                                     <tr>
-                                                        <th><?php echo $fila["id_reserva"]; ?></th>
+                                                        <th><?php echo $fila["id_reserva_has_libro"]; ?></th>
                                                         <th><?php echo $fila["fecha_reserva"]; ?></th>
                                                         <th><?php echo $fila["estado_reserva"]; ?></th>
                                                         <th><?php echo $fila["nombre_usuario"]; ?></th>
@@ -471,18 +471,18 @@ $libros_json = json_encode($titulo_libro, JSON_UNESCAPED_UNICODE);
                                                             <?php switch ($_SESSION["tipo_usuario"]):
                                                                 case "1": ?>
                                                                     <button class="btn btn-success btn-sm"
-                                                                        onclick="actualizarReserva(<?= $fila['id_reserva'] ?>, 'Aceptar')">
+                                                                        onclick="actualizarReserva(<?= $fila['id_reserva_has_libro'] ?>, 'Aceptar')">
                                                                         <i class="bi bi-check-circle"></i> Aceptar
                                                                     </button>
 
                                                                     <button class="btn btn-danger btn-sm"
-                                                                        onclick="actualizarReserva(<?= $fila['id_reserva'] ?>, 'Cancelar')">
+                                                                        onclick="actualizarReserva(<?= $fila['id_reserva_has_libro'] ?>, 'Cancelar')">
                                                                         <i class="bi bi-x-circle"></i> Cancelar
                                                                     </button>
                                                                 <?php break;
                                                                 default: ?>
                                                                     <button class="btn btn-danger btn-sm"
-                                                                        onclick="eliminarReserva(<?= $fila['id_reserva'] ?>)">
+                                                                        onclick="eliminarReserva(<?= $fila['id_reserva_has_libro'] ?>)">
                                                                         <i class="bi bi-x-circle"></i> Eliminar
                                                                     </button>
                                                             <?php break;
