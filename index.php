@@ -21,39 +21,6 @@ $id_usuario = $_SESSION["id_usuario"];
 $usuario_result = $sql->efectuarConsulta("SELECT * FROM usuarios WHERE id_usuario = $id_usuario");
 $usuario = $usuario_result->fetch_assoc();
 
-$cantidades_result = $sql->efectuarConsulta("SELECT 
-        (
-            SELECT l.titulo_libro
-            FROM libros l
-            INNER JOIN reservas_has_libros rl ON rl.libros_id_libro = l.id_libro
-            INNER JOIN reservas r ON rl.reservas_id_reserva = r.id_reserva
-            WHERE l.estado_libro = 'Activo'
-            GROUP BY l.id_libro
-            ORDER BY COUNT(r.id_reserva) DESC
-            LIMIT 1
-        ) AS titulo_mas_reservado,
-        (
-            SELECT autor_libro
-            FROM libros
-            WHERE estado_libro = 'Activo'
-            GROUP BY autor_libro
-            ORDER BY COUNT(*) DESC
-            LIMIT 1
-        ) AS autor_mas_libros,
-        (
-            SELECT SUM(cantidad_libro)
-            FROM libros
-            WHERE disponibilidad_libro = 'Disponible'
-            AND estado_libro = 'Activo'
-        ) AS total_libros_disponibles,
-        (
-            SELECT COUNT(*) FROM libros
-            WHERE categoria_libro = 'Historia'
-            AND cantidad_libro > 0
-        ) AS cantidad_historia");
-
-$cantidades = $cantidades_result->fetch_assoc();
-
 ?>
 
 <!DOCTYPE html>
@@ -198,8 +165,8 @@ $cantidades = $cantidades_result->fetch_assoc();
                 </a>
             </li>
 
-            <!-- Menú informes -->
             <?php if ($_SESSION["tipo_usuario"] === "1"): ?>
+                <!-- Select: Informes -->
                 <li class="nav-item">
                     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#menu_informes"
                         aria-expanded="true" aria-controls="collapsePages">
@@ -213,6 +180,14 @@ $cantidades = $cantidades_result->fetch_assoc();
                             <a class="collapse-item" href="assets/controladores/informes/historial_prestamo.php">Historial prestamo</a>
                         </div>
                     </div>
+                </li>
+
+                <!-- Enlace: gráficos -->
+                <li class="nav-item">
+                    <a class="nav-link" href="index_graficos.php">
+                        <i class="bi bi-bar-chart-fill"></i>
+                        <span>Gráficos</span>
+                    </a>
                 </li>
             <?php endif; ?>
 
@@ -444,11 +419,10 @@ $cantidades = $cantidades_result->fetch_assoc();
                         <div class="container-fluid">
                             <?php if ($_SESSION["tipo_usuario"] === "1"): ?>
                                 <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                                    <h1 class="h3 mb-0 text-gray-800">Usuarios</h1>
+                                    <h1>Gestión de Usuarios</h1>
                                     <button
                                         id="btn_registro_usuario"
-                                        data-tipos-usuarios="<?php echo htmlspecialchars($tipos_usuarios_json, ENT_QUOTES, 'UTF-8'); ?>"
-                                        class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                                        data-tipos-usuarios="<?php echo htmlspecialchars($tipos_usuarios_json, ENT_QUOTES, 'UTF-8'); ?>">
                                         <i class="fas fa-user-plus fa-sm text-white-50"></i> Agregar usuario
                                     </button>
                                 </div>
@@ -512,176 +486,6 @@ $cantidades = $cantidades_result->fetch_assoc();
 
                 </div>
                 <!-- End of Content Wrapper -->
-
-                <!-- Begin Page Content -->
-                <div class="container-fluid">
-                    <!-- Content Row -->
-                    <div class="row">
-
-                        <!-- Cantidad de libros de Historia -->
-                        <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card border-left-primary shadow py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                                Libros de Historia
-                                            </div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                <?= $cantidades['cantidad_historia']; ?>
-                                            </div>
-                                        </div>
-                                        <div class="col-auto">
-                                            <i class="bi bi-journal-text fa-2x text-gray-300"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Total de libros disponibles -->
-                        <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card border-left-success shadow py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                                Total de libros disponibles
-                                            </div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                <?= $cantidades['total_libros_disponibles'] ?? 0; ?>
-                                            </div>
-                                        </div>
-                                        <div class="col-auto">
-                                            <i class="bi bi-book-half fa-2x text-gray-300"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Libro más prestado -->
-                        <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card border-left-info shadow py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                                                Libro más prestado
-                                            </div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                <?= $cantidades['titulo_mas_reservado'] ?? ""; ?>
-                                            </div>
-                                        </div>
-                                        <div class="col-auto">
-                                            <i class="bi bi-star-fill fa-2x text-gray-300"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Autor con más libros -->
-                        <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card border-left-warning shadow py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                                Autor con más libros
-                                            </div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                <?= $cantidades['autor_mas_libros'] ?? "";
-                                                ?>
-                                            </div>
-                                        </div>
-                                        <div class="col-auto">
-                                            <i class="bi bi-pen-fill fa-2x text-gray-300"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Content Row -->
-
-                    <div class="row">
-
-                        <!-- Area Chart -->
-                        <div class="col-xl-8 col-lg-7">
-                            <div class="card shadow mb-4">
-                                <!-- Card Header - Dropdown -->
-                                <div
-                                    class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                    <h6 class="m-0 font-weight-bold text-primary">Totales en general</h6>
-                                    <div class="dropdown no-arrow">
-                                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
-                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
-                                        </a>
-                                        <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
-                                            aria-labelledby="dropdownMenuLink">
-                                            <div class="dropdown-header">Dropdown Header:</div>
-                                            <a class="dropdown-item" href="#">Action</a>
-                                            <a class="dropdown-item" href="#">Another action</a>
-                                            <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item" href="#">Something else here</a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- Card Body -->
-                                <div class="card-body" style="width: 100%; max-width: 600px; margin: auto;">
-                                    <div class="chart-area">
-                                        <canvas id="grafico_totales"></canvas>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Pie Chart -->
-                        <div class="col-xl-4 col-lg-5">
-                            <div class="card shadow mb-4">
-                                <!-- Card Header - Dropdown -->
-                                <div
-                                    class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                    <h6 class="m-0 font-weight-bold text-primary">Totales</h6>
-                                    <div class="dropdown no-arrow">
-                                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
-                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
-                                        </a>
-                                        <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
-                                            aria-labelledby="dropdownMenuLink">
-                                            <div class="dropdown-header">Dropdown Header:</div>
-                                            <a class="dropdown-item" href="#">Action</a>
-                                            <a class="dropdown-item" href="#">Another action</a>
-                                            <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item" href="#">Something else here</a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- Card Body -->
-                                <div class="card-body">
-                                    <div class="chart-pie pt-4 pb-2">
-                                        <canvas id="grafico_totales_pie"></canvas>
-                                    </div>
-                                    <div class="mt-4 text-center small">
-                                        <span class="mr-2">
-                                            <i class="fas fa-circle text-primary"></i> Direct
-                                        </span>
-                                        <span class="mr-2">
-                                            <i class="fas fa-circle text-success"></i> Social
-                                        </span>
-                                        <span class="mr-2">
-                                            <i class="fas fa-circle text-info"></i> Referral
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
             <!-- End of Main Content -->
 
@@ -753,19 +557,6 @@ $cantidades = $cantidades_result->fetch_assoc();
 
     <!-- Plantilla SB Admin 2 -->
     <script src="assets/js/sb-admin-2.min.js"></script>
-
-
-    <!-- ======================== -->
-    <!-- Gráficos -->
-    <!-- ======================== -->
-
-    <!-- Chart.js -->
-    <script src="assets/libs/chart.js/Chart.bundle.min.js"></script>
-
-    <!-- Script de gestión de gráficos -->
-    <script src="assets/public/js/graficos/gestion_total.js"></script>
-    <script src="assets/public/js/graficos/gestion_total_pie.js"></script>
-
 
     <!-- ======================== -->
     <!-- Gestión de usuarios -->

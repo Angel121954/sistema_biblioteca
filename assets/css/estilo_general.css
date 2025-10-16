@@ -13,3 +13,16 @@
   background-color: #8d6e63;
   border-left: 4px solid #fbc02d;
 }
+
+h1 {
+  color: #4e342e;
+  font-family: "Merriweather", serif;
+}
+
+button {
+  background-color: #744939;
+  color: #fff;
+  border-radius: 6px;
+  transition: 0.3s;
+  font-family: "Merriweather", serif;
+}
