@@ -1,0 +1,15 @@
+.sidebar {
+  background: #6d4c41 !important;
+  /* tono intermedio */
+  border-right: 1px solid rgba(0, 0, 0, 0.1);
+  font-family: "Merriweather", serif;
+}
+
+.sidebar .nav-item .nav-link {
+  color: #f5f5f5;
+}
+
+.sidebar .nav-item .nav-link.active {
+  background-color: #8d6e63;
+  border-left: 4px solid #fbc02d;
+}
