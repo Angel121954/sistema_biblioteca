@@ -45,6 +45,39 @@ while ($valor = $reservas_result->fetch_assoc()) {
 //* convertir las fechas en formato JSON para poderlo leer en el public/js/prestamos/registro_prestamo.js
 $reservas_json = json_encode($reservas, JSON_UNESCAPED_UNICODE);
 
+$cantidades_result = $sql->efectuarConsulta("SELECT 
+        (
+            SELECT l.titulo_libro
+            FROM libros l
+            INNER JOIN reservas_has_libros rl ON rl.libros_id_libro = l.id_libro
+            INNER JOIN reservas r ON rl.reservas_id_reserva = r.id_reserva
+            WHERE l.estado_libro = 'Activo'
+            GROUP BY l.id_libro
+            ORDER BY COUNT(r.id_reserva) DESC
+            LIMIT 1
+        ) AS titulo_mas_reservado,
+        (
+            SELECT autor_libro
+            FROM libros
+            WHERE estado_libro = 'Activo'
+            GROUP BY autor_libro
+            ORDER BY COUNT(*) DESC
+            LIMIT 1
+        ) AS autor_mas_libros,
+        (
+            SELECT SUM(cantidad_libro)
+            FROM libros
+            WHERE disponibilidad_libro = 'Disponible'
+            AND estado_libro = 'Activo'
+        ) AS total_libros_disponibles,
+        (
+            SELECT COUNT(*) FROM libros
+            WHERE categoria_libro = 'Historia'
+            AND cantidad_libro > 0
+        ) AS cantidad_historia");
+
+$cantidades = $cantidades_result->fetch_assoc();
+
 ?>
 
 <!DOCTYPE html>
@@ -587,14 +620,7 @@ $reservas_json = json_encode($reservas, JSON_UNESCAPED_UNICODE);
                                                 Libros de Historia
                                             </div>
                                             <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                <?php
-                                                $historia_result = $sql->efectuarConsulta("SELECT COUNT(*) AS cantidad_historia
-                                                                                        FROM libros
-                                                                                        WHERE categoria_libro = 'Historia'
-                                                                                        AND estado_libro = 'Activo'");
-                                                $historia = $historia_result->fetch_assoc();
-                                                echo $historia['cantidad_historia'] ?? 0;
-                                                ?>
+                                                <?= $cantidades['cantidad_historia'] ?? 0; ?>
                                             </div>
                                         </div>
                                         <div class="col-auto">
@@ -615,14 +641,7 @@ $reservas_json = json_encode($reservas, JSON_UNESCAPED_UNICODE);
                                                 Total de libros disponibles
                                             </div>
                                             <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                <?php
-                                                $total_result = $sql->efectuarConsulta("SELECT SUM(cantidad_libro) AS total_libros
-                                                                                        FROM libros
-                                                                                        WHERE disponibilidad_libro = 'Disponible'
-                                                                                        AND estado_libro = 'Activo'");
-                                                $total = $total_result->fetch_assoc();
-                                                echo $total['total_libros'] ?? 0;
-                                                ?>
+                                                <?= $cantidades['total_libros_disponibles'] ?? 0; ?>
                                             </div>
                                         </div>
                                         <div class="col-auto">
@@ -643,19 +662,7 @@ $reservas_json = json_encode($reservas, JSON_UNESCAPED_UNICODE);
                                                 Libro más prestado
                                             </div>
                                             <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                <?php
-                                                $titulo_max_result = $sql->efectuarConsulta("
-                                SELECT l.titulo_libro, COUNT(r.id_reserva) AS cantidad
-                                FROM libros l
-                                INNER JOIN reservas_has_libros rl ON rl.libros_id_libro = l.id_libro
-                                INNER JOIN reservas r ON rl.reservas_id_reserva = r.id_reserva
-                                WHERE estado_libro = 'Activo'
-                                GROUP BY l.id_libro
-                                ORDER BY cantidad DESC
-                            ");
-                                                $titulo_max = $titulo_max_result->fetch_assoc();
-                                                echo $titulo_max['titulo_libro'] ?? "";
-                                                ?>
+                                                <?= $cantidades['titulo_mas_reservado'] ?? ""; ?>
                                             </div>
                                         </div>
                                         <div class="col-auto">
@@ -676,15 +683,7 @@ $reservas_json = json_encode($reservas, JSON_UNESCAPED_UNICODE);
                                                 Autor con más libros
                                             </div>
                                             <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                <?php
-                                                $autor_max_result = $sql->efectuarConsulta("SELECT autor_libro, COUNT(*) AS cantidad
-                                                                                                FROM libros
-                                                                                                WHERE estado_libro = 'Activo'
-                                                                                                GROUP BY autor_libro
-                                                                                                ORDER BY cantidad DESC");
-                                                $autor_max = $autor_max_result->fetch_assoc();
-                                                echo $autor_max['autor_libro'] ?? "";
-                                                ?>
+                                                <?= $cantidades['autor_mas_libros'] ?? ""; ?>
                                             </div>
                                         </div>
                                         <div class="col-auto">
