@@ -22,7 +22,7 @@
     rel="stylesheet" />
 
   <!-- Custom styles for this template-->
-  <link href="css/sb-admin-2.min.css" rel="stylesheet" />
+  <link href="assets/css/sb-admin-2.min.css" rel="stylesheet" />
 </head>
 
 <body class="bg-gradient-primary">
@@ -98,7 +98,7 @@
   <script src="assets/libs/jquery-easing/jquery.easing.min.js"></script>
 
   <!-- Custom scripts for all pages-->
-  <script src="js/sb-admin-2.min.js"></script>
+  <script src="assets/js/sb-admin-2.min.js"></script>
 </body>
 
 </html>
