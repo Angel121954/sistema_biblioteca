@@ -6,7 +6,7 @@ $sql->conectar();
 $resultado = $sql->efectuarConsulta("
     SELECT 
     COALESCE(COUNT(DISTINCT l.id_libro), 0) AS total_libros, 
-    COALESCE(COUNT(DISTINCT r.id_reserva), 0) AS total_reservas,
+    COALESCE(COUNT(DISTINCT rl.id_reserva_has_libro), 0) AS total_reservas,
     COALESCE(COUNT(DISTINCT p.id_prestamo), 0) AS total_prestamos,
     COALESCE(COUNT(DISTINCT u.id_usuario), 0) AS total_usuarios
     FROM usuarios u

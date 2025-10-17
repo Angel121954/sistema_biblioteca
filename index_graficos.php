@@ -15,7 +15,7 @@ $cantidades_result = $sql->efectuarConsulta("SELECT
             FROM libros l
             INNER JOIN reservas_has_libros rl ON rl.libros_id_libro = l.id_libro
             INNER JOIN reservas r ON rl.reservas_id_reserva = r.id_reserva
-            WHERE l.estado_libro = 'Activo'
+            WHERE l.disponibilidad_libro = 'Disponible'
             GROUP BY l.id_libro
             ORDER BY COUNT(r.id_reserva) DESC
             LIMIT 1
@@ -23,7 +23,7 @@ $cantidades_result = $sql->efectuarConsulta("SELECT
         (
             SELECT autor_libro
             FROM libros
-            WHERE estado_libro = 'Activo'
+            WHERE disponibilidad_libro = 'Disponible'
             GROUP BY autor_libro
             ORDER BY COUNT(*) DESC
             LIMIT 1
@@ -32,7 +32,6 @@ $cantidades_result = $sql->efectuarConsulta("SELECT
             SELECT SUM(cantidad_libro)
             FROM libros
             WHERE disponibilidad_libro = 'Disponible'
-            AND estado_libro = 'Activo'
         ) AS total_libros_disponibles,
         (
             SELECT COUNT(*) FROM libros

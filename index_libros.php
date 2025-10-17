@@ -8,7 +8,7 @@ $sql->conectar();
 $resultado = $sql->efectuarConsulta("SELECT id_libro, cantidad_libro FROM libros");
 $fila = $sql->efectuarConsulta("SELECT l.id_libro, l.titulo_libro, l.autor_libro,
                     l.isbn_libro, l.categoria_libro, l.disponibilidad_libro, l.cantidad_libro 
-                    FROM libros AS l WHERE disponibilidad_libro = 'Disponible'");
+                    FROM libros AS l");
 
 while ($libro = $resultado->fetch_assoc()) {
     $id_libro = intval($libro["id_libro"]);
