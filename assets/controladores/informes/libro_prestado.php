@@ -7,11 +7,9 @@ $sql->conectar();
 
 $libros_result = $sql->efectuarConsulta("SELECT p.id_prestamo, l.titulo_libro, l.autor_libro,
                                 l.isbn_libro, l.categoria_libro, l.disponibilidad_libro,
-                                rl.cantidad_libros FROM prestamos p INNER JOIN reservas r ON
-                                p.reservas_id_reserva = r.id_reserva INNER JOIN 
-                                reservas_has_libros rl ON rl.reservas_id_reserva = r.id_reserva
-                                INNER JOIN libros l ON
-                                rl.libros_id_libro = l.id_libro");
+                                rl.cantidad_libros FROM prestamos p INNER JOIN reservas_has_libros rl ON
+                                p.fk_reserva_has_libro = rl.id_reserva_has_libro INNER JOIN libros l ON
+                                rl.libros_id_libro = l.id_libro ORDER BY p.id_prestamo");
 
 $pdf = new FPDF();
 $pdf->AddPage();

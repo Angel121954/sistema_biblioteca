@@ -8,15 +8,15 @@ $sql->conectar();
 $resultado = $sql->efectuarConsulta("SELECT id_libro, cantidad_libro FROM libros");
 $fila = $sql->efectuarConsulta("SELECT l.id_libro, l.titulo_libro, l.autor_libro,
                     l.isbn_libro, l.categoria_libro, l.disponibilidad_libro, l.cantidad_libro 
-                    FROM libros AS l WHERE estado_libro = 'Activo'");
+                    FROM libros AS l WHERE disponibilidad_libro = 'Disponible'");
 
 while ($libro = $resultado->fetch_assoc()) {
     $id_libro = intval($libro["id_libro"]);
     $cantidad = intval($libro["cantidad_libro"]);
 
-    if ($cantidad <= 0) {
+    if ($cantidad === 0) {
         $sql->efectuarConsulta("UPDATE libros 
-                                SET disponibilidad_libro = 'No disponible'
+                                SET disponibilidad_libro = 'Sin ejemplares'
                                 WHERE id_libro = $id_libro");
     }
 }
