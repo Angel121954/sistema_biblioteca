@@ -358,8 +358,7 @@ $libros_json = json_encode($titulo_libro, JSON_UNESCAPED_UNICODE);
                                 </a>
                                 <a class="dropdown-item d-flex align-items-center" href="#">
                                     <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="https://source.unsplash.com/Mv9hjnEUHR4/60x60"
-                                            alt="...">
+                                        <img src="assets/img/fondo_libro.jpg" alt="Libro">
                                         <div class="status-indicator bg-success"></div>
                                     </div>
                                     <div>
@@ -479,7 +478,7 @@ $libros_json = json_encode($titulo_libro, JSON_UNESCAPED_UNICODE);
                                                             <?php switch ($_SESSION["tipo_usuario"]):
                                                                 case "1": ?>
                                                                     <button class="btn btn-success btn-sm"
-                                                                        onclick="actualizarReserva(<?= $fila['id_reserva_has_libro'] ?>, 'Aceptar')">
+                                                                        onclick="actualizarReserva(<?php echo $fila['id_reserva_has_libro'] ?>, 'Aceptar')">
                                                                         <i class="bi bi-check-circle"></i> Aceptar
                                                                     </button>
 

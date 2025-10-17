@@ -25,39 +25,6 @@ $id_usuario = $_SESSION["id_usuario"];
 $usuario_result = $sql->efectuarConsulta("SELECT * FROM usuarios WHERE id_usuario = $id_usuario");
 $usuario = $usuario_result->fetch_assoc();
 
-$cantidades_result = $sql->efectuarConsulta("SELECT 
-        (
-            SELECT l.titulo_libro
-            FROM libros l
-            INNER JOIN reservas_has_libros rl ON rl.libros_id_libro = l.id_libro
-            INNER JOIN reservas r ON rl.reservas_id_reserva = r.id_reserva
-            WHERE l.estado_libro = 'Activo'
-            GROUP BY l.id_libro
-            ORDER BY COUNT(r.id_reserva) DESC
-            LIMIT 1
-        ) AS titulo_mas_reservado,
-        (
-            SELECT autor_libro
-            FROM libros
-            WHERE estado_libro = 'Activo'
-            GROUP BY autor_libro
-            ORDER BY COUNT(*) DESC
-            LIMIT 1
-        ) AS autor_mas_libros,
-        (
-            SELECT SUM(cantidad_libro)
-            FROM libros
-            WHERE disponibilidad_libro = 'Disponible'
-            AND estado_libro = 'Activo'
-        ) AS total_libros_disponibles,
-        (
-            SELECT COUNT(*) FROM libros
-            WHERE categoria_libro = 'Historia'
-            AND cantidad_libro > 0
-        ) AS cantidad_historia");
-
-$cantidades = $cantidades_result->fetch_assoc();
-
 ?>
 
 
@@ -397,8 +364,7 @@ $cantidades = $cantidades_result->fetch_assoc();
                                 </a>
                                 <a class="dropdown-item d-flex align-items-center" href="#">
                                     <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="https://source.unsplash.com/Mv9hjnEUHR4/60x60"
-                                            alt="...">
+                                        <img src="assets/img/fondo_libro.jpg" alt="Libro">
                                         <div class="status-indicator bg-success"></div>
                                     </div>
                                     <div>
@@ -457,14 +423,15 @@ $cantidades = $cantidades_result->fetch_assoc();
                         <!-- Begin Page Content -->
                         <div class="container-fluid">
                             <!-- Botones superiores -->
-                            <?php if ($_SESSION["tipo_usuario"] === "1"): ?>
-                                <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                                    <h1>Gestión de Libros</h1>
+
+                            <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                                <h1>Gestión de Libros</h1>
+                                <?php if ($_SESSION["tipo_usuario"] === "1"): ?>
                                     <button id="btn_registro_libro">
                                         <i class="fas fa-plus fa-sm text-white-50"></i> Agregar libro
                                     </button>
-                                </div>
-                            <?php endif; ?>
+                                <?php endif; ?>
+                            </div>
 
                             <!-- Tabla de libros -->
                             <div class="card shadow mb-4">

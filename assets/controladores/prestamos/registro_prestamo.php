@@ -4,18 +4,18 @@ $sql = new MySQL();
 $sql->conectar();
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    if (isset($_POST["reservas_id_reserva"]) && !empty($_POST["reservas_id_reserva"])) {
+    if (isset($_POST["id_reserva_has_libro"]) && !empty($_POST["id_reserva_has_libro"])) {
         //* variable
-        $id_reserva = intval($_POST["reservas_id_reserva"]);
+        $id_reserva_has_libro = intval($_POST["id_reserva_has_libro"]);
 
-        if ($id_reserva > 0) {
+        if ($id_reserva_has_libro > 0) {
             $sql->efectuarConsulta("INSERT INTO prestamos (fecha_prestamo, 
-                                    fecha_devolucion, reservas_id_reserva, estado_prestamo)
-                                    VALUES (NOW(), DATE_ADD(NOW(), INTERVAL 15 DAY), $id_reserva,
-                                    'Aceptado')");
+                                    fecha_devolucion, fk_reserva_has_libro, estado_prestamo)
+                                    VALUES (NOW(), DATE_ADD(NOW(), INTERVAL 15 DAY), $id_reserva_has_libro,
+                                    'Activo')");
 
-            $sql->efectuarConsulta("UPDATE reservas SET estado_reserva = 'Finalizada'
-                                    WHERE id_reserva = $id_reserva");
+            $sql->efectuarConsulta("UPDATE reservas_has_libros SET estado_has_reserva = 'Finalizada'
+                                    WHERE id_reserva_has_libro = $id_reserva_has_libro");
 
             echo "ok";
         }

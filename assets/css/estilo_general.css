@@ -26,3 +26,11 @@ button {
   transition: 0.3s;
   font-family: "Merriweather", serif;
 }
+
+#btn_filtrar_libros {
+  background-color: #744939;
+  color: #fff;
+  border-radius: 6px;
+  transition: 0.3s;
+  font-family: "Merriweather", serif;
+}

@@ -361,8 +361,7 @@ $cantidades = $cantidades_result->fetch_assoc();
                             </a>
                             <a class="dropdown-item d-flex align-items-center" href="#">
                                 <div class="dropdown-list-image mr-3">
-                                    <img class="rounded-circle" src="https://source.unsplash.com/Mv9hjnEUHR4/60x60"
-                                        alt="...">
+                                    <img src="assets/img/fondo_libro.jpg" alt="Libro">
                                     <div class="status-indicator bg-success"></div>
                                 </div>
                                 <div>

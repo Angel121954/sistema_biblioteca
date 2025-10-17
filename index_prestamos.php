@@ -7,21 +7,21 @@ $sql->conectar();
 $id_usuario = intval($_SESSION["id_usuario"]);
 
 //* consulta para poderlo imprimir en la tabla
-$presta = $sql->efectuarConsulta("SELECT p.id_prestamo, p.fecha_prestamo, p.fecha_devolucion,
+$prestamos_general = $sql->efectuarConsulta("SELECT p.id_prestamo, p.fecha_prestamo, p.fecha_devolucion,
                         r.fecha_reserva, l.titulo_libro, u.nombre_usuario
-                        FROM prestamos p INNER JOIN reservas r 
-                        ON p.reservas_id_reserva = r.id_reserva
+                        FROM prestamos p INNER JOIN reservas_has_libros rl 
+                        ON p.fk_reserva_has_libro = rl.id_reserva_has_libro
+                        INNER JOIN reservas r ON rl.reservas_id_reserva = r.id_reserva
                         INNER JOIN usuarios u ON r.usuarios_id_usuario = u.id_usuario
-                        INNER JOIN reservas_has_libros rl ON rl.reservas_id_reserva = r.id_reserva
                         INNER JOIN libros l ON rl.libros_id_libro = l.id_libro
                         ORDER BY p.id_prestamo");
 
 $prestamos_usuario = $sql->efectuarConsulta("SELECT p.id_prestamo, p.fecha_prestamo, p.fecha_devolucion,
                         r.fecha_reserva, l.titulo_libro, u.nombre_usuario
-                        FROM prestamos p INNER JOIN reservas r 
-                        ON p.reservas_id_reserva = r.id_reserva
+                        FROM prestamos p INNER JOIN reservas_has_libros rl 
+                        ON p.fk_reserva_has_libro = rl.id_reserva_has_libro
+                        INNER JOIN reservas r ON rl.reservas_id_reserva = r.id_reserva
                         INNER JOIN usuarios u ON r.usuarios_id_usuario = u.id_usuario
-                        INNER JOIN reservas_has_libros rl ON rl.reservas_id_reserva = r.id_reserva
                         INNER JOIN libros l ON rl.libros_id_libro = l.id_libro
                         WHERE u.id_usuario = $id_usuario
                         ORDER BY p.id_prestamo");
@@ -29,7 +29,7 @@ $prestamos_usuario = $sql->efectuarConsulta("SELECT p.id_prestamo, p.fecha_prest
 $usuario_result = $sql->efectuarConsulta("SELECT * FROM usuarios WHERE id_usuario = $id_usuario");
 $usuario = $usuario_result->fetch_assoc();
 
-$reservas_result = $sql->efectuarConsulta("SELECT r.id_reserva, u.id_usuario, u.nombre_usuario,
+$reservas_result = $sql->efectuarConsulta("SELECT rl.id_reserva_has_libro, r.id_reserva, u.id_usuario, u.nombre_usuario,
                                         r.fecha_reserva, rl.cantidad_libros, l.titulo_libro FROM reservas r
                                         INNER JOIN usuarios u ON r.usuarios_id_usuario = u.id_usuario
                                         INNER JOIN reservas_has_libros rl ON rl.reservas_id_reserva = r.id_reserva
@@ -438,8 +438,7 @@ $reservas_json = json_encode($reservas, JSON_UNESCAPED_UNICODE);
                                 </a>
                                 <a class="dropdown-item d-flex align-items-center" href="#">
                                     <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="https://source.unsplash.com/Mv9hjnEUHR4/60x60"
-                                            alt="...">
+                                        <img src="assets/img/fondo_libro.jpg" alt="Libro">
                                         <div class="status-indicator bg-success"></div>
                                     </div>
                                     <div>
@@ -498,12 +497,14 @@ $reservas_json = json_encode($reservas, JSON_UNESCAPED_UNICODE);
                         <!-- Begin Page Content -->
                         <div class="container-fluid">
                             <!-- Page Heading -->
-                            <?php if ($_SESSION["tipo_usuario"] === "1"): ?>
-                                <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                                    <h1>Gestión de Prestamos</h1>
+
+                            <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                                <h1>Gestión de Prestamos</h1>
+                                <?php if ($_SESSION["tipo_usuario"] === "1"): ?>
                                     <button id="btn_registro_prestamo" data-reserva="<?php echo htmlspecialchars($reservas_json, ENT_QUOTES, 'UTF-8'); ?>"><i class="bi bi-file-earmark-plus text-white-50 mx-1"></i>Realizar un prestamo</button>
-                                </div>
-                            <?php endif; ?>
+                                <?php endif; ?>
+                            </div>
+
                             <!-- DataTales Example -->
                             <div class="card shadow mb-4">
                                 <div class="card-header py-3">
@@ -531,7 +532,7 @@ $reservas_json = json_encode($reservas, JSON_UNESCAPED_UNICODE);
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <?php while ($fila = $presta->fetch_assoc()): ?>
+                                                    <?php while ($fila = $prestamos_general->fetch_assoc()): ?>
                                                         <tr>
                                                             <th><?php echo $fila["id_prestamo"]; ?></th>
                                                             <th><?php echo $fila["fecha_reserva"]; ?></th>
@@ -662,7 +663,7 @@ $reservas_json = json_encode($reservas, JSON_UNESCAPED_UNICODE);
     <!--DataTables local-->
     <script src="assets/libs/datatables/datatables.min.js"></script>
     <script src="assets/funcionalidad/tablas.js"></script>
-    <?php if ($_SESSION["tipo_usuario"] !== "1"): ?>
+    <?php if ($_SESSION["tipo_usuario"] !== "1" && $prestamos_usuario->num_rows > 0): ?>
         <script>
             document.addEventListener("DOMContentLoaded", () => {
                 const toast = document.getElementById("toast");

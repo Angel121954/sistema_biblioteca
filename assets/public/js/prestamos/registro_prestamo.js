@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
       let opcionesReservas =
         '<option value="" disabled selected>Seleccione una reserva</option>';
       reservasUsuarios.forEach((r) => {
-        opcionesReservas += `<option value="${r.id_reserva}">
+        opcionesReservas += `<option value="${r.id_reserva_has_libro}">
           ${r.nombre_usuario} ${r.apellido_usuario ?? ""} - ${r.titulo_libro}
         </option>`;
       });
@@ -36,10 +36,10 @@ document.addEventListener("DOMContentLoaded", () => {
         html: `
           <form id="frm_registro_prestamo" class="text-start" novalidate style="max-width: 450px; margin: 0 auto;">
             <div class="form-floating mb-3">
-              <select name="reservas_id_reserva" id="reservas_id_reserva" class="form-control" required>
+              <select name="id_reserva_has_libro" id="id_reserva_has_libro" class="form-control" required>
                 ${opcionesReservas}
               </select>
-              <label for="reservas_id_reserva" class="mt-2">
+              <label for="id_reserva_has_libro" class="mt-2">
                 <i class="bi bi-journal-bookmark"></i> Reserva
               </label>
             </div>
@@ -61,13 +61,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
         didOpen: () => {
           const form = document.querySelector("#frm_registro_prestamo");
-          const selectReserva = document.querySelector("#reservas_id_reserva");
+          const selectReserva = document.querySelector("#id_reserva_has_libro");
           const infoDiv = document.querySelector("#info_reserva");
 
           selectReserva.addEventListener("change", (e) => {
             const idSeleccionado = e.target.value;
             const reserva = reservasUsuarios.find(
-              (r) => r.id_reserva == idSeleccionado
+              (r) => r.id_reserva_has_libro == idSeleccionado
             );
 
             if (reserva) {
@@ -93,7 +93,7 @@ document.addEventListener("DOMContentLoaded", () => {
           form.addEventListener("submit", (e) => {
             e.preventDefault();
             const formData = new FormData(form);
-            const idSeleccionado = formData.get("reservas_id_reserva");
+            const idSeleccionado = formData.get("id_reserva_has_libro");
 
             if (!idSeleccionado) {
               Swal.fire(
@@ -121,6 +121,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
               );
               const res = await respuesta.text();
+
+              console.log(res.trim());
 
               if (res.trim() === "ok") {
                 Swal.fire({
