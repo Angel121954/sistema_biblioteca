@@ -17,3 +17,20 @@ $(document).ready(function () {
     }
   });
 });
+
+async function cambiarIdioma(idioma) {
+  const respuesta = await fetch(`assets/lang/${idioma}.json`);
+  const translaciones = await respuesta.json();
+  for (const key in translaciones) {
+    let elemento = document.getElementById(key);
+    if (elemento) {
+      elemento.innerHTML = translaciones[key];
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "No fue posible cambiar de idioma",
+      });
+    }
+  }
+}

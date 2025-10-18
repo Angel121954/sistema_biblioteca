@@ -5,21 +5,9 @@ require_once "assets/modelos/MySQL.php";
 $sql = new MySQL();
 $sql->conectar();
 
-$resultado = $sql->efectuarConsulta("SELECT id_libro, cantidad_libro FROM libros");
 $fila = $sql->efectuarConsulta("SELECT l.id_libro, l.titulo_libro, l.autor_libro,
                     l.isbn_libro, l.categoria_libro, l.disponibilidad_libro, l.cantidad_libro 
                     FROM libros AS l");
-
-while ($libro = $resultado->fetch_assoc()) {
-    $id_libro = intval($libro["id_libro"]);
-    $cantidad = intval($libro["cantidad_libro"]);
-
-    if ($cantidad === 0) {
-        $sql->efectuarConsulta("UPDATE libros 
-                                SET disponibilidad_libro = 'Sin ejemplares'
-                                WHERE id_libro = $id_libro");
-    }
-}
 
 $id_usuario = $_SESSION["id_usuario"];
 $usuario_result = $sql->efectuarConsulta("SELECT * FROM usuarios WHERE id_usuario = $id_usuario");

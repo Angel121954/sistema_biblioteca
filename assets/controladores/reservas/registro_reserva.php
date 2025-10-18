@@ -35,16 +35,19 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     $cantidad_libro = intval($fila['cantidad_libro']);
                     $titulo_libro = filter_var($fila['titulo_libro'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
-                    if ($cantidad_libro >= $cantidad) {
+                    if ($cantidad_libro > 0 && $cantidad_libro >= $cantidad) {
                         $sql->efectuarConsulta("
                             INSERT INTO reservas_has_libros
                             (reservas_id_reserva, libros_id_libro, cantidad_libros, estado_has_reserva)
                             VALUES ($id_reserva, $id_libro, $cantidad, 'Activa')
                         ");
 
+                        $nueva_cantidad = $cantidad_libro - $cantidad;
+
                         $sql->efectuarConsulta("
                             UPDATE libros 
-                            SET cantidad_libro = cantidad_libro - $cantidad
+                            SET cantidad_libro = $nueva_cantidad,
+                            disponibilidad_libro = IF($nueva_cantidad = 0, 'Sin ejemplares', 'Disponible')
                             WHERE id_libro = $id_libro
                         ");
                     } else {
