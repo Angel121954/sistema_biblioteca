@@ -7,11 +7,16 @@ $sql->conectar();
 
 $fila = $sql->efectuarConsulta("SELECT l.id_libro, l.titulo_libro, l.autor_libro,
                     l.isbn_libro, l.categoria_libro, l.disponibilidad_libro, l.cantidad_libro 
-                    FROM libros AS l");
+                    FROM libros AS l WHERE disponibilidad_libro = 'Disponible' OR
+                    disponibilidad_libro = 'Sin ejemplares'");
 
 $id_usuario = $_SESSION["id_usuario"];
 $usuario_result = $sql->efectuarConsulta("SELECT * FROM usuarios WHERE id_usuario = $id_usuario");
 $usuario = $usuario_result->fetch_assoc();
+
+$inactivos_result = $sql->efectuarConsulta("SELECT COUNT(*) AS cantidad_inactivos
+                                            FROM libros WHERE disponibilidad_libro = 'Inactivo'");
+$inactivos = $inactivos_result->fetch_assoc();
 
 ?>
 
@@ -329,12 +334,14 @@ $usuario = $usuario_result->fetch_assoc();
 
                         <!-- Nav Item - Messages -->
                         <li class="nav-item dropdown no-arrow mx-1">
-                            <a class="nav-link dropdown-toggle" href="#" id="messagesDropdown" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-envelope fa-fw"></i>
-                                <!-- Counter - Messages -->
-                                <span class="badge badge-danger badge-counter">7</span>
-                            </a>
+                            <?php if ($_SESSION["tipo_usuario"] === "1"): ?>
+                                <a class="nav-link dropdown-toggle" href="#" id="btn_restaurar_libros" role="button"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="bi bi-arrow-counterclockwise"></i>
+                                    <!-- Counter - Messages -->
+                                    <span class="badge badge-danger badge-counter"><?= $inactivos['cantidad_inactivos']; ?></span>
+                                </a>
+                            <?php endif; ?>
                             <!-- Dropdown - Messages -->
                             <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                 aria-labelledby="messagesDropdown">
@@ -592,6 +599,7 @@ $usuario = $usuario_result->fetch_assoc();
             <script src="assets/public/js/libros/registro_libro.js"></script>
             <script src="assets/public/js/libros/editar_libro.js"></script>
             <script src="assets/public/js/libros/eliminar_libro.js"></script>
+            <script src="assets/public/js/libros/restaurar_libro.js"></script>
         <?php endif; ?>
 
         <!-- ============================ -->

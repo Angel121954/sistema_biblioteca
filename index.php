@@ -339,12 +339,14 @@ $inactivos = $inactivos_result->fetch_assoc();
 
                         <!-- Nav Item - Messages -->
                         <li class="nav-item dropdown no-arrow mx-1">
-                            <a class="nav-link dropdown-toggle" id="btn_restaurar_usuarios" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="bi bi-arrow-counterclockwise"></i>
-                                <!-- Counter - Messages -->
-                                <span class="badge badge-danger badge-counter"><?= $inactivos['cantidad_inactivos']; ?></span>
-                            </a>
+                            <?php if ($_SESSION["tipo_usuario"] === "1"): ?>
+                                <a class="nav-link dropdown-toggle" id="btn_restaurar_usuarios" role="button"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="bi bi-arrow-counterclockwise"></i>
+                                    <!-- Counter - Messages -->
+                                    <span class="badge badge-danger badge-counter"><?= $inactivos['cantidad_inactivos']; ?></span>
+                                </a>
+                            <?php endif; ?>
                             <!-- Dropdown - Messages -->
                             <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                 aria-labelledby="messagesDropdown">
