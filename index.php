@@ -21,6 +21,10 @@ $id_usuario = $_SESSION["id_usuario"];
 $usuario_result = $sql->efectuarConsulta("SELECT * FROM usuarios WHERE id_usuario = $id_usuario");
 $usuario = $usuario_result->fetch_assoc();
 
+$inactivos_result = $sql->efectuarConsulta("SELECT COUNT(*) AS cantidad_inactivos FROM usuarios
+                            WHERE estado_usuario = 'Inactivo'");
+$inactivos = $inactivos_result->fetch_assoc();
+
 ?>
 
 <!DOCTYPE html>
@@ -166,7 +170,7 @@ $usuario = $usuario_result->fetch_assoc();
             </li>
 
             <?php if ($_SESSION["tipo_usuario"] === "1"): ?>
-                <!-- Select: Informes -->
+                <!-- Informes en PDF -->
                 <li class="nav-item">
                     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#menu_informes"
                         aria-expanded="true" aria-controls="collapsePages">
@@ -176,10 +180,37 @@ $usuario = $usuario_result->fetch_assoc();
                     <div id="menu_informes" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
                         <div class="bg-white py-2 collapse-inner rounded">
                             <a class="collapse-item" href="assets/controladores/informes/libro_disponible.php">Libros disponibles</a>
+                            <a class="collapse-item" href="assets/controladores/informes/libro_sin_ejemplar.php">Libros sin ejemplares</a>
                             <a class="collapse-item" href="assets/controladores/informes/libro_prestado.php">Libros prestados</a>
+                            <a class="collapse-item" href="assets/controladores/informes/libro_mas_prestado.php">Libros más prestados</a>
+                            <a class="collapse-item" href="assets/controladores/informes/libro_menos_prestado.php">Libros menos prestados</a>
+                            <a class="collapse-item" href="assets/controladores/informes/usuario_moroso.php">Usuarios morosos</a>
                             <a class="collapse-item" href="assets/controladores/informes/historial_prestamo.php">Historial prestamo</a>
+                            <a class="collapse-item" href="assets/controladores/informes/historial_reserva.php">Historial reserva</a>
                         </div>
                     </div>
+                </li>
+
+                <!-- Informes en Excel -->
+                <li class="nav-item">
+                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#menu_informes_excel"
+                        aria-expanded="true" aria-controls="collapsePages">
+                        <i class="fas fa-fw fa-chart-line"></i>
+                        <span>Informes en Excel</span>
+                    </a>
+                    <div id="menu_informes_excel" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                        <div class="bg-white py-2 collapse-inner rounded">
+                            <a class="collapse-item" href="assets/controladores/informes_excel/libro_disponible_excel.php">Libros disponibles</a>
+                            <a class="collapse-item" href="assets/controladores/informes_excel/libro_sin_ejemplar_excel.php">Libros sin ejemplares</a>
+                            <a class="collapse-item" href="assets/controladores/informes_excel/libro_prestado_excel.php">Libros prestados</a>
+                            <a class="collapse-item" href="assets/controladores/informes_excel/libro_mas_prestado_excel.php">Libros más prestados</a>
+                            <a class="collapse-item" href="assets/controladores/informes_excel/libro_menos_prestado_excel.php">Libros menos prestados</a>
+                            <a class="collapse-item" href="assets/controladores/informes_excel/usuario_moroso_excel.php">Usuarios morosos</a>
+                            <a class="collapse-item" href="assets/controladores/informes_excel/historial_prestamo_excel.php">Historial prestamo</a>
+                            <a class="collapse-item" href="assets/controladores/informes_excel/historial_reserva_excel.php">Historial reserva</a>
+                        </div>
+                    </div>
+
                 </li>
 
                 <!-- Enlace: gráficos -->
@@ -308,11 +339,11 @@ $usuario = $usuario_result->fetch_assoc();
 
                         <!-- Nav Item - Messages -->
                         <li class="nav-item dropdown no-arrow mx-1">
-                            <a class="nav-link dropdown-toggle" href="#" id="messagesDropdown" role="button"
+                            <a class="nav-link dropdown-toggle" id="btn_restaurar_usuarios" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-envelope fa-fw"></i>
+                                <i class="bi bi-arrow-counterclockwise"></i>
                                 <!-- Counter - Messages -->
-                                <span class="badge badge-danger badge-counter">7</span>
+                                <span class="badge badge-danger badge-counter"><?= $inactivos['cantidad_inactivos']; ?></span>
                             </a>
                             <!-- Dropdown - Messages -->
                             <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
@@ -561,14 +592,19 @@ $usuario = $usuario_result->fetch_assoc();
     <!-- Gestión de usuarios -->
     <!-- ======================== -->
 
-    <!-- Registro de usuario -->
-    <script src="assets/public/js/usuarios/registro_usuario.js"></script>
+    <?php if ($_SESSION["tipo_usuario"] == "1"): ?>
+        <!-- Registro de usuario -->
+        <script src="assets/public/js/usuarios/registro_usuario.js"></script>
 
-    <!-- Edición de usuario -->
-    <script src="assets/public/js/usuarios/editar_usuario.js"></script>
+        <!-- Edición de usuario -->
+        <script src="assets/public/js/usuarios/editar_usuario.js"></script>
 
-    <!-- Eliminación de usuario -->
-    <script src="assets/public/js/usuarios/eliminar_usuario.js"></script>
+        <!-- Eliminación de usuario -->
+        <script src="assets/public/js/usuarios/eliminar_usuario.js"></script>
+
+        <!-- Restaurar usuarios -->
+        <script src="assets/public/js/usuarios/restaurar_usuario.js"></script>
+    <?php endif; ?>
 
     <!-- Actualización de perfil -->
     <script src="assets/public/js/usuarios/actualizar_perfil.js"></script>

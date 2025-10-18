@@ -19,6 +19,7 @@ $consulta = "
     INNER JOIN reservas_has_libros rl 
     ON rl.reservas_id_reserva = r.id_reserva
     INNER JOIN libros l ON rl.libros_id_libro = l.id_libro
+    WHERE rl.estado_has_reserva = 'Finalizada'
     ORDER BY r.fecha_reserva DESC
 ";
 
@@ -36,8 +37,9 @@ $pdf->Ln(5);
 
 //* Encabezado de la tabla
 $pdf->SetFont('Arial', 'B', 11);
-$pdf->SetFillColor(41, 128, 185);  //* Azul
-$pdf->SetTextColor(255, 255, 255); //* Blanco
+$pdf->SetFillColor(52, 73, 94);
+$pdf->SetDrawColor(41, 128, 185);
+$pdf->SetTextColor(255, 255, 255);
 
 $pdf->Cell(50, 8, utf8_decode('Nombre y Apellido'), 1, 0, 'C', true);
 $pdf->Cell(50, 8, utf8_decode('Título del libro'), 1, 0, 'C', true);
@@ -53,7 +55,7 @@ if ($resultado && $resultado->num_rows > 0) {
         $usuario = utf8_decode($fila['nombre_usuario'] . ' ' . $fila['apellido_usuario']);
         $libro = utf8_decode($fila['titulo_libro']);
         $autor = utf8_decode($fila['autor_libro']);
-        $fecha = utf8_decode($fila['fecha_reserva']);
+        $fecha = utf8_decode(date('d/m/Y', strtotime($fila['fecha_reserva'])));
 
         $pdf->Cell(50, 8, $usuario, 1, 0, 'L');
         $pdf->Cell(50, 8, $libro, 1, 0, 'L');

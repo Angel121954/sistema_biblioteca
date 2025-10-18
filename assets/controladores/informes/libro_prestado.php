@@ -19,7 +19,8 @@ $pdf->Cell(0, 10, utf8_decode('Informe de Libros Prestados'), 0, 1, 'C');
 $pdf->Ln(5);
 
 $pdf->SetFont('Arial', 'B', 10);
-$pdf->SetFillColor(41, 128, 185);
+$pdf->SetFillColor(52, 73, 94);
+$pdf->SetDrawColor(41, 128, 185);
 $pdf->SetTextColor(255, 255, 255);
 $pdf->Cell(10, 8, 'ID', 1, 0, 'C', true);
 $pdf->Cell(50, 8, 'Titulo', 1, 0, 'C', true);
