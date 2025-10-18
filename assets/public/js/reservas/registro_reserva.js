@@ -3,7 +3,7 @@ document
   .addEventListener("click", function (e) {
     console.log("boton detectado");
     const btn = e.currentTarget;
-    const libros = JSON.parse(btn.dataset.libros); // Recibe los libros del atributo data-libros
+    const libros = JSON.parse(btn.dataset.libros);
 
     Swal.fire({
       title: "Nueva reserva",
@@ -25,7 +25,6 @@ document
       cancelButtonText: "Cancelar",
 
       didOpen: () => {
-        // Llenar el primer select con los libros del dataset
         const selectLibro = document.querySelector("#libros");
         libros.forEach((l) => {
           const option = document.createElement("option");
@@ -34,7 +33,6 @@ document
           selectLibro.appendChild(option);
         });
 
-        // Botón para agregar más selects dinámicos
         document.querySelector("#btnAgregar").addEventListener("click", () => {
           const container = document.querySelector("#librosContainer");
           const nuevoLibro = document.createElement("div");
@@ -56,7 +54,6 @@ document
 
           container.appendChild(nuevoLibro);
 
-          // Evento eliminar
           nuevoLibro
             .querySelector(".btnEliminar")
             .addEventListener("click", () => {
@@ -69,7 +66,6 @@ document
         console.log("enviando datos al servidor..");
         const formData = new FormData();
 
-        // Puedes dejar id_usuario en 0, PHP lo ignora y usa $_SESSION
         formData.append("id_usuario", 0);
 
         const selects = document.querySelectorAll(
