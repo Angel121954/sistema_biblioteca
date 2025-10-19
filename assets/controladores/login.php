@@ -14,7 +14,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $contrasena = trim($_POST["contrasena_usuario"]);
 
         $usuarios = $sql->efectuarConsulta("SELECT * FROM usuarios
-                    WHERE nombre_usuario = '$nombre'");
+                    WHERE nombre_usuario = '$nombre' AND estado_usuario = 'Activo'");
 
         $fila = mysqli_fetch_assoc($usuarios);
         if ($fila && password_verify($contrasena, $fila["contrasena_usuario"])) {

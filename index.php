@@ -286,13 +286,13 @@ $inactivos = $inactivos_result->fetch_assoc();
                             </div>
                         </li>
 
-                        <!-- Nav Item - Alerts -->
+                        <!-- Nav Item - Papelera usuarios -->
                         <li class="nav-item dropdown no-arrow mx-1">
-                            <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
+                            <a class="nav-link dropdown-toggle" href="#" id="btn_papelera_usuarios" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-bell fa-fw"></i>
+                                <i class="bi bi-trash3-fill"></i>
                                 <!-- Counter - Alerts -->
-                                <span class="badge badge-danger badge-counter">3+</span>
+                                <span class="badge badge-danger badge-counter"><?= $inactivos['cantidad_inactivos']; ?></span>
                             </a>
                             <!-- Dropdown - Alerts -->
                             <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
@@ -337,7 +337,7 @@ $inactivos = $inactivos_result->fetch_assoc();
                             </div>
                         </li>
 
-                        <!-- Nav Item - Messages -->
+                        <!-- Nav Item - Restaurar usuarios -->
                         <li class="nav-item dropdown no-arrow mx-1">
                             <?php if ($_SESSION["tipo_usuario"] === "1"): ?>
                                 <a class="nav-link dropdown-toggle" id="btn_restaurar_usuarios" role="button"
@@ -606,6 +606,9 @@ $inactivos = $inactivos_result->fetch_assoc();
 
         <!-- Restaurar usuarios -->
         <script src="assets/public/js/usuarios/restaurar_usuario.js"></script>
+
+        <!-- Papelera usuarios -->
+        <script src="assets/public/js/usuarios/vaciar_papelera_usuario.js"></script>
     <?php endif; ?>
 
     <!-- Actualización de perfil -->

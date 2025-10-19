@@ -28,6 +28,7 @@ function eliminarLibro(id_libro) {
         }
       );
       const res = await respuesta.text();
+      console.log(res);
       if (res.trim() === "ok") {
         Swal.fire(
           "Eliminado",
