@@ -1,6 +1,12 @@
 <?php
 
 session_start();
+
+if (!isset($_SESSION["id_usuario"])) {
+    header("Location: login.php");
+    exit;
+}
+
 require_once "assets/modelos/MySQL.php";
 $sql = new MySQL();
 $sql->conectar();
@@ -482,22 +488,22 @@ $inactivos = $inactivos_result->fetch_assoc();
                                             <tbody>
                                                 <?php while ($filas = $fila->fetch_assoc()): ?>
                                                     <tr>
-                                                        <th><?php echo $filas["id_usuario"]; ?></th>
-                                                        <th><?php echo $filas["nombre_usuario"]; ?></th>
-                                                        <th><?php echo $filas["apellido_usuario"]; ?></th>
-                                                        <th><?php echo $filas["email_usuario"]; ?></th>
-                                                        <th><?php echo $filas["nombre_tipo_usuario"]; ?></th>
+                                                        <th><?= $filas["id_usuario"]; ?></th>
+                                                        <th><?= $filas["nombre_usuario"]; ?></th>
+                                                        <th><?= $filas["apellido_usuario"]; ?></th>
+                                                        <th><?= $filas["email_usuario"]; ?></th>
+                                                        <th><?= $filas["nombre_tipo_usuario"]; ?></th>
                                                         <?php if ($_SESSION["tipo_usuario"] === "1"): ?>
                                                             <td class="text-center">
 
-                                                                <button class="btn btn-sm btn-warning" onclick="editarUsuario('<?php echo htmlspecialchars($filas['id_usuario'], ENT_QUOTES, 'UTF-8'); ?>',
-                                                            '<?php echo htmlspecialchars($filas['nombre_usuario'], ENT_QUOTES, 'UTF-8'); ?>',
-                                                            '<?php echo htmlspecialchars($filas['apellido_usuario'], ENT_QUOTES, 'UTF-8'); ?>',
-                                                            '<?php echo htmlspecialchars($filas['email_usuario'], ENT_QUOTES, 'UTF-8'); ?>',
-                                                            '<?php echo htmlspecialchars($filas['contrasena_usuario'], ENT_QUOTES, 'UTF-8'); ?>',
+                                                                <button class="btn btn-sm btn-warning" onclick="editarUsuario('<?= htmlspecialchars($filas['id_usuario'], ENT_QUOTES, 'UTF-8'); ?>',
+                                                            '<?= htmlspecialchars($filas['nombre_usuario'], ENT_QUOTES, 'UTF-8'); ?>',
+                                                            '<?= htmlspecialchars($filas['apellido_usuario'], ENT_QUOTES, 'UTF-8'); ?>',
+                                                            '<?= htmlspecialchars($filas['email_usuario'], ENT_QUOTES, 'UTF-8'); ?>',
+                                                            '<?= htmlspecialchars($filas['contrasena_usuario'], ENT_QUOTES, 'UTF-8'); ?>',
                                                             this.dataset.tiposUsuarios)"
-                                                                    data-tipos-usuarios='<?php echo htmlspecialchars($tipos_usuarios_json, ENT_QUOTES, "UTF-8"); ?>'><i class="bi bi-pencil-square"></i></button>
-                                                                <button class="btn btn-sm btn-danger" onclick="eliminarUsuario('<?php echo $filas['id_usuario']; ?>')">
+                                                                    data-tipos-usuarios='<?= htmlspecialchars($tipos_usuarios_json, ENT_QUOTES, "UTF-8"); ?>'><i class="bi bi-pencil-square"></i></button>
+                                                                <button class="btn btn-sm btn-danger" onclick="eliminarUsuario('<?= $filas['id_usuario']; ?>')">
                                                                     <i class="bi bi-trash"></i>
                                                                 </button>
 

@@ -7,24 +7,14 @@ $sql->conectar();
 $id_usuario = intval($_SESSION["id_usuario"]);
 
 //* consulta para poderlo imprimir en la tabla
-$prestamos_general = $sql->efectuarConsulta("SELECT p.id_prestamo, p.fecha_prestamo, p.fecha_devolucion,
+$prestamos = $sql->efectuarConsulta("SELECT p.id_prestamo, p.fecha_prestamo, p.fecha_devolucion,
                         r.fecha_reserva, l.titulo_libro, u.nombre_usuario
                         FROM prestamos p INNER JOIN reservas_has_libros rl 
                         ON p.fk_reserva_has_libro = rl.id_reserva_has_libro
                         INNER JOIN reservas r ON rl.reservas_id_reserva = r.id_reserva
                         INNER JOIN usuarios u ON r.usuarios_id_usuario = u.id_usuario
                         INNER JOIN libros l ON rl.libros_id_libro = l.id_libro
-                        ORDER BY p.id_prestamo");
-
-$prestamos_usuario = $sql->efectuarConsulta("SELECT p.id_prestamo, p.fecha_prestamo, p.fecha_devolucion,
-                        r.fecha_reserva, l.titulo_libro, u.nombre_usuario
-                        FROM prestamos p INNER JOIN reservas_has_libros rl 
-                        ON p.fk_reserva_has_libro = rl.id_reserva_has_libro
-                        INNER JOIN reservas r ON rl.reservas_id_reserva = r.id_reserva
-                        INNER JOIN usuarios u ON r.usuarios_id_usuario = u.id_usuario
-                        INNER JOIN libros l ON rl.libros_id_libro = l.id_libro
-                        WHERE u.id_usuario = $id_usuario
-                        ORDER BY p.id_prestamo");
+                        WHERE p.estado_prestamo = 'Activo' ORDER BY p.id_prestamo");
 
 $usuario_result = $sql->efectuarConsulta("SELECT * FROM usuarios WHERE id_usuario = $id_usuario");
 $usuario = $usuario_result->fetch_assoc();
@@ -44,6 +34,10 @@ while ($valor = $reservas_result->fetch_assoc()) {
 
 //* convertir las fechas en formato JSON para poderlo leer en el public/js/prestamos/registro_prestamo.js
 $reservas_json = json_encode($reservas, JSON_UNESCAPED_UNICODE);
+
+$inactivos_result = $sql->efectuarConsulta("SELECT COUNT(*) AS cantidad_inactivos FROM prestamos p
+                                    WHERE p.estado_prestamo = 'Inactivo'");
+$inactivos = $inactivos_result->fetch_assoc();
 
 ?>
 
@@ -358,125 +352,142 @@ $reservas_json = json_encode($reservas, JSON_UNESCAPED_UNICODE);
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="fas fa-search fa-fw"></i>
                             </a>
-                            <!-- Parte buscador -->
-
-                        </li>
-
-                        <!-- Nav Item - Alerts -->
-                        <li class="nav-item dropdown no-arrow mx-1">
-                            <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-bell fa-fw"></i>
-                                <!-- Counter - Alerts -->
-                                <span class="badge badge-danger badge-counter">3+</span>
-                            </a>
-                            <!-- Dropdown - Alerts -->
-                            <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
-                                aria-labelledby="alertsDropdown">
-                                <h6 class="dropdown-header">
-                                    Alerts Center
-                                </h6>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="mr-3">
-                                        <div class="icon-circle bg-primary">
-                                            <i class="fas fa-file-alt text-white"></i>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div class="small text-gray-500">December 12, 2019</div>
-                                        <span class="font-weight-bold">A new monthly report is ready to download!</span>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="mr-3">
-                                        <div class="icon-circle bg-success">
-                                            <i class="fas fa-donate text-white"></i>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div class="small text-gray-500">December 7, 2019</div>
-                                        $290.29 has been deposited into your account!
-                                    </div>
-                                </a>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="mr-3">
-                                        <div class="icon-circle bg-warning">
-                                            <i class="fas fa-exclamation-triangle text-white"></i>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div class="small text-gray-500">December 2, 2019</div>
-                                        Spending Alert: We've noticed unusually high spending for your account.
-                                    </div>
-                                </a>
-                                <a class="dropdown-item text-center small text-gray-500" href="#">Show All Alerts</a>
-                            </div>
-                        </li>
-
-                        <!-- Nav Item - Messages -->
-                        <li class="nav-item dropdown no-arrow mx-1">
-                            <a class="nav-link dropdown-toggle" href="#" id="messagesDropdown" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-envelope fa-fw"></i>
-                                <!-- Counter - Messages -->
-                                <span class="badge badge-danger badge-counter">7</span>
-                            </a>
                             <!-- Dropdown - Messages -->
-                            <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
-                                aria-labelledby="messagesDropdown">
-                                <h6 class="dropdown-header">
-                                    Message Center
-                                </h6>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="img/undraw_profile_1.svg"
-                                            alt="...">
-                                        <div class="status-indicator bg-success"></div>
+                            <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in"
+                                aria-labelledby="searchDropdown">
+                                <form class="form-inline mr-auto w-100 navbar-search">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control bg-light border-0 small"
+                                            placeholder="Search for..." aria-label="Search"
+                                            aria-describedby="basic-addon2">
+                                        <div class="input-group-append">
+                                            <button class="btn btn-primary" type="button">
+                                                <i class="fas fa-search fa-sm"></i>
+                                            </button>
+                                        </div>
                                     </div>
-                                    <div class="font-weight-bold">
-                                        <div class="text-truncate">Hi there! I am wondering if you can help me with a
-                                            problem I've been having.</div>
-                                        <div class="small text-gray-500">Emily Fowler · 58m</div>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="img/undraw_profile_2.svg"
-                                            alt="...">
-                                        <div class="status-indicator"></div>
-                                    </div>
-                                    <div>
-                                        <div class="text-truncate">I have the photos that you ordered last month, how
-                                            would you like them sent to you?</div>
-                                        <div class="small text-gray-500">Jae Chun · 1d</div>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="img/undraw_profile_3.svg"
-                                            alt="...">
-                                        <div class="status-indicator bg-warning"></div>
-                                    </div>
-                                    <div>
-                                        <div class="text-truncate">Last month's report looks great, I am very happy with
-                                            the progress so far, keep up the good work!</div>
-                                        <div class="small text-gray-500">Morgan Alvarez · 2d</div>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="dropdown-list-image mr-3">
-                                        <img src="assets/img/fondo_libro.jpg" alt="Libro">
-                                        <div class="status-indicator bg-success"></div>
-                                    </div>
-                                    <div>
-                                        <div class="text-truncate">Am I a good boy? The reason I ask is because someone
-                                            told me that people say this to all dogs, even if they aren't good...</div>
-                                        <div class="small text-gray-500">Chicken the Dog · 2w</div>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item text-center small text-gray-500" href="#">Read More Messages</a>
+                                </form>
                             </div>
                         </li>
+
+                        <?php if ($_SESSION["tipo_usuario"] === "1"): ?>
+                            <!-- Nav Item - Papelera usuarios -->
+                            <li class="nav-item dropdown no-arrow mx-1">
+                                <a class="nav-link dropdown-toggle" href="#" id="btn_papelera_prestamos" role="button"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="bi bi-trash3-fill"></i>
+                                    <!-- Counter - Alerts -->
+                                    <span class="badge badge-danger badge-counter"><?= $inactivos['cantidad_inactivos']; ?></span>
+                                </a>
+                                <!-- Dropdown - Alerts -->
+                                <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                                    aria-labelledby="alertsDropdown">
+                                    <h6 class="dropdown-header">
+                                        Alerts Center
+                                    </h6>
+                                    <a class="dropdown-item d-flex align-items-center" href="#">
+                                        <div class="mr-3">
+                                            <div class="icon-circle bg-primary">
+                                                <i class="fas fa-file-alt text-white"></i>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="small text-gray-500">December 12, 2019</div>
+                                            <span class="font-weight-bold">A new monthly report is ready to download!</span>
+                                        </div>
+                                    </a>
+                                    <a class="dropdown-item d-flex align-items-center" href="#">
+                                        <div class="mr-3">
+                                            <div class="icon-circle bg-success">
+                                                <i class="fas fa-donate text-white"></i>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="small text-gray-500">December 7, 2019</div>
+                                            $290.29 has been deposited into your account!
+                                        </div>
+                                    </a>
+                                    <a class="dropdown-item d-flex align-items-center" href="#">
+                                        <div class="mr-3">
+                                            <div class="icon-circle bg-warning">
+                                                <i class="fas fa-exclamation-triangle text-white"></i>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="small text-gray-500">December 2, 2019</div>
+                                            Spending Alert: We've noticed unusually high spending for your account.
+                                        </div>
+                                    </a>
+                                    <a class="dropdown-item text-center small text-gray-500" href="#">Show All Alerts</a>
+                                </div>
+                            </li>
+
+                            <!-- Nav Item - Restaurar usuarios -->
+                            <li class="nav-item dropdown no-arrow mx-1">
+                                <a class="nav-link dropdown-toggle" id="btn_restaurar_prestamos" role="button"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="bi bi-arrow-counterclockwise"></i>
+                                    <!-- Counter - Messages -->
+                                    <span class="badge badge-danger badge-counter"><?= $inactivos['cantidad_inactivos']; ?></span>
+                                </a>
+
+                                <!-- Dropdown - Messages -->
+                                <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                                    aria-labelledby="messagesDropdown">
+                                    <h6 class="dropdown-header">
+                                        Message Center
+                                    </h6>
+                                    <a class="dropdown-item d-flex align-items-center" href="#">
+                                        <div class="dropdown-list-image mr-3">
+                                            <img class="rounded-circle" src="img/undraw_profile_1.svg"
+                                                alt="...">
+                                            <div class="status-indicator bg-success"></div>
+                                        </div>
+                                        <div class="font-weight-bold">
+                                            <div class="text-truncate">Hi there! I am wondering if you can help me with a
+                                                problem I've been having.</div>
+                                            <div class="small text-gray-500">Emily Fowler · 58m</div>
+                                        </div>
+                                    </a>
+                                    <a class="dropdown-item d-flex align-items-center" href="#">
+                                        <div class="dropdown-list-image mr-3">
+                                            <img class="rounded-circle" src="img/undraw_profile_2.svg"
+                                                alt="...">
+                                            <div class="status-indicator"></div>
+                                        </div>
+                                        <div>
+                                            <div class="text-truncate">I have the photos that you ordered last month, how
+                                                would you like them sent to you?</div>
+                                            <div class="small text-gray-500">Jae Chun · 1d</div>
+                                        </div>
+                                    </a>
+                                    <a class="dropdown-item d-flex align-items-center" href="#">
+                                        <div class="dropdown-list-image mr-3">
+                                            <img class="rounded-circle" src="img/undraw_profile_3.svg"
+                                                alt="...">
+                                            <div class="status-indicator bg-warning"></div>
+                                        </div>
+                                        <div>
+                                            <div class="text-truncate">Last month's report looks great, I am very happy with
+                                                the progress so far, keep up the good work!</div>
+                                            <div class="small text-gray-500">Morgan Alvarez · 2d</div>
+                                        </div>
+                                    </a>
+                                    <a class="dropdown-item d-flex align-items-center" href="#">
+                                        <div class="dropdown-list-image mr-3">
+                                            <img src="assets/img/fondo_libro.jpg" alt="Libro">
+                                            <div class="status-indicator bg-success"></div>
+                                        </div>
+                                        <div>
+                                            <div class="text-truncate">Am I a good boy? The reason I ask is because someone
+                                                told me that people say this to all dogs, even if they aren't good...</div>
+                                            <div class="small text-gray-500">Chicken the Dog · 2w</div>
+                                        </div>
+                                    </a>
+                                    <a class="dropdown-item text-center small text-gray-500" href="#">Read More Messages</a>
+                                </div>
+                            </li>
+                        <?php endif; ?>
 
                         <div class="topbar-divider d-none d-sm-block"></div>
 
@@ -546,55 +557,41 @@ $reservas_json = json_encode($reservas, JSON_UNESCAPED_UNICODE);
                                 </div>
                                 <div class="card-body">
                                     <div class="table-responsive">
-                                        <?php if ($_SESSION["tipo_usuario"] === "1") { ?>
-                                            <table class="table table-bordered tabla_dt" id="tbl_prestamos" width="100%" cellspacing="0">
-                                                <thead>
+
+                                        <table class="table table-bordered tabla_dt" id="tbl_prestamos" width="100%" cellspacing="0">
+                                            <thead>
+                                                <tr>
+                                                    <th>ID prestamo</th>
+                                                    <th>Fecha reserva</th>
+                                                    <th>Fecha prestamo</th>
+                                                    <th>Fecha devolución</th>
+                                                    <th>Nombre usuario</th>
+                                                    <th>Titulo libro</th>
+                                                    <?php if ($_SESSION["tipo_usuario"] === "1"): ?>
+                                                        <th>Acciones</th>
+                                                    <?php endif; ?>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php while ($fila = $prestamos->fetch_assoc()): ?>
                                                     <tr>
-                                                        <th>ID prestamo</th>
-                                                        <th>Fecha reserva</th>
-                                                        <th>Fecha prestamo</th>
-                                                        <th>Fecha devolución</th>
-                                                        <th>Nombre usuario</th>
-                                                        <th>Titulo libro</th>
+                                                        <th><?php echo $fila["id_prestamo"]; ?></th>
+                                                        <th><?php echo $fila["fecha_reserva"]; ?></th>
+                                                        <th><?php echo $fila["fecha_prestamo"]; ?></th>
+                                                        <th><?php echo $fila["fecha_devolucion"]; ?></th>
+                                                        <th><?php echo $fila["nombre_usuario"]; ?></th>
+                                                        <th><?php echo $fila["titulo_libro"]; ?></th>
+                                                        <?php if ($_SESSION["tipo_usuario"] === "1"): ?>
+                                                            <td class="text-center">
+                                                                <button class="btn btn-sm btn-danger" onclick="eliminarPrestamo('<?php echo $fila['id_prestamo']; ?>')">
+                                                                    <i class="bi bi-trash"></i>
+                                                                </button>
+                                                            </td>
+                                                        <?php endif; ?>
                                                     </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <?php while ($fila = $prestamos_general->fetch_assoc()): ?>
-                                                        <tr>
-                                                            <th><?php echo $fila["id_prestamo"]; ?></th>
-                                                            <th><?php echo $fila["fecha_reserva"]; ?></th>
-                                                            <th><?php echo $fila["fecha_prestamo"]; ?></th>
-                                                            <th><?php echo $fila["fecha_devolucion"]; ?></th>
-                                                            <th><?php echo $fila["nombre_usuario"]; ?></th>
-                                                            <th><?php echo $fila["titulo_libro"]; ?></th>
-                                                        </tr>
-                                                    <?php endwhile; ?>
-                                                </tbody>
-                                            </table>
-                                        <?php } else { ?>
-                                            <table class="table table-bordered" id="tbl_prestamos1" width="100%" cellspacing="0">
-                                                <thead>
-                                                    <tr>
-                                                        <th>ID prestamo</th>
-                                                        <th>Fecha prestamo</th>
-                                                        <th>Fecha devolución</th>
-                                                        <th>Nombre usuario</th>
-                                                        <th>Titulo libro</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <?php while ($fila = $prestamos_usuario->fetch_assoc()): ?>
-                                                        <tr>
-                                                            <th><?php echo $fila["id_prestamo"]; ?></th>
-                                                            <th><?php echo $fila["fecha_prestamo"]; ?></th>
-                                                            <th><?php echo $fila["fecha_devolucion"]; ?></th>
-                                                            <th><?php echo $fila["nombre_usuario"]; ?></th>
-                                                            <th><?php echo $fila["titulo_libro"]; ?></th>
-                                                        </tr>
-                                                    <?php endwhile; ?>
-                                                </tbody>
-                                            </table>
-                                        <?php } ?>
+                                                <?php endwhile; ?>
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
                             </div>
@@ -681,6 +678,9 @@ $reservas_json = json_encode($reservas, JSON_UNESCAPED_UNICODE);
     <!-- ============================ -->
     <?php if ($_SESSION["tipo_usuario"] === "1"): ?>
         <script src="assets/public/js/prestamos/registro_prestamo.js"></script>
+        <script src="assets/public/js/prestamos/eliminar_prestamo.js"></script>
+        <script src="assets/public/js/prestamos/restaurar_prestamo.js"></script>
+        <script src="assets/public/js/prestamos/vaciar_papelera_prestamo.js"></script>
     <?php endif; ?>
     <script src="assets/public/js/usuarios/actualizar_perfil.js"></script>
 
@@ -690,7 +690,7 @@ $reservas_json = json_encode($reservas, JSON_UNESCAPED_UNICODE);
     <!--DataTables local-->
     <script src="assets/libs/datatables/datatables.min.js"></script>
     <script src="assets/funcionalidad/tablas.js"></script>
-    <?php if ($_SESSION["tipo_usuario"] !== "1" && $prestamos_usuario->num_rows > 0): ?>
+    <?php if ($_SESSION["tipo_usuario"] !== "1" && $prestamos->num_rows > 0): ?>
         <script>
             document.addEventListener("DOMContentLoaded", () => {
                 const toast = document.getElementById("toast");
