@@ -343,6 +343,14 @@ $inactivos = $inactivos_result->fetch_assoc();
                             </div>
                         </li>
 
+                        <li class="nav-item dropdown no-arrow">
+                            <a class="nav-link dropdown-toggle" href="#" id="btn_restaurar_uno" role="button"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="bi bi-person-up"></i>
+                                <span class="badge badge-danger badge-counter"><?= $inactivos['cantidad_inactivos']; ?></span>
+                            </a>
+                        </li>
+
                         <!-- Nav Item - Restaurar usuarios -->
                         <li class="nav-item dropdown no-arrow mx-1">
                             <?php if ($_SESSION["tipo_usuario"] === "1"): ?>
@@ -612,6 +620,9 @@ $inactivos = $inactivos_result->fetch_assoc();
 
         <!-- Restaurar usuarios -->
         <script src="assets/public/js/usuarios/restaurar_usuario.js"></script>
+
+        <!--Restaurar uno-->
+        <script src="assets/public/js/usuarios/restaurar_un_usuario.js"></script>
 
         <!-- Papelera usuarios -->
         <script src="assets/public/js/usuarios/vaciar_papelera_usuario.js"></script>

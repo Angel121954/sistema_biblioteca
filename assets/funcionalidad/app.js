@@ -18,7 +18,7 @@ $(document).ready(function () {
   });
 });
 
-async function cambiarIdioma(idioma) {
+/* async function cambiarIdioma(idioma) {
   const respuesta = await fetch(`assets/lang/${idioma}.json`);
   const translaciones = await respuesta.json();
   for (const key in translaciones) {
@@ -33,4 +33,4 @@ async function cambiarIdioma(idioma) {
       });
     }
   }
-}
+} */

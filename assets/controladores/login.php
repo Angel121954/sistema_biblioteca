@@ -10,7 +10,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         !empty($_POST["nombre_usuario"]) && !empty($_POST["contrasena_usuario"])
     ) {
         //* variables
-        $nombre = htmlspecialchars(trim($_POST["nombre_usuario"]));
+        $nombre = filter_var($_POST["nombre_usuario"], FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "";
         $contrasena = trim($_POST["contrasena_usuario"]);
 
         $usuarios = $sql->efectuarConsulta("SELECT * FROM usuarios

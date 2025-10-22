@@ -332,6 +332,15 @@ $inactivos = $inactivos_result->fetch_assoc();
                                 </div>
                             </li>
 
+                            <!--Restaurar un libro-->
+                            <li class="nav-item dropdown no-arrow">
+                                <a class="nav-link dropdown-toggle" href="#" id="btn_restaurar_un_libro" role="button"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="bi bi-journal-arrow-up"></i>
+                                    <span class="badge badge-danger badge-counter"><?= $inactivos['cantidad_inactivos']; ?></span>
+                                </a>
+                            </li>
+
                             <!-- Nav Item - Restaurar libros -->
                             <li class="nav-item dropdown no-arrow mx-1">
                                 <a class="nav-link dropdown-toggle" href="#" id="btn_restaurar_libros" role="button"
@@ -600,6 +609,7 @@ $inactivos = $inactivos_result->fetch_assoc();
             <script src="assets/public/js/libros/eliminar_libro.js"></script>
             <script src="assets/public/js/libros/restaurar_libro.js"></script>
             <script src="assets/public/js/libros/vaciar_papelera_libro.js"></script>
+            <script src="assets/public/js/libros/restaurar_un_libro.js"></script>
         <?php endif; ?>
 
         <!-- ============================ -->
