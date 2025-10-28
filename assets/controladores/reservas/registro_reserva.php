@@ -21,7 +21,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             ");
             $id_reserva = $sql->ultimoIdInsertado();
 
-            //* Insertar en la tabla pivote reservas_has_libros
+
             for ($i = 0; $i < count($libros); $i++) {
                 $id_libro = intval($libros[$i]);
                 $cantidad = intval($cantidades[$i]);
@@ -36,6 +36,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     $titulo_libro = filter_var($fila['titulo_libro'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
                     if ($cantidad_libro > 0 && $cantidad_libro >= $cantidad) {
+                        //* Insertar en la tabla pivote reservas_has_libros
                         $sql->efectuarConsulta("
                             INSERT INTO reservas_has_libros
                             (reservas_id_reserva, libros_id_libro, cantidad_libros, estado_has_reserva)
