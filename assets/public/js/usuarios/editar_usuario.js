@@ -1,11 +1,4 @@
-function editarUsuario(
-  id,
-  nombre,
-  apellido,
-  email,
-  contrasena,
-  tiposUsuariosStr
-) {
+function editarUsuario(id, nombre, apellido, email, tiposUsuariosStr) {
   const tipos_usuarios = JSON.parse(tiposUsuariosStr);
 
   let opcionesTiposUsuario = `
@@ -43,13 +36,6 @@ function editarUsuario(
                  id="email_usuario" placeholder="ejemplo@correo.com" required value="${email}">
         </div>
 
-        <div class="mb-3">
-          <label for="contrasena_usuario" class="form-label fw-semibold">Contraseña</label>
-          <input id="contrasena_usuario" name="contrasena_usuario" type="password"
-                 class="form-control form-control-lg shadow-sm" placeholder="Ingrese la contraseña"
-                 required value="${contrasena}">
-        </div>
-
         <div class="mb-4">
           <label for="tipo_usuario" class="form-label fw-semibold">Tipo de usuario</label>
           <select id="tipo_usuario" name="tipo_usuario" class="form-control form-select-lg shadow-sm" required>
@@ -75,6 +61,40 @@ function editarUsuario(
       form.addEventListener("submit", async (e) => {
         e.preventDefault();
 
+        // ✅ Obtener valores y validarlos antes de enviar
+        const nombre = form.nombre_usuario.value.trim();
+        const apellido = form.apellido_usuario.value.trim();
+        const tipo = form.tipo_usuario.value;
+
+        // Validaciones básicas
+        if (nombre.length < 2) {
+          Swal.fire(
+            "Campo inválido",
+            "El nombre debe tener al menos 2 caracteres.",
+            "warning"
+          );
+          return;
+        }
+
+        if (apellido.length < 2) {
+          Swal.fire(
+            "Campo inválido",
+            "El apellido debe tener al menos 2 caracteres.",
+            "warning"
+          );
+          return;
+        }
+
+        if (!tipo) {
+          Swal.fire(
+            "Campo inválido",
+            "Debe seleccionar un tipo de usuario.",
+            "warning"
+          );
+          return;
+        }
+
+        // Si todo es válido
         const formData = new FormData(form);
 
         Swal.fire({
@@ -84,25 +104,35 @@ function editarUsuario(
           didOpen: () => Swal.showLoading(),
         });
 
-        const respuesta = await fetch(
-          "assets/controladores/usuarios/editar_usuario.php",
-          {
-            method: "POST",
-            body: formData,
-          }
-        );
-        const res = await respuesta.text();
-        console.log("Respuesta del servidor:", res);
+        try {
+          const respuesta = await fetch(
+            "assets/controladores/usuarios/editar_usuario.php",
+            {
+              method: "POST",
+              body: formData,
+            }
+          );
 
-        if (res.trim() === "ok") {
-          Swal.fire({
-            title: "Actualización exitosa",
-            text: "El usuario ha sido modificado correctamente.",
-            icon: "success",
-            confirmButtonText: "Aceptar",
-          }).then(() => location.reload());
-        } else {
-          Swal.fire("Error", res, "error");
+          const res = await respuesta.text();
+          console.log("Respuesta del servidor:", res);
+
+          if (res.trim() === "ok") {
+            Swal.fire({
+              title: "Actualización exitosa",
+              text: "El usuario ha sido modificado correctamente.",
+              icon: "success",
+              confirmButtonText: "Aceptar",
+            }).then(() => location.reload());
+          } else {
+            Swal.fire(
+              "Error",
+              res || "No se pudo actualizar el usuario.",
+              "error"
+            );
+          }
+        } catch (error) {
+          console.error(error);
+          Swal.fire("Error", "No se pudo conectar con el servidor.", "error");
         }
       });
     },

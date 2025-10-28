@@ -508,7 +508,6 @@ $inactivos = $inactivos_result->fetch_assoc();
                                                             '<?= htmlspecialchars($filas['nombre_usuario'], ENT_QUOTES, 'UTF-8'); ?>',
                                                             '<?= htmlspecialchars($filas['apellido_usuario'], ENT_QUOTES, 'UTF-8'); ?>',
                                                             '<?= htmlspecialchars($filas['email_usuario'], ENT_QUOTES, 'UTF-8'); ?>',
-                                                            '<?= htmlspecialchars($filas['contrasena_usuario'], ENT_QUOTES, 'UTF-8'); ?>',
                                                             this.dataset.tiposUsuarios)"
                                                                     data-tipos-usuarios='<?= htmlspecialchars($tipos_usuarios_json, ENT_QUOTES, "UTF-8"); ?>'><i class="bi bi-pencil-square"></i></button>
                                                                 <button class="btn btn-sm btn-danger" onclick="eliminarUsuario('<?= $filas['id_usuario']; ?>')">

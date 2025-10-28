@@ -422,6 +422,15 @@ $inactivos = $inactivos_result->fetch_assoc();
                                 </div>
                             </li>
 
+                            <!--Restaurar un prestamo-->
+                            <li class="nav-item dropdown no-arrow">
+                                <a class="nav-link dropdown-toggle" href="#" id="btn_restaurar_un_prestamo" role="button"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="bi bi-journal-arrow-up"></i>
+                                    <span class="badge badge-danger badge-counter"><?= $inactivos['cantidad_inactivos']; ?></span>
+                                </a>
+                            </li>
+
                             <!-- Nav Item - Restaurar usuarios -->
                             <li class="nav-item dropdown no-arrow mx-1">
                                 <a class="nav-link dropdown-toggle" id="btn_restaurar_prestamos" role="button"
@@ -681,6 +690,7 @@ $inactivos = $inactivos_result->fetch_assoc();
         <script src="assets/public/js/prestamos/eliminar_prestamo.js"></script>
         <script src="assets/public/js/prestamos/restaurar_prestamo.js"></script>
         <script src="assets/public/js/prestamos/vaciar_papelera_prestamo.js"></script>
+        <script src="assets/public/js/prestamos/restaurar_un_prestamo.js"></script>
     <?php endif; ?>
     <script src="assets/public/js/usuarios/actualizar_perfil.js"></script>
 

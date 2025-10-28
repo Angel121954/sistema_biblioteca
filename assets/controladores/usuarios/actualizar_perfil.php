@@ -5,10 +5,10 @@ $sql = new MySQL();
 $sql->conectar();
 
 $id_usuario = intval($_SESSION["id_usuario"]);
-$nombre = $_POST["nombre"];
-$apellido = $_POST["apellido"];
-$email = $_POST["email"];
-$contrasena = $_POST["contrasena"];
+$nombre = filter_var($_POST["nombre"], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+$apellido = filter_var($_POST["apellido"], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+$email = filter_var($_POST["email"], FILTER_VALIDATE_EMAIL);
+$contrasena = trim($_POST["contrasena"]);
 
 if ($contrasena != "") {
     $hash = password_hash($contrasena, PASSWORD_BCRYPT);
