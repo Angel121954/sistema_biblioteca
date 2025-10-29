@@ -6,8 +6,12 @@ $sql->conectar();
 
 if (isset($_POST["fecha_prestamo"]) && !empty($_POST["fecha_prestamo"])) {
     $fecha = $_POST["fecha_prestamo"];
-    $sql->efectuarConsulta("UPDATE prestamos SET estado_prestamo = 'Activo'
+    $restaurar = $sql->efectuarConsulta("UPDATE prestamos SET estado_prestamo = 'Activo'
                             WHERE DATE(fecha_prestamo) = '$fecha'");
-    echo "ok";
+    if ($restaurar) {
+        echo "ok";
+    } else {
+        echo "No se pudo restaurar el prestamo pedido.";
+    }
 }
 $sql->desconectar();

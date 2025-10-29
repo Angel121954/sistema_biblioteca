@@ -8,8 +8,12 @@ if (isset($_POST["id_usuario"]) && !empty($_POST["id_usuario"])) {
     //* variables
     $id = filter_var($_POST["id_usuario"], FILTER_SANITIZE_NUMBER_INT);
 
-    $sql->efectuarConsulta("UPDATE usuarios SET estado_usuario = 'Inactivo'
+    $eliminar = $sql->efectuarConsulta("UPDATE usuarios SET estado_usuario = 'Inactivo'
                             WHERE id_usuario = $id");
-    echo "ok";
+    if ($eliminar) {
+        echo "ok";
+    } else {
+        echo "No se pudo eliminar el usuario";
+    }
 }
 $sql->desconectar();

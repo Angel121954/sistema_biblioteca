@@ -8,31 +8,25 @@ document
       title: "Registrar nuevo usuario",
       html: `
       <form id="frm_registro_usuario" class="needs-validation" novalidate>
-        <div class="form-floating mb-3">
-          <input name="nombre_usuario" type="text" class="form-control" id="nombre_usuario" placeholder="Nombre" required>
-          <label for="nombre_usuario">Nombres</label>
+        <div class="mb-4">
+          <input name="nombre_usuario" type="text" class="form-control form-control-lg shadow-sm"
+                 id="nombre_usuario" placeholder="Ingrese el nombre" required">
         </div>
 
-        <div class="form-floating mb-3">
-          <input name="apellido_usuario" type="text" class="form-control" id="apellido_usuario" placeholder="Apellido" required autocomplete="off">
-          <label for="apellido_usuario">Apellidos</label>
+        <div class="mb-4">
+          <input name="apellido_usuario" type="text" class="form-control form-control-lg shadow-sm"
+                 id="apellido_usuario" placeholder="Ingrese el apellido" required">
         </div>
 
-        <div class="form-floating mb-3">
-          <input name="email_usuario" type="email" class="form-control" id="email_usuario" placeholder="Correo" required autocomplete="email">
-          <label for="email_usuario">Correo electrónico</label>
+        <div class="mb-4">
+          <input name="email_usuario" type="email" class="form-control form-control-lg shadow-sm"
+                 id="email_usuario" placeholder="ejemplo@correo.com" required">
         </div>
 
-        <div class="form-floating mb-3">
-          <input id="contrasena_usuario" name="contrasena_usuario" type="password" class="form-control" placeholder="Contraseña" required autocomplete="new-password">
-          <label for="contrasena_usuario">Contraseña</label>
-        </div>
-
-        <div class="form-floating mb-3">
+        <div class="form-floating mb-4">
           <select id="tipo_usuario" name="tipo_usuario" class="form-control" required>
             <option disabled selected>Seleccione el tipo de usuario</option>
           </select>
-          <label for="tipo_usuario">Tipo de usuario</label>
         </div>
 
         <button type="submit" class="btn btn-primary w-100 py-2">Guardar usuario</button>

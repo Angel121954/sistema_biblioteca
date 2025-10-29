@@ -22,10 +22,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $cantidad = floatval($_POST["cantidad_libro"]);
 
         if ($cantidad > 0):
-            $sql->efectuarConsulta("UPDATE libros SET titulo_libro = '$titulo', autor_libro = '$autor',
+            $editar = $sql->efectuarConsulta("UPDATE libros SET titulo_libro = '$titulo', autor_libro = '$autor',
                         isbn_libro = '$isbn', categoria_libro = '$categoria', disponibilidad_libro = 'Disponible',
                         cantidad_libro = $cantidad WHERE id_libro = $id");
-            echo "ok";
+            if ($editar) {
+                echo "ok";
+            } else {
+                echo "No se pudo editar el libro correctamente.";
+            }
         endif;
         $sql->desconectar();
     }

@@ -9,15 +9,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $id_reserva_has_libro = intval($_POST["id_reserva_has_libro"]);
 
         if ($id_reserva_has_libro > 0) {
-            $sql->efectuarConsulta("INSERT INTO prestamos (fecha_prestamo, 
+            $registrar = $sql->efectuarConsulta("INSERT INTO prestamos (fecha_prestamo, 
                                     fecha_devolucion, fk_reserva_has_libro, estado_prestamo)
                                     VALUES (NOW(), DATE_ADD(NOW(), INTERVAL 15 DAY), $id_reserva_has_libro,
                                     'Activo')");
-
-            $sql->efectuarConsulta("UPDATE reservas_has_libros SET estado_has_reserva = 'Finalizada'
+            if ($registrar) {
+                $sql->efectuarConsulta("UPDATE reservas_has_libros SET estado_has_reserva = 'Finalizada'
                                     WHERE id_reserva_has_libro = $id_reserva_has_libro");
-
-            echo "ok";
+                echo "ok";
+            }
         }
 
         $sql->desconectar();

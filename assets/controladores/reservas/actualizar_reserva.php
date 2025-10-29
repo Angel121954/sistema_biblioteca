@@ -34,9 +34,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         //* Si la acción es Cancelar
         if ($accion === "Cancelar") {
-            $sql->efectuarConsulta("DELETE FROM reservas_has_libros
+            $cancelar = $sql->efectuarConsulta("DELETE FROM reservas_has_libros
                             WHERE id_reserva_has_libro = $id_reserva");
-            echo "ok";
+            if ($cancelar) {
+                echo "ok";
+            } else {
+                echo "No se pudo cancelar la reserva correspondiente";
+            }
         }
 
         $sql->desconectar();

@@ -12,9 +12,13 @@ if (
     $nombre_usuario = filter_var($_POST["nombre_usuario"], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     $apellido_usuario = filter_var($_POST["apellido_usuario"], FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "";
 
-    $sql->efectuarConsulta("UPDATE usuarios SET estado_usuario = 'Activo'
+    $restaurar = $sql->efectuarConsulta("UPDATE usuarios SET estado_usuario = 'Activo'
                             WHERE nombre_usuario = '$nombre_usuario' AND
                             apellido_usuario = '$apellido_usuario'");
-    echo "ok";
+    if ($restaurar) {
+        echo "ok";
+    } else {
+        echo "No se pudo restaurar el usuario correctamente";
+    }
 }
 $sql->desconectar();

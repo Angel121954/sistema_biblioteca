@@ -1,4 +1,10 @@
-function editarLibro(id, titulo, autor, isbn, categoria, cantidad) {
+function editarLibro(btn) {
+  const id = btn.dataset.id;
+  const titulo = btn.dataset.titulo;
+  const autor = btn.dataset.autor;
+  const isbn = btn.dataset.isbn;
+  const categoria = btn.dataset.categoria;
+  const cantidad = btn.dataset.cantidad;
   Swal.fire({
     title: "Editar Libro",
     html: `

@@ -1,4 +1,5 @@
-function eliminarLibro(id_libro) {
+function eliminarLibro(btn) {
+  const id_libro = btn.dataset.id;
   Swal.fire({
     title: "¿Eliminar libro?",
     text: "Esta acción no se puede deshacer.",

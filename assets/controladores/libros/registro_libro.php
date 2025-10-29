@@ -19,16 +19,21 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     ) {
         $titulo         = filter_var($_POST["titulo_libro"], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $autor          = filter_var($_POST["autor_libro"], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-        $isbn           = htmlspecialchars(trim($_POST["isbn_libro"]));
+        $isbn           = filter_var($_POST["isbn_libro"], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $categoria      = filter_var($_POST["categoria_libro"], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-        $cantidad       = floatval($_POST["cantidad_libro"]);
+        $cantidad       = filter_var($_POST["cantidad_libro"], FILTER_SANITIZE_NUMBER_FLOAT);
         if ($cantidad > 0):
-            $sql->efectuarConsulta("INSERT INTO libros
+            $registrar = $sql->efectuarConsulta("INSERT INTO libros
                 (titulo_libro, autor_libro, isbn_libro, categoria_libro, cantidad_libro, disponibilidad_libro,
                 estado_libro)
                 VALUES ('$titulo', '$autor', '$isbn', '$categoria', $cantidad, 'Disponible', 'Activo')");
-            echo "ok";
+            if ($registrar) {
+                echo "ok";
+            } else {
+                echo "No se completo todos los campos correctamente";
+            }
         endif;
         $sql->desconectar();
+        exit;
     }
 }

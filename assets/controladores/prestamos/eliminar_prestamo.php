@@ -6,10 +6,14 @@ $sql->conectar();
 
 if (isset($_POST["id_prestamo"]) && !empty($_POST["id_prestamo"])) {
     //* variables
-    $id_prestamo = intval($_POST["id_prestamo"]);
+    $id_prestamo = filter_var($_POST["id_prestamo"], FILTER_SANITIZE_NUMBER_INT) ?? 0;
 
-    $sql->efectuarConsulta("UPDATE prestamos p SET p.estado_prestamo = 'Inactivo'
+    $eliminar = $sql->efectuarConsulta("UPDATE prestamos p SET p.estado_prestamo = 'Inactivo'
                             WHERE p.id_prestamo = $id_prestamo");
-    echo "ok";
+    if ($eliminar) {
+        echo "ok";
+    } else {
+        echo "No se pudo eliminar correctamente el prestamo.";
+    }
 }
 $sql->desconectar();

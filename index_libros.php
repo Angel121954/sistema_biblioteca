@@ -500,21 +500,21 @@ $inactivos = $inactivos_result->fetch_assoc();
                                                         <?php if ($_SESSION["tipo_usuario"] === "1"): ?>
                                                             <td class="text-center">
                                                                 <button
-                                                                    class="btn btn-sm btn-warning"
-                                                                    onclick="editarLibro(
-                                                '<?php echo $filas['id_libro']; ?>',
-                                                '<?php echo $filas['titulo_libro']; ?>',
-                                                '<?php echo $filas['autor_libro']; ?>',
-                                                '<?php echo $filas['isbn_libro']; ?>',
-                                                '<?php echo $filas['categoria_libro']; ?>',
-                                                '<?php echo $filas['cantidad_libro']; ?>'
-                                            )">
+                                                                    class="btn btn-sm btn-warning" +
+                                                                    data-id="<?= $filas['id_libro']; ?>"
+                                                                    data-titulo="<?= $filas['titulo_libro']; ?>"
+                                                                    data-autor="<?= $filas['autor_libro']; ?>"
+                                                                    data-isbn="<?= $filas['isbn_libro']; ?>"
+                                                                    data-categoria="<?= $filas['categoria_libro']; ?>"
+                                                                    data-cantidad="<?= $filas['cantidad_libro']; ?>"
+                                                                    onclick="editarLibro(this)">
                                                                     <i class="bi bi-pencil-square"></i>
                                                                 </button>
 
                                                                 <button
                                                                     class="btn btn-sm btn-danger"
-                                                                    onclick="eliminarLibro('<?= $filas['id_libro']; ?>')">
+                                                                    data-id="<?= $filas['id_libro']; ?>"
+                                                                    onclick="eliminarLibro(this)">
                                                                     <i class="bi bi-trash"></i>
                                                                 </button>
                                                             </td>

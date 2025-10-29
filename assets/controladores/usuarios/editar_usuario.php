@@ -23,10 +23,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $email = filter_var($_POST["email_usuario"], FILTER_SANITIZE_EMAIL);
         $tipo_usuario = filter_var($_POST["tipo_usuario"], FILTER_SANITIZE_NUMBER_INT);
 
-        $sql->efectuarConsulta("UPDATE usuarios SET nombre_usuario = '$nombre', 
+        $editar = $sql->efectuarConsulta("UPDATE usuarios SET nombre_usuario = '$nombre', 
                             apellido_usuario = '$apellido', email_usuario = '$email',
                             fk_tipo_usuario = $tipo_usuario WHERE id_usuario = $id");
-        echo "ok";
+        if ($editar) {
+            echo "ok";
+        } else {
+            echo "No se pudo editar el usuario correctamente";
+        }
         $sql->desconectar();
     }
 }

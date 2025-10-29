@@ -1,4 +1,4 @@
-function editarUsuario(id, nombre, apellido, email, tiposUsuariosStr) {
+function editarUsuario(btn, tiposUsuariosStr) {
   const tipos_usuarios = JSON.parse(tiposUsuariosStr);
 
   let opcionesTiposUsuario = `
@@ -11,6 +11,10 @@ function editarUsuario(id, nombre, apellido, email, tiposUsuariosStr) {
     `;
   });
 
+  const nombre_usuario = btn.dataset.nombre;
+  const apellido_usuario = btn.dataset.apellido;
+  const email_usuario = btn.dataset.email;
+
   Swal.fire({
     title:
       '<h3 class="fw-bold mb-3 text-primary">Editar información del usuario</h3>',
@@ -21,19 +25,19 @@ function editarUsuario(id, nombre, apellido, email, tiposUsuariosStr) {
         <div class="mb-3">
           <label for="nombre_usuario" class="form-label fw-semibold">Nombre</label>
           <input name="nombre_usuario" type="text" class="form-control form-control-lg shadow-sm"
-                 id="nombre_usuario" placeholder="Ingrese el nombre" required value="${nombre}">
+                 id="nombre_usuario" placeholder="Ingrese el nombre" required value="${nombre_usuario}">
         </div>
 
         <div class="mb-3">
           <label for="apellido_usuario" class="form-label fw-semibold">Apellido</label>
           <input name="apellido_usuario" type="text" class="form-control form-control-lg shadow-sm"
-                 id="apellido_usuario" placeholder="Ingrese el apellido" required value="${apellido}">
+                 id="apellido_usuario" placeholder="Ingrese el apellido" required value="${apellido_usuario}">
         </div>
 
         <div class="mb-3">
           <label for="email_usuario" class="form-label fw-semibold">Correo electrónico</label>
           <input name="email_usuario" type="email" class="form-control form-control-lg shadow-sm"
-                 id="email_usuario" placeholder="ejemplo@correo.com" required value="${email}">
+                 id="email_usuario" placeholder="ejemplo@correo.com" required value="${email_usuario}">
         </div>
 
         <div class="mb-4">

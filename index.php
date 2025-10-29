@@ -504,13 +504,14 @@ $inactivos = $inactivos_result->fetch_assoc();
                                                         <?php if ($_SESSION["tipo_usuario"] === "1"): ?>
                                                             <td class="text-center">
 
-                                                                <button class="btn btn-sm btn-warning" onclick="editarUsuario('<?= htmlspecialchars($filas['id_usuario'], ENT_QUOTES, 'UTF-8'); ?>',
-                                                            '<?= htmlspecialchars($filas['nombre_usuario'], ENT_QUOTES, 'UTF-8'); ?>',
-                                                            '<?= htmlspecialchars($filas['apellido_usuario'], ENT_QUOTES, 'UTF-8'); ?>',
-                                                            '<?= htmlspecialchars($filas['email_usuario'], ENT_QUOTES, 'UTF-8'); ?>',
-                                                            this.dataset.tiposUsuarios)"
+                                                                <button class="btn btn-sm btn-warning"
+                                                                    data-id="<?= $filas['id_usuario']; ?>"
+                                                                    data-nombre="<?= $filas['nombre_usuario']; ?>"
+                                                                    data-apellido="<?= $filas['apellido_usuario']; ?>"
+                                                                    data-email="<?= $filas['email_usuario']; ?>" onclick="editarUsuario(this, this.dataset.tiposUsuarios)"
                                                                     data-tipos-usuarios='<?= htmlspecialchars($tipos_usuarios_json, ENT_QUOTES, "UTF-8"); ?>'><i class="bi bi-pencil-square"></i></button>
-                                                                <button class="btn btn-sm btn-danger" onclick="eliminarUsuario('<?= $filas['id_usuario']; ?>')">
+                                                                <button class="btn btn-sm btn-danger"
+                                                                    data-id="<?= $filas['id_usuario']; ?>" onclick="eliminarUsuario(this)">
                                                                     <i class="bi bi-trash"></i>
                                                                 </button>
 

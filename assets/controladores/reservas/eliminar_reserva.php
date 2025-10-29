@@ -9,8 +9,12 @@ if (isset($_POST["id_reserva"]) && !empty($_POST["id_reserva"])) {
     //* variables
     $id_reserva = intval($_POST["id_reserva"]);
 
-    $sql->efectuarConsulta("DELETE FROM reservas_has_libros
+    $eliminar = $sql->efectuarConsulta("DELETE FROM reservas_has_libros
                             WHERE id_reserva_has_libro = $id_reserva");
-    echo "ok";
+    if ($eliminar) {
+        echo "ok";
+    } else {
+        echo "No se pudo eliminar la reserva";
+    }
 }
 $sql->desconectar();

@@ -8,7 +8,7 @@ $resultado = $sql->efectuarConsulta("SELECT id_libro FROM libros");
 if ($resultado->num_rows > 0) {
     while ($libro = $resultado->fetch_assoc()) {
         //* variable
-        $id_libro = intval($libro['id_libro']);
+        $id_libro = filter_var($libro['id_libro'], FILTER_SANITIZE_NUMBER_INT);
 
         $sql->efectuarConsulta("
         DELETE p FROM prestamos p

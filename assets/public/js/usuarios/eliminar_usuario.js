@@ -1,4 +1,5 @@
-function eliminarUsuario(id_usuario) {
+function eliminarUsuario(btn) {
+  const id_usuario = btn.dataset.id;
   Swal.fire({
     title: "¿Eliminar usuario?",
     text: "Esta acción no se puede deshacer.",
