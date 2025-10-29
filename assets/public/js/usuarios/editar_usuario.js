@@ -11,6 +11,7 @@ function editarUsuario(btn, tiposUsuariosStr) {
     `;
   });
 
+  const id = btn.dataset.id;
   const nombre_usuario = btn.dataset.nombre;
   const apellido_usuario = btn.dataset.apellido;
   const email_usuario = btn.dataset.email;

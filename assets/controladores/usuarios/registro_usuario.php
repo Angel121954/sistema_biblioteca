@@ -36,7 +36,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $sql->desconectar();
         exit;
     } else {
-        echo "No se completo todos los campos correctamente";
+        echo "Por favor, completar todos los campos correctamente";
         exit;
     }
 }
