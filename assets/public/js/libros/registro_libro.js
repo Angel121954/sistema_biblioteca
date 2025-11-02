@@ -17,7 +17,7 @@ document.querySelector("#btn_registro_libro").addEventListener("click", () => {
         </div>
 
         <div class="form-floating mb-3">
-          <input name="isbn_libro" id="isbn_libro" type="text" class="form-control"
+          <input name="isbn_libro" id="isbn_libro" type="number" class="form-control"
                  placeholder="ISBN" required autocomplete="off">
           <label for="isbn_libro"><i class="bi bi-upc-scan"></i> ISBN</label>
         </div>
@@ -52,6 +52,51 @@ document.querySelector("#btn_registro_libro").addEventListener("click", () => {
         e.preventDefault();
 
         const formData = new FormData(form);
+        const titulo = document.querySelector("#titulo_libro").value.trim();
+        const autor = document.querySelector("#autor_libro").value.trim();
+        const isbn = document.querySelector("#isbn_libro").value.trim();
+        const categoria = document
+          .querySelector("#categoria_libro")
+          .value.trim();
+        const cantidad = document.querySelector("#cantidad_libro").value.trim();
+
+        const regex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
+        if (!regex.test(titulo) || !titulo) {
+          Swal.fire("Campo inválido", "El título debe ser válido.", "warning");
+          return;
+        }
+
+        if (!regex.test(autor) || !autor) {
+          Swal.fire("Campo inválido", "El autor debe ser válido.", "warning");
+          return;
+        }
+
+        if (!isbn || isbn.length < 5) {
+          Swal.fire(
+            "Campo inválido",
+            "El isbn debe ser númerico y además debe tener como minimo 5 caracteres.",
+            "warning"
+          );
+          return;
+        }
+
+        if (!regex.test(categoria) || !categoria) {
+          Swal.fire(
+            "Campo inválido",
+            "La categoría debe ser válida.",
+            "warning"
+          );
+          return;
+        }
+
+        if (!cantidad || cantidad <= 0) {
+          Swal.fire(
+            "Campo inválido",
+            "La cantidad debe ser válida.",
+            "warning"
+          );
+          return;
+        }
 
         Swal.fire({
           title: "Registrando libro...",

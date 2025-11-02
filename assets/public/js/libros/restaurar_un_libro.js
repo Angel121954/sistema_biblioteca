@@ -22,6 +22,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (!titulo) return;
 
+    const regex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
+    if (!regex.test(titulo) || titulo.length < 2) {
+      Swal.fire(
+        "Campo inválido",
+        "El título del libro debe ser válido y además debe contar con 2 o más caracteres.",
+        "warning"
+      );
+      return;
+    }
+
     // Confirmación final
     const confirmacion = await Swal.fire({
       title: `¿Restaurar "${titulo}"?`,

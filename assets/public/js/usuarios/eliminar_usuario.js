@@ -2,7 +2,7 @@ function eliminarUsuario(btn) {
   const id_usuario = btn.dataset.id;
   Swal.fire({
     title: "¿Eliminar usuario?",
-    text: "Esta acción no se puede deshacer.",
+    text: "Esta acción inactiva el usuario del sistema.",
     icon: "warning",
     showCancelButton: true,
     confirmButtonColor: "#d33",

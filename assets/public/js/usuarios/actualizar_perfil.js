@@ -1,13 +1,32 @@
-function actualizarPerfil(id, nombre, apellido, email) {
+function actualizarPerfil(btn) {
+  const id = btn.dataset.id;
+  const nombre = btn.dataset.nombre;
+  const apellido = btn.dataset.apellido;
+  const email = btn.dataset.email;
   Swal.fire({
     title: "<i class='fa-solid fa-user-pen'></i> Actualizar perfil",
     html: `
-      <input id="nombre" name="nombre" class="swal2-input" placeholder="Nombre" value="${nombre}">
-      <input id="apellido" name="apellido" class="swal2-input" placeholder="Apellido" value="${apellido}">
-      <input id="email" name="email" type="email" class="swal2-input" placeholder="Correo electrónico" value="${email}">
+    <div class="mb-4">
+          <input name="nombre" type="text" class="form-control form-control-lg shadow-sm"
+                 id="nombre" placeholder="Ingrese su nombre" required value="${nombre}">
+        </div>
+        <div class="mb-4">
+          <input name="apellido" type="text" class="form-control form-control-lg shadow-sm"
+                 id="apellido" placeholder="Ingrese su apellido" required value="${apellido}">
+        </div>
+        <div class="mb-4">
+          <input name="email" type="email" class="form-control form-control-lg shadow-sm"
+                 id="email" placeholder="ejemplo@correo.com" required value="${email}">
+        </div>
       <hr>
-      <input id="pass1" name="pass1" type="password" class="swal2-input" placeholder="Nueva contraseña (opcional)">
-      <input id="pass2" name="pass2" type="password" class="swal2-input" placeholder="Confirmar contraseña">
+      <div class="mb-4">
+      <input id="pass1" name="pass1" type="password" class="form-control form-control-lg shadow-sm" 
+      placeholder="Nueva contraseña (opcional)">
+      </div>
+      <div class="mb-4">
+      <input id="pass2" name="pass2" type="password" class="form-control form-control-lg shadow-sm" 
+      placeholder="Confirmar contraseña">
+      </div>
     `,
     focusConfirm: false,
     showCancelButton: true,
@@ -23,6 +42,16 @@ function actualizarPerfil(id, nombre, apellido, email) {
       if (!nombre || !apellido || !email) {
         Swal.showValidationMessage(
           "Por favor completa todos los campos obligatorios"
+        );
+        return false;
+      }
+
+      const regex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
+      if (!regex.test(nombre) || !regex.test(apellido)) {
+        Swal.fire(
+          "Campo inválido",
+          "Por favor, ingrese campos válidos para poder actualizar el perfil.",
+          "warning"
         );
         return false;
       }
@@ -43,12 +72,12 @@ function actualizarPerfil(id, nombre, apellido, email) {
       datos.append("email", result.value.email);
       datos.append("contrasena", result.value.pass1);
 
-      Swal.fire({
+      /* Swal.fire({
         title: "Actualizando perfil...",
         text: "Por favor espere un momento.",
         allowOutsideClick: false,
         didOpen: () => Swal.showLoading(),
-      });
+      }); */
 
       const respuesta = await fetch(
         "assets/controladores/usuarios/actualizar_perfil.php",

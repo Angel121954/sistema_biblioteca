@@ -10,12 +10,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         //* Si la acción es Aceptar
         if ($accion === "Aceptar") {
-
-            //* Cambiar el estado de la reserva a Aceptada
-            $sql->efectuarConsulta("UPDATE reservas_has_libros rl
-                SET rl.estado_has_reserva = 'Aceptada' 
-                WHERE rl.id_reserva_has_libro = $id_reserva");
-
             $resultado = $sql->efectuarConsulta("SELECT rl.libros_id_libro, rl.cantidad_libros
                                                  FROM reservas_has_libros rl
                                                  WHERE rl.id_reserva_has_libro = $id_reserva");
@@ -24,11 +18,23 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 $id_libro = intval($fila['libros_id_libro']);
                 $cantidad = intval($fila['cantidad_libros']);
 
-                $sql->efectuarConsulta("UPDATE libros 
-                                        SET cantidad_libro = cantidad_libro - $cantidad 
-                                        WHERE id_libro = $id_libro");
+                $libros_result = $sql->efectuarConsulta("SELECT COUNT(*) AS cantidad_excedida
+                                    FROM libros WHERE cantidad_libro < $cantidad
+                                    AND id_libro = $id_libro");
+                if ($libros_result->num_rows > 0) {
+                    $libros = $libros_result->fetch_assoc();
+                    if ($libros['cantidad_excedida'] > 0) {
+                        echo "No se puede aceptar la reserva por cantidad insuficiente del ejemplar";
+                        $sql->desconectar();
+                        exit;
+                    }
+                }
+                $sql->efectuarConsulta("UPDATE reservas_has_libros rl
+                                            SET rl.estado_has_reserva = 'Aceptada'
+                                            WHERE rl.id_reserva_has_libro = $id_reserva");
+                $sql->efectuarConsulta("UPDATE libros SET cantidad_libro = cantidad_libro - $cantidad
+                                            WHERE id_libro = $id_libro");
             }
-
             echo "ok";
         }
 

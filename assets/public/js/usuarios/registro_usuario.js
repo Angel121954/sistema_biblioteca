@@ -23,6 +23,11 @@ document
                  id="email_usuario" placeholder="ejemplo@correo.com" required">
         </div>
 
+        <div class="mb-4">
+          <input name="contrasena_usuario" type="password" class="form-control form-control-lg shadow-sm"
+                 id="contrasena_usuario" placeholder="Ingrese la contraseña" required">
+        </div>
+
         <div class="form-floating mb-4">
           <select id="tipo_usuario" name="tipo_usuario" class="form-control" required>
             <option disabled selected>Seleccione el tipo de usuario</option>
@@ -47,7 +52,44 @@ document
           .addEventListener("submit", function (e) {
             e.preventDefault();
             const formData = new FormData(this);
+            const nombre = document
+              .querySelector("#nombre_usuario")
+              .value.trim();
+            const apellido = document
+              .querySelector("#apellido_usuario")
+              .value.trim();
 
+            const contrasena = document
+              .querySelector("#contrasena_usuario")
+              .value.trim();
+
+            const regex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
+            if (!regex.test(nombre)) {
+              Swal.fire(
+                "Campo inválido",
+                "El nombre debe ser válido.",
+                "warning"
+              );
+              return;
+            }
+
+            if (!regex.test(apellido)) {
+              Swal.fire(
+                "Campo inválido",
+                "El apellido debe ser válido.",
+                "warning"
+              );
+              return;
+            }
+
+            if (contrasena.length < 4) {
+              Swal.fire(
+                "Campo inválido",
+                "La contrasña debe de tener un minimo de 4 caracteres.",
+                "warning"
+              );
+              return;
+            }
             Swal.fire({
               title: "Registrando usuario...",
               text: "Por favor espere un momento.",

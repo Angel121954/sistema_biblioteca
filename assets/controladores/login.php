@@ -6,15 +6,15 @@ $sql->conectar();
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     if (
-        isset($_POST["nombre_usuario"], $_POST["contrasena_usuario"]) &&
-        !empty($_POST["nombre_usuario"]) && !empty($_POST["contrasena_usuario"])
+        isset($_POST["email_usuario"], $_POST["contrasena_usuario"]) &&
+        !empty($_POST["email_usuario"]) && !empty($_POST["contrasena_usuario"])
     ) {
         //* variables
-        $nombre = filter_var($_POST["nombre_usuario"], FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "";
+        $email = filter_var($_POST["email_usuario"], FILTER_SANITIZE_EMAIL);
         $contrasena = trim($_POST["contrasena_usuario"]);
 
         $usuarios = $sql->efectuarConsulta("SELECT * FROM usuarios
-                    WHERE nombre_usuario = '$nombre' AND estado_usuario = 'Activo'");
+                    WHERE email_usuario = '$email' AND estado_usuario = 'Activo'");
 
         $fila = mysqli_fetch_assoc($usuarios);
         if ($fila && password_verify($contrasena, $fila["contrasena_usuario"])) {

@@ -236,11 +236,11 @@ $libros_json = json_encode($titulo_libro, JSON_UNESCAPED_UNICODE);
             <!-- Enlace: perfil -->
             <li class="nav-item">
                 <a class="nav-link" href="#"
-                    onclick="actualizarPerfil(
-                    '<?php echo $usuario['id_usuario']; ?>',
-                    '<?php echo $usuario['nombre_usuario']; ?>',
-                    '<?php echo $usuario['apellido_usuario']; ?>',
-                    '<?php echo $usuario['email_usuario']; ?>')">
+                    data-id="<?= $usuario['id_usuario']; ?>"
+                    data-nombre="<?= $usuario['nombre_usuario']; ?>"
+                    data-apellido="<?= $usuario['apellido_usuario']; ?>"
+                    data-email="<?= $usuario['email_usuario']; ?>"
+                    onclick="actualizarPerfil(this)">
                     <i class="fas fa-user-cog"></i>
                     <span>Perfil</span>
                 </a>
@@ -506,18 +506,21 @@ $libros_json = json_encode($titulo_libro, JSON_UNESCAPED_UNICODE);
                                                             <?php switch ($_SESSION["tipo_usuario"]):
                                                                 case "1": ?>
                                                                     <button class="btn btn-success btn-sm"
-                                                                        onclick="actualizarReserva(<?php echo $fila['id_reserva_has_libro'] ?>, 'Aceptar')">
+                                                                        data-id="<?= $fila['id_reserva_has_libro']; ?>"
+                                                                        onclick="actualizarReserva(this.dataset.id, 'Aceptar')">
                                                                         <i class="bi bi-check-circle"></i> Aceptar
                                                                     </button>
 
                                                                     <button class="btn btn-danger btn-sm"
-                                                                        onclick="actualizarReserva(<?= $fila['id_reserva_has_libro'] ?>, 'Cancelar')">
+                                                                        data-id="<?= $fila['id_reserva_has_libro']; ?>"
+                                                                        onclick="actualizarReserva(this.dataset.id, 'Cancelar')">
                                                                         <i class="bi bi-x-circle"></i> Cancelar
                                                                     </button>
                                                                 <?php break;
                                                                 default: ?>
                                                                     <button class="btn btn-danger btn-sm"
-                                                                        onclick="eliminarReserva(<?= $fila['id_reserva_has_libro'] ?>)">
+                                                                        data-id="<?= $fila['id_reserva_has_libro']; ?>"
+                                                                        onclick="eliminarReserva(this.dataset.id)">
                                                                         <i class="bi bi-x-circle"></i> Eliminar
                                                                     </button>
                                                             <?php break;

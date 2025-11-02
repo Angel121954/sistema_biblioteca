@@ -23,6 +23,19 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $email = filter_var($_POST["email_usuario"], FILTER_SANITIZE_EMAIL);
         $tipo_usuario = filter_var($_POST["tipo_usuario"], FILTER_SANITIZE_NUMBER_INT);
 
+        $usuarios_result = $sql->efectuarConsulta("SELECT COUNT(*) AS cantidad_repetido FROM usuarios 
+                                                WHERE email_usuario = '$email'
+                                                AND id_usuario != $id");
+
+        if ($usuarios_result->num_rows > 0) {
+            $usuarios = $usuarios_result->fetch_assoc();
+            if ($usuarios["cantidad_repetido"] > 0) {
+                echo "Esté correo ya está registrado en la base de datos!";
+                $sql->desconectar();
+                exit;
+            }
+        }
+
         $editar = $sql->efectuarConsulta("UPDATE usuarios SET nombre_usuario = '$nombre', 
                             apellido_usuario = '$apellido', email_usuario = '$email',
                             fk_tipo_usuario = $tipo_usuario WHERE id_usuario = $id");

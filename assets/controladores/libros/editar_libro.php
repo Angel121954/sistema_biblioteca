@@ -1,36 +1,54 @@
 <?php
-
 require_once "../../modelos/MySQL.php";
 $sql = new MySQL();
 $sql->conectar();
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    if (isset(
-        $_POST["id_libro"],
-        $_POST["titulo_libro"],
-        $_POST["autor_libro"],
-        $_POST["isbn_libro"],
-        $_POST["categoria_libro"],
-        $_POST["cantidad_libro"]
-    )) {
-        //* variables
-        $id = intval($_POST["id_libro"]);
-        $titulo = filter_var($_POST["titulo_libro"], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-        $autor = filter_var($_POST["autor_libro"], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-        $isbn = filter_var($_POST["isbn_libro"], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-        $categoria = filter_var($_POST["categoria_libro"], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-        $cantidad = floatval($_POST["cantidad_libro"]);
-
-        if ($cantidad > 0):
-            $editar = $sql->efectuarConsulta("UPDATE libros SET titulo_libro = '$titulo', autor_libro = '$autor',
-                        isbn_libro = '$isbn', categoria_libro = '$categoria', disponibilidad_libro = 'Disponible',
-                        cantidad_libro = $cantidad WHERE id_libro = $id");
-            if ($editar) {
-                echo "ok";
-            } else {
-                echo "No se pudo editar el libro correctamente.";
-            }
-        endif;
-        $sql->desconectar();
+    $campos = ["id_libro", "titulo_libro", "autor_libro", "categoria_libro", "cantidad_libro"];
+    foreach ($campos as $campo) {
+        if (!isset($_POST[$campo]) || trim($_POST[$campo]) === '') {
+            exit("Error: faltan campos requeridos.");
+        }
     }
+
+    function limpiarTexto($texto, $conexion)
+    {
+        $texto = trim($texto);
+        $texto = strip_tags($texto);
+        $texto = htmlspecialchars($texto, ENT_QUOTES, 'UTF-8');
+        $texto = mysqli_real_escape_string($conexion, $texto);
+        return $texto;
+    }
+
+    $conexion = $sql->getConexion();
+    $id        = intval($_POST["id_libro"]);
+    $titulo    = limpiarTexto($_POST["titulo_libro"], $conexion);
+    $autor     = limpiarTexto($_POST["autor_libro"], $conexion);
+    $categoria = limpiarTexto($_POST["categoria_libro"], $conexion);
+    $cantidad  = filter_var($_POST["cantidad_libro"], FILTER_SANITIZE_NUMBER_INT);
+
+    if (!is_numeric($cantidad) || $cantidad < 0) {
+        exit("No se puede editar con una cantidad negativa.");
+    }
+
+    $consulta = "
+        UPDATE libros SET
+            titulo_libro = '$titulo',
+            autor_libro = '$autor',
+            categoria_libro = '$categoria',
+            disponibilidad_libro = 'Disponible',
+            cantidad_libro = $cantidad
+        WHERE id_libro = $id
+    ";
+
+    $resultado = $sql->efectuarConsulta($consulta);
+
+    if ($resultado) {
+        echo "ok";
+    } else {
+        echo "No se pudo editar el libro correctamente.";
+    }
+
+    $sql->desconectar();
+    exit;
 }

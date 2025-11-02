@@ -40,15 +40,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                             $sql->efectuarConsulta("
                             INSERT INTO reservas_has_libros
                             (reservas_id_reserva, libros_id_libro, cantidad_libros, estado_has_reserva)
-                            VALUES ($id_reserva, $id_libro, $cantidad, 'Activa')
-                        ");
-
+                            VALUES ($id_reserva, $id_libro, $cantidad, 'Activa')");
                             $nueva_cantidad = $cantidad_libro - $cantidad;
-
                             $sql->efectuarConsulta("
                             UPDATE libros 
-                            SET cantidad_libro = $nueva_cantidad,
-                            disponibilidad_libro = IF($nueva_cantidad = 0, 'Sin ejemplares', 'Disponible')
+                            SET disponibilidad_libro = IF($nueva_cantidad = 0, 'Sin ejemplares', 'Disponible')
                             WHERE id_libro = $id_libro
                         ");
                         } else {

@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (confirmacion.isConfirmed) {
       try {
         Swal.fire({
-          title: "Restaurando usuarios...",
+          title: "Restaurando libros...",
           text: "Por favor espere un momento.",
           allowOutsideClick: false,
           didOpen: () => Swal.showLoading(),

@@ -9,6 +9,11 @@ $fila = $sql->efectuarConsulta("SELECT l.id_libro, l.titulo_libro, l.autor_libro
                     l.isbn_libro, l.categoria_libro, l.disponibilidad_libro, l.cantidad_libro 
                     FROM libros AS l WHERE estado_libro != 'Inactivo'");
 
+if (!isset($_SESSION['id_usuario'])) {
+    header("Location: login.php");
+    exit;
+}
+
 $id_usuario = $_SESSION["id_usuario"];
 $usuario_result = $sql->efectuarConsulta("SELECT * FROM usuarios WHERE id_usuario = $id_usuario");
 $usuario = $usuario_result->fetch_assoc();
@@ -218,11 +223,11 @@ $inactivos = $inactivos_result->fetch_assoc();
             <!-- Enlace: perfil -->
             <li class="nav-item">
                 <a class="nav-link" href="#"
-                    onclick="actualizarPerfil(
-                    '<?php echo $usuario['id_usuario']; ?>',
-                    '<?php echo $usuario['nombre_usuario']; ?>',
-                    '<?php echo $usuario['apellido_usuario']; ?>',
-                    '<?php echo $usuario['email_usuario']; ?>')">
+                    data-id="<?= $usuario['id_usuario']; ?>"
+                    data-nombre="<?= $usuario['nombre_usuario']; ?>"
+                    data-apellido="<?= $usuario['apellido_usuario']; ?>"
+                    data-email="<?= $usuario['email_usuario']; ?>"
+                    onclick="actualizarPerfil(this)">
                     <i class="fas fa-user-cog"></i>
                     <span>Perfil</span>
                 </a>
@@ -341,6 +346,9 @@ $inactivos = $inactivos_result->fetch_assoc();
                                 </a>
                             </li>
 
+
+
+
                             <!-- Nav Item - Restaurar libros -->
                             <li class="nav-item dropdown no-arrow mx-1">
                                 <a class="nav-link dropdown-toggle" href="#" id="btn_restaurar_libros" role="button"
@@ -406,6 +414,15 @@ $inactivos = $inactivos_result->fetch_assoc();
                                 </div>
                             </li>
                         <?php endif; ?>
+
+                        <!--Cerrar sesión-->
+                        <li class="nav-item dropdown no-arrow">
+                            <a class="nav-link dropdown-toggle" href="#" id="btn_cerrar_session" role="button"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="text-danger bi bi-houses"></i>
+                            </a>
+                        </li>
+
 
                         <div class="topbar-divider d-none d-sm-block"></div>
 
@@ -504,7 +521,6 @@ $inactivos = $inactivos_result->fetch_assoc();
                                                                     data-id="<?= $filas['id_libro']; ?>"
                                                                     data-titulo="<?= $filas['titulo_libro']; ?>"
                                                                     data-autor="<?= $filas['autor_libro']; ?>"
-                                                                    data-isbn="<?= $filas['isbn_libro']; ?>"
                                                                     data-categoria="<?= $filas['categoria_libro']; ?>"
                                                                     data-cantidad="<?= $filas['cantidad_libro']; ?>"
                                                                     onclick="editarLibro(this)">
@@ -616,6 +632,9 @@ $inactivos = $inactivos_result->fetch_assoc();
         <!-- 🔹 Script personalizado - Usuarios -->
         <!-- ============================ -->
         <script src="assets/public/js/usuarios/actualizar_perfil.js"></script>
+
+        <!--Cerrar sesión-->
+        <script src="assets/public/js/usuarios/cerrar_sesion_usuario.js"></script>
 
         <!--Funcionalidad menú-->
         <script src="assets/funcionalidad/app.js"></script>

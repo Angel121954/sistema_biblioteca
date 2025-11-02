@@ -19,6 +19,9 @@ if ($contrasena != "") {
         contrasena_usuario = '$hash'
         WHERE id_usuario = $id_usuario");
     if ($actualizar) {
+        $_SESSION["nombre_usuario"] = $nombre;
+        $_SESSION["apellido_usuario"] = $apellido;
+        $_SESSION["email_usuario"] = $email;
         echo "ok";
         $sql->desconectar();
         exit;
@@ -35,6 +38,9 @@ if ($contrasena != "") {
         WHERE id_usuario = '$id_usuario'");
     if ($actualizar) {
         echo "ok";
+        $_SESSION["nombre_usuario"] = $nombre;
+        $_SESSION["apellido_usuario"] = $apellido;
+        $_SESSION["email_usuario"] = $email;
         $sql->desconectar();
         exit;
     } else {

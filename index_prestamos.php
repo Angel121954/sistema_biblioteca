@@ -309,11 +309,11 @@ $inactivos = $inactivos_result->fetch_assoc();
             <!-- Enlace: perfil -->
             <li class="nav-item">
                 <a class="nav-link" href="#"
-                    onclick="actualizarPerfil(
-                    '<?php echo $usuario['id_usuario']; ?>',
-                    '<?php echo $usuario['nombre_usuario']; ?>',
-                    '<?php echo $usuario['apellido_usuario']; ?>',
-                    '<?php echo $usuario['email_usuario']; ?>')">
+                    data-id="<?= $usuario['id_usuario']; ?>"
+                    data-nombre="<?= $usuario['nombre_usuario']; ?>"
+                    data-apellido="<?= $usuario['apellido_usuario']; ?>"
+                    data-email="<?= $usuario['email_usuario']; ?>"
+                    onclick="actualizarPerfil(this)">
                     <i class="fas fa-user-cog"></i>
                     <span>Perfil</span>
                 </a>
@@ -592,7 +592,9 @@ $inactivos = $inactivos_result->fetch_assoc();
                                                         <th><?php echo $fila["titulo_libro"]; ?></th>
                                                         <?php if ($_SESSION["tipo_usuario"] === "1"): ?>
                                                             <td class="text-center">
-                                                                <button class="btn btn-sm btn-danger" onclick="eliminarPrestamo('<?php echo $fila['id_prestamo']; ?>')">
+                                                                <button class="btn btn-sm btn-danger"
+                                                                    data-id="<?= $fila['id_prestamo']; ?>"
+                                                                    onclick="eliminarPrestamo(this)">
                                                                     <i class="bi bi-trash"></i>
                                                                 </button>
                                                             </td>

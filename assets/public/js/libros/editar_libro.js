@@ -2,7 +2,6 @@ function editarLibro(btn) {
   const id = btn.dataset.id;
   const titulo = btn.dataset.titulo;
   const autor = btn.dataset.autor;
-  const isbn = btn.dataset.isbn;
   const categoria = btn.dataset.categoria;
   const cantidad = btn.dataset.cantidad;
   Swal.fire({
@@ -21,12 +20,6 @@ function editarLibro(btn) {
               <label for="swal_autor" class="form-label fw-semibold">Autor</label>
               <input id="swal_autor" type="text" class="form-control form-control-lg shadow-sm"
                      placeholder="Ingrese el autor" required value="${autor}">
-            </div>
-
-            <div class="col-md-6">
-              <label for="swal_isbn" class="form-label fw-semibold">ISBN</label>
-              <input id="swal_isbn" type="text" class="form-control form-control-lg shadow-sm"
-                     placeholder="Ingrese el ISBN" required value="${isbn}">
             </div>
 
             <div class="col-md-6">
@@ -53,22 +46,45 @@ function editarLibro(btn) {
     preConfirm: () => {
       const titulo = document.querySelector("#swal_titulo").value.trim();
       const autor = document.querySelector("#swal_autor").value.trim();
-      const isbn = document.querySelector("#swal_isbn").value.trim();
       const categoria = document.querySelector("#swal_categoria").value.trim();
       const cantidad = document.querySelector("#swal_cantidad").value;
 
-      if (!titulo || !autor || !isbn || !categoria || cantidad <= 0) {
+      if (!titulo || !autor || !categoria) {
         Swal.showValidationMessage(
           "Por favor, complete todos los campos correctamente."
         );
         return false;
       }
 
+      const regex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
+      if (!regex.test(titulo)) {
+        Swal.fire("Campo inválido", "El titulo debe ser válido.", "warning");
+        return;
+      }
+
+      if (!regex.test(autor)) {
+        Swal.fire("Campo inválido", "El autor debe ser válido.", "warning");
+        return;
+      }
+
+      if (!regex.test(categoria)) {
+        Swal.fire("Campo inválido", "La categoría debe ser válida.", "warning");
+        return;
+      }
+
+      if (cantidad <= 0) {
+        Swal.fire(
+          "Campo inválido",
+          "La cantidad del libro debe ser válida.",
+          "warning"
+        );
+        return;
+      }
+
       const fd = new FormData();
       fd.append("id_libro", id);
       fd.append("titulo_libro", titulo);
       fd.append("autor_libro", autor);
-      fd.append("isbn_libro", isbn);
       fd.append("categoria_libro", categoria);
       fd.append("cantidad_libro", cantidad);
 

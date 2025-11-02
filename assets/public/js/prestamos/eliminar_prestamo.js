@@ -1,4 +1,5 @@
-function eliminarPrestamo(id_prestamo) {
+function eliminarPrestamo(btn) {
+  const id_prestamo = btn.dataset.id;
   Swal.fire({
     title: "¿Eliminar prestamo?",
     text: "Esta acción no se puede deshacer.",

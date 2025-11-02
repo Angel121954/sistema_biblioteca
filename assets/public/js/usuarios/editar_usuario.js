@@ -66,25 +66,21 @@ function editarUsuario(btn, tiposUsuariosStr) {
       form.addEventListener("submit", async (e) => {
         e.preventDefault();
 
-        // ✅ Obtener valores y validarlos antes de enviar
         const nombre = form.nombre_usuario.value.trim();
         const apellido = form.apellido_usuario.value.trim();
+        const email = form.email_usuario.value.trim();
         const tipo = form.tipo_usuario.value;
 
-        // Validaciones básicas
-        if (nombre.length < 2) {
-          Swal.fire(
-            "Campo inválido",
-            "El nombre debe tener al menos 2 caracteres.",
-            "warning"
-          );
+        const regex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
+        if (!regex.test(nombre)) {
+          Swal.fire("Campo inválido", "El nombre debe ser válido.", "warning");
           return;
         }
 
-        if (apellido.length < 2) {
+        if (!regex.test(apellido)) {
           Swal.fire(
             "Campo inválido",
-            "El apellido debe tener al menos 2 caracteres.",
+            "El apellido debe ser válido.",
             "warning"
           );
           return;
@@ -96,6 +92,11 @@ function editarUsuario(btn, tiposUsuariosStr) {
             "Debe seleccionar un tipo de usuario.",
             "warning"
           );
+          return;
+        }
+
+        if (!email || email == "'@gmail.com") {
+          Swal.fire("Campo inválido", "El correo debe ser válido.", "warning");
           return;
         }
 

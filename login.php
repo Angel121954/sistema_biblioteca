@@ -51,12 +51,12 @@
                     class="user">
                     <div class="form-group">
                       <input
-                        type="text"
+                        type="email"
                         class="form-control form-control-user"
-                        id="nombre_usuario"
-                        name="nombre_usuario"
+                        id="email_usuario"
+                        name="email_usuario"
                         aria-describedby="emailHelp"
-                        placeholder="Ingrese su nombre..." />
+                        placeholder="Ingrese su correo electrónico..." />
                     </div>
                     <div class="form-group">
                       <input

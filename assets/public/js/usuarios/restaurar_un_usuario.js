@@ -40,6 +40,25 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (!apellido) return;
 
+    const regex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
+    /* if (nombre.length < 2 || apellido.length < 2) {
+      Swal.fire(
+        "Campo inválido",
+        "Por favor, ingrese campos lo suficientemente válidos.",
+        "warning"
+      );
+      return;
+    } */
+
+    if (!regex.test(nombre) || !regex.test(apellido)) {
+      Swal.fire(
+        "Campo inválido",
+        "Por favor, ingrese campos lo suficientemente válidos.",
+        "warning"
+      );
+      return;
+    }
+
     // Confirmación final
     const confirmacion = await Swal.fire({
       title: `¿Restaurar a ${nombre} ${apellido}?`,

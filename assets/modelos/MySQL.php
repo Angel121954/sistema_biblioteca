@@ -53,4 +53,9 @@ class MySQL
     {
         return mysqli_insert_id($this->conexion);
     }
+
+    public function getConexion()
+    {
+        return $this->conexion;
+    }
 }
