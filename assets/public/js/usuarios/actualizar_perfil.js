@@ -72,12 +72,12 @@ function actualizarPerfil(btn) {
       datos.append("email", result.value.email);
       datos.append("contrasena", result.value.pass1);
 
-      /* Swal.fire({
+      Swal.fire({
         title: "Actualizando perfil...",
         text: "Por favor espere un momento.",
         allowOutsideClick: false,
         didOpen: () => Swal.showLoading(),
-      }); */
+      });
 
       const respuesta = await fetch(
         "assets/controladores/usuarios/actualizar_perfil.php",
