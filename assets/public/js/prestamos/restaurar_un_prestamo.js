@@ -62,10 +62,18 @@ document.addEventListener("DOMContentLoaded", () => {
         if (resultado.trim() === "ok") {
           Swal.fire({
             title: "Préstamo restaurado",
-            text: `El préstamo del día "${fecha_prestamo}" ha sido activado correctamente.`,
+            text: `El préstamo de la fecha "${fecha_prestamo}" ha sido activado correctamente.`,
             icon: "success",
             confirmButtonColor: "#28a745",
           }).then(() => location.reload());
+        } else if (
+          resultado == `No existe un prestamo con la fecha: ${fecha_prestamo}`
+        ) {
+          Swal.fire({
+            title: "Fallo",
+            text: resultado,
+            icon: "question",
+          });
         } else {
           Swal.fire({
             title: "Error",

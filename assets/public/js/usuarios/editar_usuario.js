@@ -95,8 +95,12 @@ function editarUsuario(btn, tiposUsuariosStr) {
           return;
         }
 
-        if (!email || email == "'@gmail.com") {
-          Swal.fire("Campo inválido", "El correo debe ser válido.", "warning");
+        if (!email || email.includes("'")) {
+          Swal.fire(
+            "Campo inválido",
+            "El correo debe ser válido y no se permite comilla simple por cuestiones de seguridad.",
+            "warning"
+          );
           return;
         }
 

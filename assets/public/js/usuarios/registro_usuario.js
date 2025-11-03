@@ -59,6 +59,8 @@ document
               .querySelector("#apellido_usuario")
               .value.trim();
 
+            const email = document.querySelector("#email_usuario").value.trim();
+
             const contrasena = document
               .querySelector("#contrasena_usuario")
               .value.trim();
@@ -90,6 +92,16 @@ document
               );
               return;
             }
+
+            if (!email || email.includes("'")) {
+              Swal.fire(
+                "Campo inválido",
+                "El correo debe ser válido y no debe de contener comilla simple por cuestiones de seguridad.",
+                "warning"
+              );
+              return;
+            }
+
             Swal.fire({
               title: "Registrando usuario...",
               text: "Por favor espere un momento.",
@@ -114,6 +126,11 @@ document
                   "Usuario agregado correctamente",
                   "success"
                 ).then(() => location.reload());
+              } else if (
+                res ==
+                "Este correo ya existe en la base de datos. Intenta con otro"
+              ) {
+                Swal.fire("Fallo", res, "question");
               } else {
                 Swal.fire("Error", res, "error");
               }

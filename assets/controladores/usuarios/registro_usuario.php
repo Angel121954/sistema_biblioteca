@@ -24,14 +24,21 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $contrasena = password_hash($_POST["contrasena_usuario"], PASSWORD_DEFAULT);
         $tipo = $_POST["tipo_usuario"];
 
-        $registrar = $sql->efectuarConsulta("INSERT INTO usuarios(nombre_usuario, apellido_usuario,
+        $correo_repetido_result = $sql->efectuarConsulta("SELECT COUNT(*) AS cantidad_repetida
+                                                FROM usuarios WHERE email_usuario = '$email'");
+
+        $correo_repetido = $correo_repetido_result->fetch_assoc();
+        if ($correo_repetido["cantidad_repetida"] > 0) {
+            echo "Este correo ya existe en la base de datos. Intenta con otro";
+        } else {
+            $registrar = $sql->efectuarConsulta("INSERT INTO usuarios(nombre_usuario, apellido_usuario,
                                     email_usuario, contrasena_usuario, estado_usuario, fk_tipo_usuario) VALUES(
                                         '$nombre', '$apellido', '$email', '$contrasena', 'Activo', '$tipo')");
-
-        if ($registrar) {
-            echo "ok";
-        } else {
-            echo "Por favor llene los campos correctamente";
+            if ($registrar) {
+                echo "ok";
+            } else {
+                echo "Por favor llene los campos correctamente";
+            }
         }
         $sql->desconectar();
         exit;
