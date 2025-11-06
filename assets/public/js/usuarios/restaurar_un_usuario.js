@@ -102,6 +102,8 @@ document.addEventListener("DOMContentLoaded", () => {
             icon: "success",
             confirmButtonColor: "#28a745",
           }).then(() => location.reload());
+        } else if (resultado.includes("No existe el usuario")) {
+          Swal.fire("Fallo", resultado, "question");
         } else {
           Swal.fire({
             title: "Error",

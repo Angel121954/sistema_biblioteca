@@ -34,3 +34,7 @@ button {
   transition: 0.3s;
   font-family: "Merriweather", serif;
 }
+
+tbody th {
+  font-weight: normal !important;
+}

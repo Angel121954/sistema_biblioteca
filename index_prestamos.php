@@ -53,94 +53,25 @@ $inactivos = $inactivos_result->fetch_assoc();
     <meta name="author" content="">
     <title>Prestamos</title>
 
-    <!--Font Awesome local-->
-    <link href="assets/libs/awesome/css/all.min.css" rel="stylesheet" type="text/css">
+    <!--FontAwesome CDN-->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet" type="text/css">
 
-    <!--SweetAlert local-->
-    <link href="assets/libs/sweetAlert/sweetalert2.min.css" rel="stylesheet" type="text/css">
+    <!--SweetAlert CDN-->
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.7/dist/sweetalert2.min.css" rel="stylesheet" type="text/css">
 
-    <!--Bootstrap local-->
-    <link href="assets/libs/bootstrap/css/bootstrap.min.css">
+    <!--Bootstrap CDN-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+    <!--DataTable CDN-->
+    <link href="https://cdn.datatables.net/2.0.2/css/dataTables.bootstrap5.min.css" rel="stylesheet" type="text/css">
 
     <!-- Custom styles for this template-->
     <link href="assets/css/sb-admin-2.min.css" rel="stylesheet">
 
-    <!--DataTable local-->
-    <link href="assets/libs/datatables/datatables.min.css" rel="stylesheet">
-
     <!--Estilo personal-->
     <link href="assets/css/estilo_general.css" rel="stylesheet">
-
-    <style>
-        /* ======= Estilos generales ======= */
-        .toast-notificacion {
-            position: fixed;
-            bottom: 25px;
-            right: 25px;
-            background: #1e1e2f;
-            color: #fff;
-            padding: 14px 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-family: "Segoe UI", sans-serif;
-            font-size: 15px;
-            animation: slideIn 0.5s ease forwards;
-            opacity: 0;
-            z-index: 9999;
-        }
-
-        /* Ícono */
-        .toast-notificacion i {
-            font-size: 18px;
-            color: #4ade80;
-            /* verde moderno */
-        }
-
-        /* Botón de cerrar */
-        .toast-notificacion button {
-            background: none;
-            border: none;
-            color: #aaa;
-            font-size: 18px;
-            cursor: pointer;
-            margin-left: auto;
-            transition: 0.3s;
-        }
-
-        .toast-notificacion button:hover {
-            color: #fff;
-        }
-
-        /* Animaciones */
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(40px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
-        @keyframes slideOut {
-            from {
-                opacity: 1;
-                transform: translateY(0);
-            }
-
-            to {
-                opacity: 0;
-                transform: translateY(40px);
-            }
-        }
-    </style>
+    <link href="assets/css/estilo_prestamos.css" rel="stylesheet">
 </head>
 
 <body id="page-top">
@@ -345,31 +276,6 @@ $inactivos = $inactivos_result->fetch_assoc();
 
                     <!-- Topbar Navbar -->
                     <ul class="navbar-nav ml-auto">
-
-                        <!-- Nav Item - Search Dropdown (Visible Only XS) -->
-                        <li class="nav-item dropdown no-arrow d-sm-none">
-                            <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-search fa-fw"></i>
-                            </a>
-                            <!-- Dropdown - Messages -->
-                            <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in"
-                                aria-labelledby="searchDropdown">
-                                <form class="form-inline mr-auto w-100 navbar-search">
-                                    <div class="input-group">
-                                        <input type="text" class="form-control bg-light border-0 small"
-                                            placeholder="Search for..." aria-label="Search"
-                                            aria-describedby="basic-addon2">
-                                        <div class="input-group-append">
-                                            <button class="btn btn-primary" type="button">
-                                                <i class="fas fa-search fa-sm"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </li>
-
                         <?php if ($_SESSION["tipo_usuario"] === "1"): ?>
                             <!-- Nav Item - Papelera usuarios -->
                             <li class="nav-item dropdown no-arrow mx-1">
@@ -669,24 +575,39 @@ $inactivos = $inactivos_result->fetch_assoc();
     <!-- ============================ -->
     <!-- 🔹 Librerías base y dependencias -->
     <!-- ============================ -->
-    <script src="assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="assets/libs/jquery/jquery.min.js"></script>
-    <script src="assets/libs/jquery-easing/jquery.easing.min.js"></script>
+    <!-- jQuery DEBE ir primero (muchas librerías dependen de él) -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <!-- Bootstrap Bundle (incluye Popper.js) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <!-- ============================ -->
-    <!-- 🔹 Librerías externas -->
+    <!-- 🔹 Librerías que dependen de jQuery -->
     <!-- ============================ -->
-    <script src="assets/libs/awesome/js/all.min.js"></script>
-    <script src="assets/libs/sweetAlert/sweetalert2.all.min.js"></script>
+    <!-- jQuery Easing (depende de jQuery) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+
+    <!-- DataTables (depende de jQuery) -->
+    <script src="https://cdn.datatables.net/2.0.2/js/dataTables.min.js"></script>
+    <!-- DataTables Bootstrap 5 integration (depende de DataTables y Bootstrap) -->
+    <script src="https://cdn.datatables.net/2.0.2/js/dataTables.bootstrap5.min.js"></script>
 
     <!-- ============================ -->
-    <!-- 🔹 Scripts principales -->
+    <!-- 🔹 Librerías independientes -->
     <!-- ============================ -->
-    <script src="assets/js/sb-admin-2.min.js"></script>
+    <!-- SweetAlert2 (no depende de jQuery) -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.7/dist/sweetalert2.all.min.js"></script>
+
+    <!-- Font Awesome (independiente) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/js/all.min.js"></script>
 
     <!-- ============================ -->
     <!-- 🔹 Scripts personalizados -->
     <!-- ============================ -->
+    <!-- Configuración de tablas (usa DataTables) -->
+    <script src="assets/funcionalidad/tablas.js"></script>
+
+    <!-- Scripts específicos del usuario administrador -->
     <?php if ($_SESSION["tipo_usuario"] === "1"): ?>
         <script src="assets/public/js/prestamos/registro_prestamo.js"></script>
         <script src="assets/public/js/prestamos/eliminar_prestamo.js"></script>
@@ -694,14 +615,14 @@ $inactivos = $inactivos_result->fetch_assoc();
         <script src="assets/public/js/prestamos/vaciar_papelera_prestamo.js"></script>
         <script src="assets/public/js/prestamos/restaurar_un_prestamo.js"></script>
     <?php endif; ?>
+
+    <!-- Scripts de usuario -->
     <script src="assets/public/js/usuarios/actualizar_perfil.js"></script>
 
-    <!--Funcionalidad del menú despegable-->
+    <!-- Funcionalidad del menú -->
     <script src="assets/funcionalidad/app.js"></script>
 
-    <!--DataTables local-->
-    <script src="assets/libs/datatables/datatables.min.js"></script>
-    <script src="assets/funcionalidad/tablas.js"></script>
+    <!-- Script del toast para usuarios no administradores -->
     <?php if ($_SESSION["tipo_usuario"] !== "1" && $prestamos->num_rows > 0): ?>
         <script>
             document.addEventListener("DOMContentLoaded", () => {

@@ -50,21 +50,21 @@ $libros_json = json_encode($titulo_libro, JSON_UNESCAPED_UNICODE);
     <meta name="author" content="">
     <title>Reservas</title>
 
-    <!--Font Awesome local-->
-    <link href="assets/libs/awesome/css/all.min.css" rel="stylesheet" type="text/css">
+    <!--FontAwesome CDN-->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet" type="text/css">
 
-    <!--SweetAlert local-->
-    <link href="assets/libs/sweetAlert/sweetalert2.min.css" rel="stylesheet" type="text/css">
+    <!--SweetAlert CDN-->
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.7/dist/sweetalert2.min.css" rel="stylesheet" type="text/css">
 
-    <!--Bootstrap local-->
-    <link href="assets/libs/bootstrap/css/bootstrap.min.css">
+    <!--Bootstrap CDN-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+    <!--DataTable CDN-->
+    <link href="https://cdn.datatables.net/2.0.2/css/dataTables.bootstrap5.min.css" rel="stylesheet" type="text/css">
 
     <!-- Custom styles for this template-->
     <link href="assets/css/sb-admin-2.min.css" rel="stylesheet">
-
-    <!--DataTable local-->
-    <link href="assets/libs/datatables/datatables.min.css" rel="stylesheet">
 
     <!--Estilo personal-->
     <link href="assets/css/estilo_general.css" rel="stylesheet">
@@ -584,45 +584,40 @@ $libros_json = json_encode($titulo_libro, JSON_UNESCAPED_UNICODE);
     </div>
     <?php $sql->desconectar(); ?>
 
-    <!-- jQuery -->
-    <script src="assets/libs/jquery/jquery.min.js"></script>
-    <script src="assets/libs/jquery-easing/jquery.easing.min.js"></script>
+    <!-- ============================ -->
+    <!-- 🔹 Librerías base y dependencias -->
+    <!-- ============================ -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Bootstrap -->
-    <script src="assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <!-- ============================ -->
+    <!-- 🔹 Librerías externas -->
+    <!-- ============================ -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/js/all.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.7/dist/sweetalert2.all.min.js"></script>
+    <script src="https://cdn.datatables.net/2.0.2/js/dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/2.0.2/js/dataTables.bootstrap5.min.js"></script>
 
-    <!-- SweetAlert -->
-    <script src="assets/libs/sweetAlert/sweetalert2.all.min.js"></script>
+    <!-- ============================ -->
+    <!-- 🔹 Scripts personalizados -->
+    <!-- ============================ -->
+    <script src="assets/funcionalidad/app.js"></script>
 
-    <!-- Font Awesome -->
-    <script src="assets/libs/awesome/js/all.min.js"></script>
-
-    <!-- SB Admin 2 -->
-    <script src="assets/js/sb-admin-2.min.js"></script>
-
-    <!-- JS reservas -->
+    <!-- JS según el tipo de usuario -->
     <?php if ($_SESSION["tipo_usuario"] !== "1"): ?>
-        <!--JS registro reserva-->
         <script src="assets/public/js/reservas/registro_reserva.js"></script>
-
-        <!--JS eliminar reserva-->
         <script src="assets/public/js/reservas/eliminar_reserva.js"></script>
     <?php endif; ?>
 
-    <!-- JS actualizar perfil -->
-    <script src="assets/public/js/usuarios/actualizar_perfil.js"></script>
-
     <?php if ($_SESSION["tipo_usuario"] === "1"): ?>
-        <!--JS actualizar estado de la reserva-->
         <script src="assets/public/js/reservas/actualizar_reserva.js"></script>
     <?php endif; ?>
 
-    <!--Funcionalidad menú-->
-    <script src="assets/funcionalidad/app.js"></script>
-
-    <!--DataTables local-->
-    <script src="assets/libs/datatables/datatables.min.js"></script>
+    <!-- Perfil y tablas -->
+    <script src="assets/public/js/usuarios/actualizar_perfil.js"></script>
     <script src="assets/funcionalidad/tablas.js"></script>
+
 </body>
 
 </html>

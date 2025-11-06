@@ -45,21 +45,21 @@ $inactivos = $inactivos_result->fetch_assoc();
     <meta name="author" content="">
     <title>Inicio</title>
 
-    <!--Font Awesome local-->
-    <link href="assets/libs/awesome/css/all.min.css" rel="stylesheet" type="text/css">
+    <!--FontAwesome CDN-->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet" type="text/css">
 
-    <!--SweetAlert local-->
-    <link href="assets/libs/sweetAlert/sweetalert2.min.css" rel="stylesheet" type="text/css">
+    <!--SweetAlert CDN-->
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.7/dist/sweetalert2.min.css" rel="stylesheet" type="text/css">
 
-    <!--Bootstrap local-->
-    <link href="assets/libs/bootstrap/css/bootstrap.min.css">
+    <!--Bootstrap CDN-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+    <!--DataTable CDN-->
+    <link href="https://cdn.datatables.net/2.0.2/css/dataTables.bootstrap5.min.css" rel="stylesheet" type="text/css">
 
     <!-- Custom styles for this template-->
     <link href="assets/css/sb-admin-2.min.css" rel="stylesheet">
-
-    <!--DataTable local-->
-    <link href="assets/libs/datatables/datatables.min.css" rel="stylesheet">
 
     <!--Estilo personal-->
     <link href="assets/css/estilo_general.css" rel="stylesheet">
@@ -267,31 +267,6 @@ $inactivos = $inactivos_result->fetch_assoc();
 
                     <!-- Topbar Navbar -->
                     <ul class="navbar-nav ml-auto">
-
-                        <!-- Nav Item - Search Dropdown (Visible Only XS) -->
-                        <li class="nav-item dropdown no-arrow d-sm-none">
-                            <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-search fa-fw"></i>
-                            </a>
-                            <!-- Dropdown - Messages -->
-                            <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in"
-                                aria-labelledby="searchDropdown">
-                                <form class="form-inline mr-auto w-100 navbar-search">
-                                    <div class="input-group">
-                                        <input type="text" class="form-control bg-light border-0 small"
-                                            placeholder="Search for..." aria-label="Search"
-                                            aria-describedby="basic-addon2">
-                                        <div class="input-group-append">
-                                            <button class="btn btn-primary" type="button">
-                                                <i class="fas fa-search fa-sm"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </li>
-
                         <!-- Nav Item - Papelera usuarios -->
                         <li class="nav-item dropdown no-arrow mx-1">
                             <a class="nav-link dropdown-toggle" href="#" id="btn_papelera_usuarios" role="button"
@@ -577,32 +552,25 @@ $inactivos = $inactivos_result->fetch_assoc();
     </div>
     <?php $sql->desconectar(); ?>
 
-    <!-- ======================== -->
-    <!-- Librerías principales -->
-    <!-- ======================== -->
+    <!-- ============================ -->
+    <!-- 🔹 Librerías base y dependencias -->
+    <!-- ============================ -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- jQuery -->
-    <script src="assets/libs/jquery/jquery.min.js"></script>
+    <!-- ============================ -->
+    <!-- 🔹 Librerías externas -->
+    <!-- ============================ -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/js/all.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.7/dist/sweetalert2.all.min.js"></script>
 
-    <!-- jQuery Easing -->
-    <script src="assets/libs/jquery-easing/jquery.easing.min.js"></script>
-
-    <!-- Bootstrap -->
-    <script src="assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
-
-    <!-- Font Awesome -->
-    <script src="assets/libs/awesome/js/all.min.js"></script>
-
-    <!-- SweetAlert2 -->
-    <script src="assets/libs/sweetAlert/sweetalert2.all.min.js"></script>
-
-
-    <!-- ======================== -->
-    <!-- Scripts generales -->
-    <!-- ======================== -->
-
-    <!-- Plantilla SB Admin 2 -->
-    <script src="assets/js/sb-admin-2.min.js"></script>
+    <!-- ============================ -->
+    <!-- 🔹 DataTables CDN -->
+    <!-- ============================ -->
+    <script src="https://cdn.datatables.net/2.0.2/js/dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/2.0.2/js/dataTables.bootstrap5.min.js"></script>
+    <script src="assets/funcionalidad/tablas.js"></script>
 
     <!-- ======================== -->
     <!-- Gestión de usuarios -->
@@ -633,10 +601,6 @@ $inactivos = $inactivos_result->fetch_assoc();
 
     <!--Funcionalidad menú-->
     <script src="assets/funcionalidad/app.js"></script>
-
-    <!--DataTables local-->
-    <script src="assets/libs/datatables/datatables.min.js"></script>
-    <script src="assets/funcionalidad/tablas.js"></script>
 </body>
 
 </html>
