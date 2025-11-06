@@ -61,40 +61,36 @@ document.querySelector("#btn_registro_libro").addEventListener("click", () => {
         const cantidad = document.querySelector("#cantidad_libro").value.trim();
 
         const regex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
-        if (!regex.test(titulo) || !titulo) {
-          Swal.fire("Campo inválido", "El título debe ser válido.", "warning");
-          return;
-        }
-
-        if (!regex.test(autor) || !autor) {
-          Swal.fire("Campo inválido", "El autor debe ser válido.", "warning");
-          return;
-        }
-
-        if (!isbn || isbn.length < 5) {
-          Swal.fire(
-            "Campo inválido",
-            "El isbn debe ser númerico y además debe tener como minimo 5 caracteres.",
-            "warning"
+        if (!regex.test(titulo) || !titulo || titulo.length < 4) {
+          Swal.showValidationMessage(
+            "El título debe ser válido y con un minimo de 4 caracteres."
           );
           return;
         }
 
-        if (!regex.test(categoria) || !categoria) {
-          Swal.fire(
-            "Campo inválido",
-            "La categoría debe ser válida.",
-            "warning"
+        if (!regex.test(autor) || !autor || autor.length < 4) {
+          Swal.showValidationMessage(
+            "El autor debe ser válido y con un minimo de 4 caracteres."
+          );
+          return;
+        }
+
+        if (!isbn || isbn.length < 5) {
+          Swal.showValidationMessage(
+            "El ISBN debe ser válido y con un minimo de 5 caracteres."
+          );
+          return;
+        }
+
+        if (!regex.test(categoria) || !categoria || categoria.length < 4) {
+          Swal.showValidationMessage(
+            "La categoría debe ser válida y con un minimo de 4 caracteres."
           );
           return;
         }
 
         if (!cantidad || cantidad <= 0) {
-          Swal.fire(
-            "Campo inválido",
-            "La cantidad debe ser válida.",
-            "warning"
-          );
+          Swal.showValidationMessage("La cantidad debe ser válida.");
           return;
         }
 

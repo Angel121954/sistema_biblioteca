@@ -1,10 +1,9 @@
 document.addEventListener("DOMContentLoaded", () => {
   const btnRestaurarLibro = document.querySelector("#btn_restaurar_un_libro");
-
   if (!btnRestaurarLibro) return;
 
   btnRestaurarLibro.addEventListener("click", async () => {
-    // Pedir título del libro
+    // Pedir título del libro con validación
     const { value: titulo } = await Swal.fire({
       title: "Restaurar libro",
       text: "Ingrese el título del libro que desea restaurar:",
@@ -16,21 +15,20 @@ document.addEventListener("DOMContentLoaded", () => {
       confirmButtonColor: "#28a745",
       cancelButtonColor: "#6c757d",
       inputValidator: (value) => {
-        if (!value) return "Debes ingresar el título del libro.";
+        // Validación básica
+        if (!value) {
+          return "Debes ingresar el título del libro.";
+        }
+
+        // Validación de caracteres y longitud
+        const regex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
+        if (!regex.test(value) || value.length < 2) {
+          return "El título del libro debe ser válido y además debe contar con 2 o más caracteres.";
+        }
       },
     });
 
     if (!titulo) return;
-
-    const regex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
-    if (!regex.test(titulo) || titulo.length < 2) {
-      Swal.fire(
-        "Campo inválido",
-        "El título del libro debe ser válido y además debe contar con 2 o más caracteres.",
-        "warning"
-      );
-      return;
-    }
 
     // Confirmación final
     const confirmacion = await Swal.fire({
@@ -73,6 +71,10 @@ document.addEventListener("DOMContentLoaded", () => {
             icon: "success",
             confirmButtonColor: "#28a745",
           }).then(() => location.reload());
+        } else if (
+          resultado.trim() === `No existe el libro ${titulo} en estado inactivo`
+        ) {
+          Swal.fire("Fallo", resultado, "question");
         } else {
           Swal.fire({
             title: "Error",

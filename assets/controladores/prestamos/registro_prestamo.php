@@ -32,32 +32,35 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                                             = r.id_reserva INNER JOIN prestamos p ON
                                             p.fk_reserva_has_libro = rl.id_reserva_has_libro
                                             WHERE rl.id_reserva_has_libro = $id_reserva_has_libro");
-        $usuario = $usuarios_result->fetch_assoc();
 
-        $mail = new PHPMailer(true);
+        if ($usuarios_result) {
+            $usuario = $usuarios_result->fetch_assoc();
 
-        try {
-            $mail->isSMTP();
-            $mail->Host       = 'smtp.gmail.com';
-            $mail->SMTPAuth   = true;
-            $mail->Username   = 'angeldavidagudelocuartas13@gmail.com';
-            $mail->Password   = 'jhvm chgt zkyd xzlx';
-            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-            $mail->Port       = 587;
+            $mail = new PHPMailer(true);
 
-            $mail->setFrom('angeldavidagudelocuartas13@gmail.com', 'contrasena_phpmailer_angel');
-            $mail->addAddress($usuario["email_usuario"], $usuario["nombre_usuario"]);
+            try {
+                $mail->isSMTP();
+                $mail->Host       = 'smtp.gmail.com';
+                $mail->SMTPAuth   = true;
+                $mail->Username   = 'angeldavidagudelocuartas13@gmail.com';
+                $mail->Password   = 'jhvm chgt zkyd xzlx';
+                $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+                $mail->Port       = 587;
 
-            $mail->isHTML(true);
-            $mail->Subject = 'Correo de prueba con PHPMailer';
-            $mail->Body    = '<h3>¡Hola!</h3> Este es un mensaje de prueba.';
-            $mail->AltBody = 'Este es un mensaje de prueba.';
+                $mail->setFrom('angeldavidagudelocuartas13@gmail.com', 'contrasena_phpmailer_angel');
+                $mail->addAddress($usuario["email_usuario"], $usuario["nombre_usuario"]);
 
-            $mail->send();
-            echo "ok";
-        } catch (Exception $e) {
-            echo "Error al enviar el correo: {$mail->ErrorInfo}";
+                $mail->isHTML(true);
+                $mail->Subject = 'Correo de prueba con PHPMailer';
+                $mail->Body    = '<h3>¡Hola!</h3> Este es un mensaje de prueba.';
+                $mail->AltBody = 'Este es un mensaje de prueba.';
+
+                $mail->send();
+                echo "ok";
+            } catch (Exception $e) {
+                echo "Error al enviar el correo: {$mail->ErrorInfo}";
+            }
         }
-        $sql->desconectar();
     }
 }
+$sql->desconectar();
