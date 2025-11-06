@@ -4,7 +4,9 @@ document.addEventListener("DOMContentLoaded", () => {
   if (!btnRestaurarUno) return;
 
   btnRestaurarUno.addEventListener("click", async () => {
-    // Pedir nombre
+    const regex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
+
+    // Pedir nombre con validación
     const { value: nombre } = await Swal.fire({
       title: "Restaurar usuario",
       text: "Ingrese el nombre del usuario que desea restaurar:",
@@ -16,13 +18,18 @@ document.addEventListener("DOMContentLoaded", () => {
       confirmButtonColor: "#28a745",
       cancelButtonColor: "#6c757d",
       inputValidator: (value) => {
-        if (!value) return "Debes ingresar el nombre del usuario.";
+        if (!value) {
+          return "Debes ingresar el nombre del usuario.";
+        }
+        if (!regex.test(value) || value.length < 2) {
+          return "El nombre debe ser válido y contar con 2 o más caracteres.";
+        }
       },
     });
 
     if (!nombre) return;
 
-    // Pedir apellido
+    // Pedir apellido con validación
     const { value: apellido } = await Swal.fire({
       title: "Restaurar usuario",
       text: "Ingrese el apellido del usuario:",
@@ -34,30 +41,16 @@ document.addEventListener("DOMContentLoaded", () => {
       confirmButtonColor: "#28a745",
       cancelButtonColor: "#6c757d",
       inputValidator: (value) => {
-        if (!value) return "Debes ingresar el apellido del usuario.";
+        if (!value) {
+          return "Debes ingresar el apellido del usuario.";
+        }
+        if (!regex.test(value) || value.length < 2) {
+          return "El apellido debe ser válido y contar con 2 o más caracteres.";
+        }
       },
     });
 
     if (!apellido) return;
-
-    const regex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
-    /* if (nombre.length < 2 || apellido.length < 2) {
-      Swal.fire(
-        "Campo inválido",
-        "Por favor, ingrese campos lo suficientemente válidos.",
-        "warning"
-      );
-      return;
-    } */
-
-    if (!regex.test(nombre) || !regex.test(apellido)) {
-      Swal.fire(
-        "Campo inválido",
-        "Por favor, ingrese campos lo suficientemente válidos.",
-        "warning"
-      );
-      return;
-    }
 
     // Confirmación final
     const confirmacion = await Swal.fire({
