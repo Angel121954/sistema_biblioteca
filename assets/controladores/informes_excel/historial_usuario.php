@@ -1,7 +1,4 @@
 <?php
-// Evitar cualquier salida antes de las cabeceras
-ob_start();
-
 require_once "../../modelos/MySQL.php";
 require_once "../../libs/phpSpreadsheet/vendor/autoload.php";
 
@@ -15,20 +12,16 @@ use PhpOffice\PhpSpreadsheet\Style\Border;
 $sql = new MySQL();
 $sql->conectar();
 
-//* Consulta de reservas finalizadas
+//* Consulta de usuarios
 $consulta = "
     SELECT 
-        r.id_reserva, 
         u.nombre_usuario, 
-        l.titulo_libro, 
-        r.fecha_reserva, 
-        rl.estado_has_reserva
-    FROM reservas r
-    INNER JOIN reservas_has_libros rl ON rl.reservas_id_reserva = r.id_reserva
-    INNER JOIN libros l ON rl.libros_id_libro = l.id_libro
-    INNER JOIN usuarios u ON r.usuarios_id_usuario = u.id_usuario
-    WHERE rl.estado_has_reserva = 'Finalizada'
-    ORDER BY r.fecha_reserva DESC
+        u.apellido_usuario,
+        u.email_usuario, 
+        tu.nombre_tipo_usuario 
+    FROM usuarios u
+    INNER JOIN tipos_usuarios tu ON u.fk_tipo_usuario = tu.id_tipo_usuario
+    WHERE u.estado_usuario = 'Activo'
 ";
 
 $resultado = $sql->efectuarConsulta($consulta);
@@ -36,20 +29,17 @@ $resultado = $sql->efectuarConsulta($consulta);
 //* Crear el archivo Excel
 $spreadsheet = new Spreadsheet();
 $sheet = $spreadsheet->getActiveSheet();
-$sheet->setTitle('Historial Reservas');
 
 //* Título del reporte
-$sheet->setCellValue('A1', 'Historial de Reservas Finalizadas');
-$sheet->mergeCells('A1:E1');
+$sheet->setCellValue('A1', 'Historial de Usuarios');
+$sheet->mergeCells('A1:D1');
 $sheet->getStyle('A1')->getFont()->setBold(true)->setSize(16);
 $sheet->getStyle('A1')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
 //* Encabezados de la tabla
-$sheet->setCellValue('A3', 'ID Reserva');
-$sheet->setCellValue('B3', 'Usuario');
-$sheet->setCellValue('C3', 'Título Libro');
-$sheet->setCellValue('D3', 'Fecha Reserva');
-$sheet->setCellValue('E3', 'Estado');
+$sheet->setCellValue('A3', 'Nombre y Apellido');
+$sheet->setCellValue('B3', 'Correo');
+$sheet->setCellValue('C3', 'Tipo de Usuario');
 
 //* Estilo de encabezados
 $headerStyle = [
@@ -74,27 +64,23 @@ $headerStyle = [
     ]
 ];
 
-$sheet->getStyle('A3:E3')->applyFromArray($headerStyle);
+$sheet->getStyle('A3:C3')->applyFromArray($headerStyle);
 
 //* Ajustar ancho de columnas
-$sheet->getColumnDimension('A')->setWidth(15);
-$sheet->getColumnDimension('B')->setWidth(25);
-$sheet->getColumnDimension('C')->setWidth(40);
-$sheet->getColumnDimension('D')->setWidth(18);
-$sheet->getColumnDimension('E')->setWidth(15);
+$sheet->getColumnDimension('A')->setWidth(30);
+$sheet->getColumnDimension('B')->setWidth(35);
+$sheet->getColumnDimension('C')->setWidth(25);
 
 //* Llenar datos
 $fila = 4;
 if ($resultado && $resultado->num_rows > 0) {
     while ($row = $resultado->fetch_assoc()) {
-        $sheet->setCellValue('A' . $fila, $row['id_reserva']);
-        $sheet->setCellValue('B' . $fila, $row['nombre_usuario']);
-        $sheet->setCellValue('C' . $fila, $row['titulo_libro']);
-        $sheet->setCellValue('D' . $fila, $row['fecha_reserva']);
-        $sheet->setCellValue('E' . $fila, $row['estado_reserva']);
+        $sheet->setCellValue('A' . $fila, $row['nombre_usuario'] . ' ' . $row['apellido_usuario']);
+        $sheet->setCellValue('B' . $fila, $row['email_usuario']);
+        $sheet->setCellValue('C' . $fila, $row['nombre_tipo_usuario']);
 
         //* Estilo de celdas de datos
-        $sheet->getStyle('A' . $fila . ':E' . $fila)->applyFromArray([
+        $sheet->getStyle('A' . $fila . ':C' . $fila)->applyFromArray([
             'borders' => [
                 'allBorders' => [
                     'borderStyle' => Border::BORDER_THIN,
@@ -106,30 +92,25 @@ if ($resultado && $resultado->num_rows > 0) {
         $fila++;
     }
 } else {
-    $sheet->setCellValue('A4', 'No se encontraron reservas finalizadas.');
-    $sheet->mergeCells('A4:E4');
+    $sheet->setCellValue('A4', 'No se encontraron usuarios activos.');
+    $sheet->mergeCells('A4:C4');
     $sheet->getStyle('A4')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 }
 
 //* Pie de página
 $ultimaFila = $fila + 1;
 $sheet->setCellValue('A' . $ultimaFila, 'Biblioteca - Informe generado el ' . date('d/m/Y'));
-$sheet->mergeCells('A' . $ultimaFila . ':E' . $ultimaFila);
+$sheet->mergeCells('A' . $ultimaFila . ':C' . $ultimaFila);
 $sheet->getStyle('A' . $ultimaFila)->getFont()->setItalic(true)->setSize(9);
 $sheet->getStyle('A' . $ultimaFila)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
-//* Cierre de conexión
-$sql->desconectar();
-
-// Limpiar cualquier salida previa
-ob_end_clean();
-
 //* Generar y descargar el archivo
 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-header('Content-Disposition: attachment;filename="historial_reservas.xlsx"');
+header('Content-Disposition: attachment;filename="historial_usuarios.xlsx"');
 header('Cache-Control: max-age=0');
-header('Pragma: public');
 
 $writer = new Xlsx($spreadsheet);
 $writer->save('php://output');
-exit;
+
+//! Cierre de conexión
+$sql->desconectar();
