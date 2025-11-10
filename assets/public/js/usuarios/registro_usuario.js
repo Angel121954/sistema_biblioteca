@@ -76,19 +76,13 @@ document
             }
 
             if (!regex.test(apellido)) {
-              Swal.fire(
-                "Campo inválido",
-                "El apellido debe ser válido.",
-                "warning"
-              );
+              Swal.showValidationMessage("El apellido debe ser válido.");
               return;
             }
 
             if (contrasena.length < 4) {
-              Swal.fire(
-                "Campo inválido",
-                "La contrasña debe de tener un minimo de 4 caracteres.",
-                "warning"
+              Swal.showValidationMessage(
+                "La contrasña debe de tener un minimo de 4 caracteres."
               );
               return;
             }

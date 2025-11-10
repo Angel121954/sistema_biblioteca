@@ -1,55 +1,32 @@
 <?php
-
 session_start();
 require_once "assets/modelos/MySQL.php";
+
 $sql = new MySQL();
 $sql->conectar();
-$id_usuario = intval($_SESSION["id_usuario"]);
 
-//* consulta para poderlo imprimir en la tabla
-$prestamos = $sql->efectuarConsulta("SELECT p.id_prestamo, p.fecha_prestamo, p.fecha_devolucion,
-                        r.fecha_reserva, l.titulo_libro, u.nombre_usuario
-                        FROM prestamos p INNER JOIN reservas_has_libros rl 
-                        ON p.fk_reserva_has_libro = rl.id_reserva_has_libro
-                        INNER JOIN reservas r ON rl.reservas_id_reserva = r.id_reserva
-                        INNER JOIN usuarios u ON r.usuarios_id_usuario = u.id_usuario
-                        INNER JOIN libros l ON rl.libros_id_libro = l.id_libro
-                        WHERE p.estado_prestamo = 'Activo' ORDER BY p.id_prestamo");
+$categorias_result = $sql->efectuarConsulta("SELECT id_categoria, nombre_categoria
+                                                    FROM categorias");
+$categorias_result2 = $sql->efectuarConsulta("SELECT id_categoria, nombre_categoria
+                                                    FROM categorias
+                                                    WHERE estado_categoria = 'Activa'");
+$categorias = [];
+while ($valor = $categorias_result->fetch_assoc()) {
+    $categorias[] = $valor;
+}
 
+$categorias_json = json_encode($categorias, JSON_UNESCAPED_UNICODE);
+
+$id_usuario = $_SESSION["id_usuario"];
 $usuario_result = $sql->efectuarConsulta("SELECT * FROM usuarios WHERE id_usuario = $id_usuario");
 $usuario = $usuario_result->fetch_assoc();
 
-$reservas_result = $sql->efectuarConsulta("SELECT rl.id_reserva_has_libro, r.id_reserva, u.id_usuario, u.nombre_usuario,
-                                        r.fecha_reserva, rl.cantidad_libros, l.titulo_libro FROM reservas r
-                                        INNER JOIN usuarios u ON r.usuarios_id_usuario = u.id_usuario
-                                        INNER JOIN reservas_has_libros rl ON rl.reservas_id_reserva = r.id_reserva
-                                        INNER JOIN libros l ON rl.libros_id_libro = l.id_libro
-                                        WHERE rl.estado_has_reserva = 'Aceptada'");
-
-$reservas = [];
-
-while ($valor = $reservas_result->fetch_assoc()) {
-    $reservas[] = $valor;
-}
-
-//* convertir las fechas en formato JSON para poderlo leer en el public/js/prestamos/registro_prestamo.js
-$reservas_json = json_encode($reservas, JSON_UNESCAPED_UNICODE);
-
-$inactivos_result = $sql->efectuarConsulta("SELECT COUNT(*) AS cantidad_inactivos FROM prestamos p
-                                    WHERE p.estado_prestamo = 'Inactivo'");
+$inactivos_result = $sql->efectuarConsulta("SELECT COUNT(*) AS cantidad_inactivos
+                                        FROM categorias WHERE estado_categoria = 'Inactiva'");
 $inactivos = $inactivos_result->fetch_assoc();
 
-$prestamos_usuario_result = $sql->efectuarConsulta("SELECT p.id_prestamo, p.fecha_prestamo, p.fecha_devolucion,
-                        r.fecha_reserva, l.titulo_libro, u.nombre_usuario
-                        FROM prestamos p INNER JOIN reservas_has_libros rl 
-                        ON p.fk_reserva_has_libro = rl.id_reserva_has_libro
-                        INNER JOIN reservas r ON rl.reservas_id_reserva = r.id_reserva
-                        INNER JOIN usuarios u ON r.usuarios_id_usuario = u.id_usuario
-                        INNER JOIN libros l ON rl.libros_id_libro = l.id_libro
-                        WHERE p.estado_prestamo = 'Activo' AND u.id_usuario = $id_usuario 
-                        ORDER BY p.id_prestamo");
-
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -61,7 +38,7 @@ $prestamos_usuario_result = $sql->efectuarConsulta("SELECT p.id_prestamo, p.fech
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>Prestamos</title>
+    <title>Libros</title>
 
     <!--FontAwesome CDN-->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet" type="text/css">
@@ -81,7 +58,6 @@ $prestamos_usuario_result = $sql->efectuarConsulta("SELECT p.id_prestamo, p.fech
 
     <!--Estilo personal-->
     <link href="assets/css/estilo_general.css" rel="stylesheet">
-    <link href="assets/css/estilo_prestamos.css" rel="stylesheet">
 </head>
 
 <body id="page-top">
@@ -297,75 +273,23 @@ $prestamos_usuario_result = $sql->efectuarConsulta("SELECT p.id_prestamo, p.fech
                     <!-- Topbar Navbar -->
                     <ul class="navbar-nav ml-auto">
                         <?php if ($_SESSION["tipo_usuario"] === "1"): ?>
-                            <!-- Nav Item - Papelera usuarios -->
-                            <li class="nav-item dropdown no-arrow mx-1">
-                                <a class="nav-link dropdown-toggle" href="#" id="btn_papelera_prestamos" role="button"
-                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <i class="bi bi-trash3-fill"></i>
-                                    <!-- Counter - Alerts -->
-                                    <span class="badge badge-danger badge-counter"><?= $inactivos['cantidad_inactivos']; ?></span>
-                                </a>
-                                <!-- Dropdown - Alerts -->
-                                <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
-                                    aria-labelledby="alertsDropdown">
-                                    <h6 class="dropdown-header">
-                                        Alerts Center
-                                    </h6>
-                                    <a class="dropdown-item d-flex align-items-center" href="#">
-                                        <div class="mr-3">
-                                            <div class="icon-circle bg-primary">
-                                                <i class="fas fa-file-alt text-white"></i>
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <div class="small text-gray-500">December 12, 2019</div>
-                                            <span class="font-weight-bold">A new monthly report is ready to download!</span>
-                                        </div>
-                                    </a>
-                                    <a class="dropdown-item d-flex align-items-center" href="#">
-                                        <div class="mr-3">
-                                            <div class="icon-circle bg-success">
-                                                <i class="fas fa-donate text-white"></i>
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <div class="small text-gray-500">December 7, 2019</div>
-                                            $290.29 has been deposited into your account!
-                                        </div>
-                                    </a>
-                                    <a class="dropdown-item d-flex align-items-center" href="#">
-                                        <div class="mr-3">
-                                            <div class="icon-circle bg-warning">
-                                                <i class="fas fa-exclamation-triangle text-white"></i>
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <div class="small text-gray-500">December 2, 2019</div>
-                                            Spending Alert: We've noticed unusually high spending for your account.
-                                        </div>
-                                    </a>
-                                    <a class="dropdown-item text-center small text-gray-500" href="#">Show All Alerts</a>
-                                </div>
-                            </li>
-
-                            <!--Restaurar un prestamo-->
+                            <!--Restaurar un libro-->
                             <li class="nav-item dropdown no-arrow">
-                                <a class="nav-link dropdown-toggle" href="#" id="btn_restaurar_un_prestamo" role="button"
+                                <a class="nav-link dropdown-toggle" href="#" id="btn_restaurar_una_categoria" role="button"
                                     data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <i class="bi bi-journal-arrow-up"></i>
+                                    <i class="bi bi-bookmark-check"></i>
                                     <span class="badge badge-danger badge-counter"><?= $inactivos['cantidad_inactivos']; ?></span>
                                 </a>
                             </li>
 
-                            <!-- Nav Item - Restaurar usuarios -->
+                            <!-- Nav Item - Restaurar libros -->
                             <li class="nav-item dropdown no-arrow mx-1">
-                                <a class="nav-link dropdown-toggle" id="btn_restaurar_prestamos" role="button"
+                                <a class="nav-link dropdown-toggle" href="#" id="btn_restaurar_categorias" role="button"
                                     data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <i class="bi bi-arrow-counterclockwise"></i>
                                     <!-- Counter - Messages -->
                                     <span class="badge badge-danger badge-counter"><?= $inactivos['cantidad_inactivos']; ?></span>
                                 </a>
-
                                 <!-- Dropdown - Messages -->
                                 <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                     aria-labelledby="messagesDropdown">
@@ -469,110 +393,72 @@ $prestamos_usuario_result = $sql->efectuarConsulta("SELECT p.id_prestamo, p.fech
 
                         <!-- Begin Page Content -->
                         <div class="container-fluid">
-                            <!-- Page Heading -->
+                            <!-- Botones superiores -->
 
                             <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                                <h1>Gestión de Prestamos</h1>
+                                <h1>Gestión de Categorías</h1>
                                 <?php if ($_SESSION["tipo_usuario"] === "1"): ?>
-                                    <button id="btn_registro_prestamo" data-reserva="<?php echo htmlspecialchars($reservas_json, ENT_QUOTES, 'UTF-8'); ?>"><i class="bi bi-file-earmark-plus text-white-50 mx-1"></i>Realizar un prestamo</button>
+                                    <button id="btn_registro_categoria"
+                                        data-categorias="<?php echo htmlspecialchars($categorias_json, ENT_QUOTES, 'UTF-8'); ?>">
+                                        <i class="fas fa-plus fa-sm text-white-50"></i> Agregar categoría
+                                    </button>
                                 <?php endif; ?>
                             </div>
 
-                            <!-- DataTales Example -->
+                            <!-- Tabla de categorías -->
                             <div class="card shadow mb-4">
                                 <div class="card-header py-3">
-                                    <?php switch ($_SESSION["tipo_usuario"]):
-                                        case "1": ?>
-                                            <h6 class="m-0 font-weight-bold text-primary">Tabla de los prestamos</h6>
-                                        <?php break;
-                                        default: ?>
-                                            <h6 class="m-0 font-weight-bold text-primary">Tabla de mis prestamos</h6>
-                                    <?php break;
-                                    endswitch; ?>
+                                    <h6 class="m-0 font-weight-bold text-primary">Tabla de categorías</h6>
                                 </div>
+
                                 <div class="card-body">
                                     <div class="table-responsive">
+                                        <table class="table table-bordered tabla_dt" id="tbl_categorias" width="100%" cellspacing="0">
+                                            <thead>
+                                                <tr>
+                                                    <th>ID categoría</th>
+                                                    <th>Nombre categoría</th>
+                                                    <?php if ($_SESSION["tipo_usuario"] === "1"): ?>
+                                                        <th class="text-center">Acciones</th>
+                                                    <?php endif; ?>
+                                                </tr>
+                                            </thead>
 
-                                        <?php if ($_SESSION["tipo_usuario"] == "1"): ?>
-                                            <table class="table table-bordered tabla_dt" id="tbl_prestamos" width="100%" cellspacing="0">
-                                                <thead>
+                                            <tbody>
+                                                <?php while ($filas = $categorias_result2->fetch_assoc()): ?>
                                                     <tr>
-                                                        <th>ID prestamo</th>
-                                                        <th>Fecha reserva</th>
-                                                        <th>Fecha prestamo</th>
-                                                        <th>Fecha devolución</th>
-                                                        <th>Nombre usuario</th>
-                                                        <th>Titulo libro</th>
+                                                        <td><?php echo $filas["id_categoria"]; ?></td>
+                                                        <td><?php echo $filas["nombre_categoria"]; ?></td>
                                                         <?php if ($_SESSION["tipo_usuario"] === "1"): ?>
-                                                            <th>Acciones</th>
+                                                            <td class="text-center">
+                                                                <button
+                                                                    class="btn btn-sm btn-warning"
+                                                                    data-id="<?= $filas['id_categoria']; ?>"
+                                                                    data-nombre="<?= $filas['nombre_categoria']; ?>"
+                                                                    onclick="editarCategoria(this)">
+                                                                    <i class="bi bi-pencil-square"></i>
+                                                                </button>
+
+                                                                <button
+                                                                    class="btn btn-sm btn-danger"
+                                                                    data-id="<?= $filas['id_categoria']; ?>"
+                                                                    data-nombre="<?= $filas['nombre_categoria']; ?>"
+                                                                    onclick="eliminarCategoria(this)">
+                                                                    <i class="bi bi-trash"></i>
+                                                                </button>
+                                                            </td>
                                                         <?php endif; ?>
                                                     </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <?php while ($fila = $prestamos->fetch_assoc()): ?>
-                                                        <tr>
-                                                            <th><?php echo $fila["id_prestamo"]; ?></th>
-                                                            <th><?php echo $fila["fecha_reserva"]; ?></th>
-                                                            <th><?php echo $fila["fecha_prestamo"]; ?></th>
-                                                            <th><?php echo $fila["fecha_devolucion"]; ?></th>
-                                                            <th><?php echo $fila["nombre_usuario"]; ?></th>
-                                                            <th><?php echo $fila["titulo_libro"]; ?></th>
-                                                            <?php if ($_SESSION["tipo_usuario"] === "1"): ?>
-                                                                <td class="text-center">
-                                                                    <button class="btn btn-sm btn-danger"
-                                                                        data-id="<?= $fila['id_prestamo']; ?>"
-                                                                        onclick="eliminarPrestamo(this)">
-                                                                        <i class="bi bi-trash"></i>
-                                                                    </button>
-                                                                </td>
-                                                            <?php endif; ?>
-                                                        </tr>
-                                                    <?php endwhile; ?>
-                                                </tbody>
-                                            </table>
-                                        <?php endif; ?>
-                                        <?php if ($_SESSION["tipo_usuario"] != "1"): ?>
-                                            <table class="table table-bordered tabla_dt" id="tbl_prestamos" width="100%" cellspacing="0">
-                                                <thead>
-                                                    <tr>
-                                                        <th>ID prestamo</th>
-                                                        <th>Fecha reserva</th>
-                                                        <th>Fecha prestamo</th>
-                                                        <th>Fecha devolución</th>
-                                                        <th>Nombre usuario</th>
-                                                        <th>Titulo libro</th>
-                                                        <?php if ($_SESSION["tipo_usuario"] === "1"): ?>
-                                                            <th>Acciones</th>
-                                                        <?php endif; ?>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <?php while ($fila = $prestamos_usuario_result->fetch_assoc()): ?>
-                                                        <tr>
-                                                            <th><?php echo $fila["id_prestamo"]; ?></th>
-                                                            <th><?php echo $fila["fecha_reserva"]; ?></th>
-                                                            <th><?php echo $fila["fecha_prestamo"]; ?></th>
-                                                            <th><?php echo $fila["fecha_devolucion"]; ?></th>
-                                                            <th><?php echo $fila["nombre_usuario"]; ?></th>
-                                                            <th><?php echo $fila["titulo_libro"]; ?></th>
-                                                            <?php if ($_SESSION["tipo_usuario"] === "1"): ?>
-                                                                <td class="text-center">
-                                                                    <button class="btn btn-sm btn-danger"
-                                                                        data-id="<?= $fila['id_prestamo']; ?>"
-                                                                        onclick="eliminarPrestamo(this)">
-                                                                        <i class="bi bi-trash"></i>
-                                                                    </button>
-                                                                </td>
-                                                            <?php endif; ?>
-                                                        </tr>
-                                                    <?php endwhile; ?>
-                                                </tbody>
-                                            </table>v
-                                        <?php endif; ?>
+                                                <?php endwhile; ?>
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
                             </div>
+
                         </div>
+                        <!-- End Page Content -->
+
                         <!-- /.container-fluid -->
 
                     </div>
@@ -580,132 +466,86 @@ $prestamos_usuario_result = $sql->efectuarConsulta("SELECT p.id_prestamo, p.fech
 
                 </div>
                 <!-- End of Content Wrapper -->
+                <!-- Footer -->
+                <footer class="sticky-footer bg-white">
+                    <div class="container my-auto">
+                        <div class="copyright text-center my-auto">
+                            <span>Copyright &copy; Your Website 2021</span>
+                        </div>
+                    </div>
+                </footer>
+                <!-- End of Footer -->
+
             </div>
-            <!-- Footer -->
-            <footer class="sticky-footer bg-white">
-                <div class="container my-auto">
-                    <div class="copyright text-center my-auto">
-                        <span>Copyright &copy; Your Website 2021</span>
+            <!-- End of Content Wrapper -->
+
+        </div>
+        <!-- End of Page Wrapper -->
+
+        <!-- Scroll to Top Button-->
+        <a class="scroll-to-top rounded" href="#page-top">
+            <i class="fas fa-angle-up"></i>
+        </a>
+
+        <!-- Logout Modal-->
+        <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+                        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                        <a class="btn btn-primary" href="login.html">Logout</a>
                     </div>
                 </div>
-            </footer>
-            <!-- End of Footer -->
-
-        </div>
-        <!-- End of Content Wrapper -->
-
-    </div>
-    <!-- End of Page Wrapper -->
-
-    <!-- Scroll to Top Button-->
-    <a class="scroll-to-top rounded" href="#page-top">
-        <i class="fas fa-angle-up"></i>
-    </a>
-
-    <!-- Logout Modal-->
-    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
-                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
-                <div class="modal-footer">
-                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-primary" href="login.html">Logout</a>
-                </div>
             </div>
         </div>
-    </div>
-    <?php if ($_SESSION["tipo_usuario"] !== "1"): ?>
-        <!-- ======= Contenedor del mensaje ======= -->
-        <div id="toast" class="toast-notificacion" style="display:none;">
-            <i class="fas fa-book-reader"></i>
-            <span>Recuerde usuario <?= $_SESSION["nombre_usuario"]; ?> la fecha de devolución de libro correspondiente. Gracias</span>
+        <?php $sql->desconectar(); ?>
 
-            <button id="cerrarToast">&times;</button>
-        </div>
-    <?php endif; ?>
-    <?php $sql->desconectar(); ?>
+        <!-- ============================ -->
+        <!-- 🔹 Librerías base y dependencias -->
+        <!-- ============================ -->
+        <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- ============================ -->
-    <!-- 🔹 Librerías base y dependencias -->
-    <!-- ============================ -->
-    <!-- jQuery DEBE ir primero (muchas librerías dependen de él) -->
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+        <!-- ============================ -->
+        <!-- 🔹 Librerías externas -->
+        <!-- ============================ -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/js/all.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.7/dist/sweetalert2.all.min.js"></script>
 
-    <!-- Bootstrap Bundle (incluye Popper.js) -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- ============================ -->
+        <!-- 🔹 Scripts personalizados - Categorías -->
+        <!-- ============================ -->
+        <?php if ($_SESSION["tipo_usuario"] === "1"): ?>
+            <script src="assets/public/js/categorias/registro_categoria.js"></script>
+            <script src="assets/public/js/categorias/editar_categoria.js"></script>
+            <script src="assets/public/js/categorias/eliminar_categoria.js"></script>
+            <script src="assets/public/js/categorias/restaurar_una_categoria.js"></script>
+            <script src="assets/public/js/categorias/restaurar_categoria.js"></script>
+        <?php endif; ?>
 
-    <!-- ============================ -->
-    <!-- 🔹 Librerías que dependen de jQuery -->
-    <!-- ============================ -->
-    <!-- jQuery Easing (depende de jQuery) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+        <!-- ============================ -->
+        <!-- 🔹 Script personalizado - Usuarios -->
+        <!-- ============================ -->
+        <script src="assets/public/js/usuarios/actualizar_perfil.js"></script>
 
-    <!-- DataTables (depende de jQuery) -->
-    <script src="https://cdn.datatables.net/2.0.2/js/dataTables.min.js"></script>
-    <!-- DataTables Bootstrap 5 integration (depende de DataTables y Bootstrap) -->
-    <script src="https://cdn.datatables.net/2.0.2/js/dataTables.bootstrap5.min.js"></script>
+        <!-- Funcionalidad menú -->
+        <script src="assets/funcionalidad/app.js"></script>
 
-    <!-- ============================ -->
-    <!-- 🔹 Librerías independientes -->
-    <!-- ============================ -->
-    <!-- SweetAlert2 (no depende de jQuery) -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.7/dist/sweetalert2.all.min.js"></script>
-
-    <!-- Font Awesome (independiente) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/js/all.min.js"></script>
-
-    <!-- ============================ -->
-    <!-- 🔹 Scripts personalizados -->
-    <!-- ============================ -->
-    <!-- Configuración de tablas (usa DataTables) -->
-    <script src="assets/funcionalidad/tablas.js"></script>
-
-    <!-- Scripts específicos del usuario administrador -->
-    <?php if ($_SESSION["tipo_usuario"] === "1"): ?>
-        <script src="assets/public/js/prestamos/registro_prestamo.js"></script>
-        <script src="assets/public/js/prestamos/eliminar_prestamo.js"></script>
-        <script src="assets/public/js/prestamos/restaurar_prestamo.js"></script>
-        <script src="assets/public/js/prestamos/vaciar_papelera_prestamo.js"></script>
-        <script src="assets/public/js/prestamos/restaurar_un_prestamo.js"></script>
-    <?php endif; ?>
-
-    <!-- Scripts de usuario -->
-    <script src="assets/public/js/usuarios/actualizar_perfil.js"></script>
-
-    <!-- Funcionalidad del menú -->
-    <script src="assets/funcionalidad/app.js"></script>
-
-    <!-- Script del toast para usuarios no administradores -->
-    <?php if ($_SESSION["tipo_usuario"] !== "1" && $prestamos_usuario_result->num_rows > 0): ?>
-        <script>
-            document.addEventListener("DOMContentLoaded", () => {
-                const toast = document.getElementById("toast");
-                const btnCerrar = document.getElementById("cerrarToast");
-
-                // Mostrar mensaje
-                toast.style.display = "flex";
-                setTimeout(() => toast.style.opacity = "1", 10);
-
-                // Ocultar después de 5s
-                setTimeout(() => cerrarToast(), 5000);
-
-                // Cerrar manualmente
-                btnCerrar.addEventListener("click", cerrarToast);
-
-                function cerrarToast() {
-                    toast.style.animation = "slideOut 0.5s ease forwards";
-                    setTimeout(() => toast.style.display = "none", 500);
-                }
-            });
-        </script>
-    <?php endif; ?>
+        <!-- ============================ -->
+        <!-- 🔹 DataTables CDN -->
+        <!-- ============================ -->
+        <script src="https://cdn.datatables.net/2.0.2/js/dataTables.min.js"></script>
+        <script src="https://cdn.datatables.net/2.0.2/js/dataTables.bootstrap5.min.js"></script>
+        <script src="assets/funcionalidad/tablas.js"></script>
 </body>
 
 </html>

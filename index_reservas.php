@@ -143,6 +143,14 @@ $libros_json = json_encode($titulo_libro, JSON_UNESCAPED_UNICODE);
                 </a>
             </li>
 
+            <!-- Enlace: Categorias -->
+            <li class="nav-item">
+                <a class="nav-link" href="index_categorias.php">
+                    <i class="bi bi-collection"></i>
+                    <span>Categorias</span>
+                </a>
+            </li>
+
             <!-- Reservas -->
             <?php switch ($_SESSION["tipo_usuario"]):
                 case "1": ?>
@@ -195,6 +203,7 @@ $libros_json = json_encode($titulo_libro, JSON_UNESCAPED_UNICODE);
                             <a class="collapse-item" href="assets/controladores/informes/libro_prestado.php">Libros prestados</a>
                             <a class="collapse-item" href="assets/controladores/informes/libro_mas_prestado.php">Libros más prestados</a>
                             <a class="collapse-item" href="assets/controladores/informes/libro_menos_prestado.php">Libros menos prestados</a>
+                            <a class="collapse-item" href="assets/controladores/informes/historial_usuario.php">Historial de usuarios</a>
                             <a class="collapse-item" href="assets/controladores/informes/usuario_moroso.php">Usuarios morosos</a>
                             <a class="collapse-item" href="assets/controladores/informes/historial_prestamo.php">Historial prestamo</a>
                             <a class="collapse-item" href="assets/controladores/informes/historial_reserva.php">Historial reserva</a>
@@ -216,6 +225,7 @@ $libros_json = json_encode($titulo_libro, JSON_UNESCAPED_UNICODE);
                             <a class="collapse-item" href="assets/controladores/informes_excel/libro_prestado_excel.php">Libros prestados</a>
                             <a class="collapse-item" href="assets/controladores/informes_excel/libro_mas_prestado_excel.php">Libros más prestados</a>
                             <a class="collapse-item" href="assets/controladores/informes_excel/libro_menos_prestado_excel.php">Libros menos prestados</a>
+                            <a class="collapse-item" href="assets/controladores/informes_excel/historial_usuario.php">Historial de usuarios</a>
                             <a class="collapse-item" href="assets/controladores/informes_excel/usuario_moroso_excel.php">Usuarios morosos</a>
                             <a class="collapse-item" href="assets/controladores/informes_excel/historial_prestamo_excel.php">Historial prestamo</a>
                             <a class="collapse-item" href="assets/controladores/informes_excel/historial_reserva_excel.php">Historial reserva</a>

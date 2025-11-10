@@ -1,4 +1,6 @@
-document.querySelector("#btn_registro_libro").addEventListener("click", () => {
+document.querySelector("#btn_registro_libro").addEventListener("click", (e) => {
+  const btn = e.currentTarget;
+  const categoria_libro = JSON.parse(btn.dataset.categorias);
   Swal.fire({
     title: '<h2 class="fw-bold mb-3 text-primary">Registro de libro</h2>',
     html: `
@@ -22,10 +24,11 @@ document.querySelector("#btn_registro_libro").addEventListener("click", () => {
           <label for="isbn_libro"><i class="bi bi-upc-scan"></i> ISBN</label>
         </div>
 
-        <div class="form-floating mb-3">
-          <input name="categoria_libro" id="categoria_libro" type="text" class="form-control"
-                 placeholder="Categoría" required autocomplete="off">
-          <label for="categoria_libro"><i class="bi bi-tags"></i> Categoría</label>
+        <div class="form-floating mb-4">
+          <select id="categoria_libro" name="categoria_libro" class="form-select" required>
+            <option value="" disabled selected>Seleccione una categoría</option>
+          </select>
+          <label for="categoria_libro"><i class="bi bi-tag"></i> Categoría</label>
         </div>
 
         <div class="form-floating mb-4">
@@ -46,6 +49,14 @@ document.querySelector("#btn_registro_libro").addEventListener("click", () => {
       popup: "shadow-lg rounded-4 border-0",
     },
     didOpen: () => {
+      const selectCategoriaLibro = document.querySelector("#categoria_libro");
+      categoria_libro.forEach((c) => {
+        const option = document.createElement("option");
+        option.value = c.id_categoria;
+        option.textContent = c.nombre_categoria;
+        selectCategoriaLibro.appendChild(option);
+      });
+
       const form = document.querySelector("#frm_registro_libro");
 
       form.addEventListener("submit", (e) => {
@@ -55,37 +66,34 @@ document.querySelector("#btn_registro_libro").addEventListener("click", () => {
         const titulo = document.querySelector("#titulo_libro").value.trim();
         const autor = document.querySelector("#autor_libro").value.trim();
         const isbn = document.querySelector("#isbn_libro").value.trim();
-        const categoria = document
-          .querySelector("#categoria_libro")
-          .value.trim();
+        const categoria = document.querySelector("#categoria_libro").value;
         const cantidad = document.querySelector("#cantidad_libro").value.trim();
 
         const regex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
+
         if (!regex.test(titulo) || !titulo || titulo.length < 4) {
           Swal.showValidationMessage(
-            "El título debe ser válido y con un minimo de 4 caracteres."
+            "El título debe ser válido y con un mínimo de 4 caracteres."
           );
           return;
         }
 
         if (!regex.test(autor) || !autor || autor.length < 4) {
           Swal.showValidationMessage(
-            "El autor debe ser válido y con un minimo de 4 caracteres."
+            "El autor debe ser válido y con un mínimo de 4 caracteres."
           );
           return;
         }
 
         if (!isbn || isbn.length < 5) {
           Swal.showValidationMessage(
-            "El ISBN debe ser válido y con un minimo de 5 caracteres."
+            "El ISBN debe ser válido y con un mínimo de 5 caracteres."
           );
           return;
         }
 
-        if (!regex.test(categoria) || !categoria || categoria.length < 4) {
-          Swal.showValidationMessage(
-            "La categoría debe ser válida y con un minimo de 4 caracteres."
-          );
+        if (!categoria) {
+          Swal.showValidationMessage("Debe seleccionar una categoría.");
           return;
         }
 
@@ -100,26 +108,32 @@ document.querySelector("#btn_registro_libro").addEventListener("click", () => {
           allowOutsideClick: false,
           didOpen: () => Swal.showLoading(),
         });
-        registroLibro(); //* Hoisting
-        async function registroLibro() {
-          const respuesta = await fetch(
-            "assets/controladores/libros/registro_libro.php",
-            {
-              method: "POST",
-              body: formData,
-            }
-          );
-          const res = await respuesta.text();
-          console.log("Respuesta del servidor:", res);
 
-          if (res.trim() === "ok") {
-            Swal.fire(
-              "¡Actualizado!",
-              "Libro agregado correctamente",
-              "success"
-            ).then(() => location.reload());
-          } else {
-            Swal.fire("Error", res, "error");
+        registroLibro();
+
+        async function registroLibro() {
+          try {
+            const respuesta = await fetch(
+              "assets/controladores/libros/registro_libro.php",
+              {
+                method: "POST",
+                body: formData,
+              }
+            );
+            const res = await respuesta.text();
+            console.log("Respuesta del servidor:", res);
+
+            if (res.trim() === "ok") {
+              Swal.fire(
+                "¡Registrado!",
+                "Libro agregado correctamente",
+                "success"
+              ).then(() => location.reload());
+            } else {
+              Swal.fire("Error", res, "error");
+            }
+          } catch (error) {
+            Swal.fire("Error", "No se pudo conectar con el servidor", "error");
           }
         }
       });

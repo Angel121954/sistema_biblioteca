@@ -70,36 +70,26 @@ function editarUsuario(btn, tiposUsuariosStr) {
         const apellido = form.apellido_usuario.value.trim();
         const email = form.email_usuario.value.trim();
         const tipo = form.tipo_usuario.value;
-
+        
         const regex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
         if (!regex.test(nombre)) {
-          Swal.fire("Campo inválido", "El nombre debe ser válido.", "warning");
+          Swal.showValidationMessage("El nombre debe ser válido.");
           return;
         }
 
         if (!regex.test(apellido)) {
-          Swal.fire(
-            "Campo inválido",
-            "El apellido debe ser válido.",
-            "warning"
-          );
+          Swal.showValidationMessage("El apellido debe ser válido.");
           return;
         }
 
         if (!tipo) {
-          Swal.fire(
-            "Campo inválido",
-            "Debe seleccionar un tipo de usuario.",
-            "warning"
-          );
+          Swal.showValidationMessage("Debe seleccionar un tipo de usuario.");
           return;
         }
 
         if (!email || email.includes("'")) {
-          Swal.fire(
-            "Campo inválido",
-            "El correo debe ser válido y no se permite comilla simple por cuestiones de seguridad.",
-            "warning"
+          Swal.showValidationMessage(
+            "El correo debe ser válido y no se permite comilla simple por cuestiones de seguridad."
           );
           return;
         }

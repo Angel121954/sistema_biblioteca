@@ -42,6 +42,8 @@ document.addEventListener("DOMContentLoaded", () => {
           }).then(() => {
             location.reload();
           });
+        } else if (resultado.includes("No hay libros para restaurar")) {
+          Swal.fire("Fallo", resultado, "question");
         } else {
           Swal.fire({
             title: "Error",

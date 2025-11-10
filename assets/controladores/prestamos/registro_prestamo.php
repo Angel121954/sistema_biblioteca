@@ -54,6 +54,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 $mail->Subject = 'Correo de prueba con PHPMailer';
                 $mail->Body    = '<h3>¡Hola!</h3> Este es un mensaje de prueba.';
                 $mail->AltBody = 'Este es un mensaje de prueba.';
+                $mail->CharSet = 'UTF-8';
 
                 $mail->send();
                 echo "ok";

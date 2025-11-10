@@ -48,10 +48,8 @@ function actualizarPerfil(btn) {
 
       const regex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
       if (!regex.test(nombre) || !regex.test(apellido) || email.includes("'")) {
-        Swal.fire(
-          "Campo inválido",
-          "Por favor, ingrese campos válidos para poder actualizar el perfil.",
-          "warning"
+        Swal.showValidationMessage(
+          "Por favor, ingrese campos válidos para poder actualizar el perfil."
         );
         return false;
       }

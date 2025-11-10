@@ -1,8 +1,8 @@
-function eliminarLibro(btn) {
-  const id_libro = btn.dataset.id;
-  const titulo_libro = btn.dataset.nombre;
+function eliminarCategoria(btn) {
+  const id_categoria = btn.dataset.id;
+  const categoria = btn.dataset.nombre;
   Swal.fire({
-    title: "¿Eliminar libro?",
+    title: "¿Eliminar categoría?",
     text: "Esta acción no se puede deshacer.",
     icon: "warning",
     showCancelButton: true,
@@ -13,17 +13,17 @@ function eliminarLibro(btn) {
   }).then(async (result) => {
     if (result.isConfirmed) {
       const fd = new FormData();
-      fd.append("id_libro", id_libro);
+      fd.append("id_categoria", id_categoria);
 
       Swal.fire({
-        title: "Eliminando libro...",
+        title: "Eliminando categoría...",
         text: "Por favor espere un momento.",
         allowOutsideClick: false,
         didOpen: () => Swal.showLoading(),
       });
 
       const respuesta = await fetch(
-        "assets/controladores/libros/eliminar_libro.php",
+        "assets/controladores/categorias/eliminar_categoria.php",
         {
           method: "POST",
           body: fd,
@@ -34,12 +34,12 @@ function eliminarLibro(btn) {
       if (res.trim() === "ok") {
         Swal.fire(
           "Eliminado",
-          "Libro eliminado correctamente.",
+          "Categoría eliminado correctamente.",
           "success"
         ).then(() => location.reload());
       } else if (
         res ==
-        `No se puede inactivar el libro ${titulo_libro} ya que está asociado a un prestamo`
+        `No se puede inactivar la categoría ${titulo_libro} ya que está asociado a un prestamo`
       ) {
         Swal.fire("Fallo", res, "question");
       } else {

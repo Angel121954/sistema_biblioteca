@@ -1,5 +1,6 @@
 function eliminarUsuario(btn) {
   const id_usuario = btn.dataset.id;
+  const nombre_usuario = btn.dataset.nombre;
   Swal.fire({
     title: "¿Eliminar usuario?",
     text: "Esta acción inactiva el usuario del sistema.",
@@ -35,6 +36,11 @@ function eliminarUsuario(btn) {
           "Usuario eliminado correctamente.",
           "success"
         ).then(() => location.reload());
+      } else if (
+        res.trim() ==
+        `No se puede inactivar el usuario ${nombre_usuario} ya que está asociado a una reserva`
+      ) {
+        Swal.fire("Fallo", res, "question");
       } else {
         Swal.fire("Error", res, "error");
       }

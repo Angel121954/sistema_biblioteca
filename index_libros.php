@@ -6,8 +6,10 @@ $sql = new MySQL();
 $sql->conectar();
 
 $fila = $sql->efectuarConsulta("SELECT l.id_libro, l.titulo_libro, l.autor_libro,
-                    l.isbn_libro, l.categoria_libro, l.disponibilidad_libro, l.cantidad_libro 
-                    FROM libros AS l WHERE estado_libro != 'Inactivo'");
+                    l.isbn_libro, l.disponibilidad_libro, l.cantidad_libro,
+                    cl.id_categoria, cl.nombre_categoria
+                    FROM libros l INNER JOIN categorias cl ON cl.id_categoria = l.fk_categoria
+                    WHERE l.estado_libro != 'Inactivo'");
 
 if (!isset($_SESSION['id_usuario'])) {
     header("Location: login.php");
@@ -130,6 +132,14 @@ $inactivos = $inactivos_result->fetch_assoc();
                 </a>
             </li>
 
+            <!-- Enlace: Categorias -->
+            <li class="nav-item">
+                <a class="nav-link" href="index_categorias.php">
+                    <i class="bi bi-collection"></i>
+                    <span>Categorias</span>
+                </a>
+            </li>
+
             <!-- Reservas -->
             <?php switch ($_SESSION["tipo_usuario"]):
                 case "1": ?>
@@ -182,6 +192,7 @@ $inactivos = $inactivos_result->fetch_assoc();
                             <a class="collapse-item" href="assets/controladores/informes/libro_prestado.php">Libros prestados</a>
                             <a class="collapse-item" href="assets/controladores/informes/libro_mas_prestado.php">Libros más prestados</a>
                             <a class="collapse-item" href="assets/controladores/informes/libro_menos_prestado.php">Libros menos prestados</a>
+                            <a class="collapse-item" href="assets/controladores/informes/historial_usuario.php">Historial de usuarios</a>
                             <a class="collapse-item" href="assets/controladores/informes/usuario_moroso.php">Usuarios morosos</a>
                             <a class="collapse-item" href="assets/controladores/informes/historial_prestamo.php">Historial prestamo</a>
                             <a class="collapse-item" href="assets/controladores/informes/historial_reserva.php">Historial reserva</a>
@@ -203,6 +214,7 @@ $inactivos = $inactivos_result->fetch_assoc();
                             <a class="collapse-item" href="assets/controladores/informes_excel/libro_prestado_excel.php">Libros prestados</a>
                             <a class="collapse-item" href="assets/controladores/informes_excel/libro_mas_prestado_excel.php">Libros más prestados</a>
                             <a class="collapse-item" href="assets/controladores/informes_excel/libro_menos_prestado_excel.php">Libros menos prestados</a>
+                            <a class="collapse-item" href="assets/controladores/informes_excel/historial_usuario.php">Historial de usuarios</a>
                             <a class="collapse-item" href="assets/controladores/informes_excel/usuario_moroso_excel.php">Usuarios morosos</a>
                             <a class="collapse-item" href="assets/controladores/informes_excel/historial_prestamo_excel.php">Historial prestamo</a>
                             <a class="collapse-item" href="assets/controladores/informes_excel/historial_reserva_excel.php">Historial reserva</a>
@@ -275,57 +287,6 @@ $inactivos = $inactivos_result->fetch_assoc();
                     <!-- Topbar Navbar -->
                     <ul class="navbar-nav ml-auto">
                         <?php if ($_SESSION["tipo_usuario"] === "1"): ?>
-                            <!-- Nav Item - Papelera libros -->
-                            <li class="nav-item dropdown no-arrow mx-1">
-                                <a class="nav-link dropdown-toggle" href="#" id="btn_papelera_libros" role="button"
-                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <i class="bi bi-trash3-fill"></i>
-                                    <!-- Counter - Alerts -->
-                                    <span class="badge badge-danger badge-counter"><?= $inactivos['cantidad_inactivos']; ?></span>
-                                </a>
-                                <!-- Dropdown - Alerts -->
-                                <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
-                                    aria-labelledby="alertsDropdown">
-                                    <h6 class="dropdown-header">
-                                        Alerts Center
-                                    </h6>
-                                    <a class="dropdown-item d-flex align-items-center" href="#">
-                                        <div class="mr-3">
-                                            <div class="icon-circle bg-primary">
-                                                <i class="fas fa-file-alt text-white"></i>
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <div class="small text-gray-500">December 12, 2019</div>
-                                            <span class="font-weight-bold">A new monthly report is ready to download!</span>
-                                        </div>
-                                    </a>
-                                    <a class="dropdown-item d-flex align-items-center" href="#">
-                                        <div class="mr-3">
-                                            <div class="icon-circle bg-success">
-                                                <i class="fas fa-donate text-white"></i>
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <div class="small text-gray-500">December 7, 2019</div>
-                                            $290.29 has been deposited into your account!
-                                        </div>
-                                    </a>
-                                    <a class="dropdown-item d-flex align-items-center" href="#">
-                                        <div class="mr-3">
-                                            <div class="icon-circle bg-warning">
-                                                <i class="fas fa-exclamation-triangle text-white"></i>
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <div class="small text-gray-500">December 2, 2019</div>
-                                            Spending Alert: We've noticed unusually high spending for your account.
-                                        </div>
-                                    </a>
-                                    <a class="dropdown-item text-center small text-gray-500" href="#">Show All Alerts</a>
-                                </div>
-                            </li>
-
                             <!--Restaurar un libro-->
                             <li class="nav-item dropdown no-arrow">
                                 <a class="nav-link dropdown-toggle" href="#" id="btn_restaurar_un_libro" role="button"
@@ -463,7 +424,8 @@ $inactivos = $inactivos_result->fetch_assoc();
                             <div class="d-sm-flex align-items-center justify-content-between mb-4">
                                 <h1>Gestión de Libros</h1>
                                 <?php if ($_SESSION["tipo_usuario"] === "1"): ?>
-                                    <button id="btn_registro_libro">
+                                    <button id="btn_registro_libro"
+                                        data-categorias="<?php echo htmlspecialchars($categorias_json, ENT_QUOTES, 'UTF-8'); ?>">
                                         <i class="fas fa-plus fa-sm text-white-50"></i> Agregar libro
                                     </button>
                                 <?php endif; ?>
@@ -499,7 +461,7 @@ $inactivos = $inactivos_result->fetch_assoc();
                                                         <td><?php echo $filas["id_libro"]; ?></td>
                                                         <td><?php echo $filas["titulo_libro"]; ?></td>
                                                         <td><?php echo $filas["autor_libro"]; ?></td>
-                                                        <td><?php echo $filas["categoria_libro"]; ?></td>
+                                                        <td><?php echo $filas["nombre_categoria"]; ?></td>
                                                         <td><?php echo $filas["disponibilidad_libro"]; ?></td>
                                                         <td><?php echo $filas["cantidad_libro"]; ?></td>
                                                         <td><?php echo $filas["isbn_libro"]; ?></td>
@@ -510,7 +472,6 @@ $inactivos = $inactivos_result->fetch_assoc();
                                                                     data-id="<?= $filas['id_libro']; ?>"
                                                                     data-titulo="<?= $filas['titulo_libro']; ?>"
                                                                     data-autor="<?= $filas['autor_libro']; ?>"
-                                                                    data-categoria="<?= $filas['categoria_libro']; ?>"
                                                                     data-cantidad="<?= $filas['cantidad_libro']; ?>"
                                                                     onclick="editarLibro(this)">
                                                                     <i class="bi bi-pencil-square"></i>
@@ -519,6 +480,7 @@ $inactivos = $inactivos_result->fetch_assoc();
                                                                 <button
                                                                     class="btn btn-sm btn-danger"
                                                                     data-id="<?= $filas['id_libro']; ?>"
+                                                                    data-nombre="<?= $filas['titulo_libro']; ?>"
                                                                     onclick="eliminarLibro(this)">
                                                                     <i class="bi bi-trash"></i>
                                                                 </button>
@@ -608,7 +570,6 @@ $inactivos = $inactivos_result->fetch_assoc();
             <script src="assets/public/js/libros/editar_libro.js"></script>
             <script src="assets/public/js/libros/eliminar_libro.js"></script>
             <script src="assets/public/js/libros/restaurar_libro.js"></script>
-            <script src="assets/public/js/libros/vaciar_papelera_libro.js"></script>
             <script src="assets/public/js/libros/restaurar_un_libro.js"></script>
         <?php endif; ?>
 

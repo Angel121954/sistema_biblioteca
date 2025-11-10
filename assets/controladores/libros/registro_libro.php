@@ -25,7 +25,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $titulo    = limpiarTexto($_POST["titulo_libro"], $conexion);
     $autor     = limpiarTexto($_POST["autor_libro"], $conexion);
     $isbn      = limpiarTexto($_POST["isbn_libro"], $conexion);
-    $categoria = limpiarTexto($_POST["categoria_libro"], $conexion);
+    $categoria = filter_var($_POST["categoria_libro"], FILTER_SANITIZE_NUMBER_INT);
     $cantidad  = filter_var($_POST["cantidad_libro"], FILTER_SANITIZE_NUMBER_INT);
 
     if (!is_numeric($cantidad) || $cantidad <= 0) {
@@ -34,9 +34,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     $consulta = "
         INSERT INTO libros (
-            titulo_libro, autor_libro, isbn_libro, categoria_libro, cantidad_libro, disponibilidad_libro, estado_libro
+            titulo_libro, autor_libro, isbn_libro, fk_categoria, cantidad_libro, disponibilidad_libro, estado_libro
         ) VALUES (
-            '$titulo', '$autor', '$isbn', '$categoria', $cantidad, 'Disponible', 'Activo'
+            '$titulo', '$autor', '$isbn', $categoria, $cantidad, 'Disponible', 'Activo'
         )
     ";
 

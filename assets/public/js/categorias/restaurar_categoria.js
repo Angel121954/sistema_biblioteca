@@ -1,15 +1,15 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const btnEliminarTodos = document.querySelector("#btn_papelera_libros");
+  const btnRestaurarTodos = document.getElementById("btn_restaurar_categorias");
 
-  if (!btnEliminarTodos) return;
+  if (!btnRestaurarTodos) return;
 
-  btnEliminarTodos.addEventListener("click", async () => {
+  btnRestaurarTodos.addEventListener("click", async () => {
     const confirmacion = await Swal.fire({
-      title: "¿Deseas eliminar todos los libros?",
-      text: "Todos los libros inactivos serán eliminados completamente del sistema.",
+      title: "¿Deseas restaurar todas las categorías?",
+      text: "Todos las categorías inactivas volverán a estar activos en el sistema.",
       icon: "question",
       showCancelButton: true,
-      confirmButtonText: "Sí, vaciar papelera",
+      confirmButtonText: "Sí, restaurar todos",
       cancelButtonText: "Cancelar",
       confirmButtonColor: "#28a745",
       cancelButtonColor: "#6c757d",
@@ -18,36 +18,36 @@ document.addEventListener("DOMContentLoaded", () => {
     if (confirmacion.isConfirmed) {
       try {
         Swal.fire({
-          title: "Vaciando papelera...",
+          title: "Restaurando categorías...",
           text: "Por favor espere un momento.",
           allowOutsideClick: false,
           didOpen: () => Swal.showLoading(),
         });
 
         const respuesta = await fetch(
-          "assets/controladores/libros/vaciar_papelera_libro.php",
+          "assets/controladores/categorias/restaurar_categoria.php",
           {
             method: "POST",
           }
         );
 
-        const res = await respuesta.text();
+        const resultado = await respuesta.text();
 
-        console.log(`Lo que trajo la respuesta: ${res}`);
-
-        if (res.trim() === "ok") {
+        if (resultado.trim() === "ok") {
           Swal.fire({
-            title: "Papelera vaciada",
-            text: "Todos los libros fueron eliminados correctamente.",
+            title: "Libros restaurados",
+            text: "Todos las categorías fueron activadas correctamente.",
             icon: "success",
             confirmButtonColor: "#28a745",
           }).then(() => {
             location.reload();
           });
+        } else if (resultado.includes("No hay categorías para restaurar")) {
+          Swal.fire("Fallo", resultado, "question");
         } else {
           Swal.fire({
             title: "Error",
-            text: res || "No se pudieron eliminar los libros.",
+            text: resultado || "No se pudieron restaurar las categorías.",
             icon: "error",
           });
         }

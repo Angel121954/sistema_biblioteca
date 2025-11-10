@@ -18,6 +18,12 @@ $(document).ready(function () {
   });
 });
 
+// Función simple para toggle del sidebar
+document.getElementById('sidebarToggle').addEventListener('click', function() {
+    const sidebar = document.getElementById('accordionSidebar');
+    sidebar.classList.toggle('toggled');
+});
+
 /* async function cambiarIdioma(idioma) {
   const respuesta = await fetch(`assets/lang/${idioma}.json`);
   const translaciones = await respuesta.json();
