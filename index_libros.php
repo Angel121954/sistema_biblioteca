@@ -24,6 +24,14 @@ $inactivos_result = $sql->efectuarConsulta("SELECT COUNT(*) AS cantidad_inactivo
                                             FROM libros WHERE estado_libro = 'Inactivo'");
 $inactivos = $inactivos_result->fetch_assoc();
 
+$categorias_result = $sql->efectuarConsulta("SELECT id_categoria, nombre_categoria
+                                            FROM categorias");
+$categorias = [];
+while ($valor = $categorias_result->fetch_assoc()) {
+    $categorias[] = $valor;
+}
+$categorias_json = json_encode($categorias, JSON_UNESCAPED_UNICODE);
+
 ?>
 
 
@@ -296,9 +304,6 @@ $inactivos = $inactivos_result->fetch_assoc();
                                 </a>
                             </li>
 
-
-
-
                             <!-- Nav Item - Restaurar libros -->
                             <li class="nav-item dropdown no-arrow mx-1">
                                 <a class="nav-link dropdown-toggle" href="#" id="btn_restaurar_libros" role="button"
@@ -468,10 +473,11 @@ $inactivos = $inactivos_result->fetch_assoc();
                                                         <?php if ($_SESSION["tipo_usuario"] === "1"): ?>
                                                             <td class="text-center">
                                                                 <button
-                                                                    class="btn btn-sm btn-warning" +
+                                                                    class="btn btn-sm btn-warning"
                                                                     data-id="<?= $filas['id_libro']; ?>"
                                                                     data-titulo="<?= $filas['titulo_libro']; ?>"
                                                                     data-autor="<?= $filas['autor_libro']; ?>"
+                                                                    data-categoria="<?php echo htmlspecialchars($categorias_json, ENT_QUOTES, 'UTF-8'); ?>"
                                                                     data-cantidad="<?= $filas['cantidad_libro']; ?>"
                                                                     onclick="editarLibro(this)">
                                                                     <i class="bi bi-pencil-square"></i>

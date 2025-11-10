@@ -110,7 +110,6 @@ document.querySelector("#btn_registro_libro").addEventListener("click", (e) => {
         });
 
         registroLibro();
-
         async function registroLibro() {
           try {
             const respuesta = await fetch(
@@ -129,6 +128,10 @@ document.querySelector("#btn_registro_libro").addEventListener("click", (e) => {
                 "Libro agregado correctamente",
                 "success"
               ).then(() => location.reload());
+            } else if (
+              res.includes(`El libro ${titulo} ya existe en el sistema`)
+            ) {
+              Swal.fire("Fallo", res, "question");
             } else {
               Swal.fire("Error", res, "error");
             }

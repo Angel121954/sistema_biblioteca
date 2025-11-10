@@ -32,22 +32,23 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         exit("Cantidad inválida");
     }
 
-    $consulta = "
-        INSERT INTO libros (
+    $libro_repetido = $sql->efectuarConsulta("SELECT id_libro FROM libros
+                                        WHERE titulo_libro = '$titulo'");
+    if ($libro_repetido->num_rows > 0) {
+        echo "El libro $titulo ya existe en el sistema";
+        $sql->desconectar();
+        exit;
+    }
+
+    $registrar = $sql->efectuarConsulta("INSERT INTO libros (
             titulo_libro, autor_libro, isbn_libro, fk_categoria, cantidad_libro, disponibilidad_libro, estado_libro
         ) VALUES (
-            '$titulo', '$autor', '$isbn', $categoria, $cantidad, 'Disponible', 'Activo'
-        )
-    ";
+            '$titulo', '$autor', '$isbn', $categoria, $cantidad, 'Disponible', 'Activo')");
 
-    $resultado = $sql->efectuarConsulta($consulta);
-
-    if ($resultado) {
+    if ($registrar) {
         echo "ok";
     } else {
         echo "Error al registrar el libro.";
     }
-
-    $sql->desconectar();
-    exit;
 }
+$sql->desconectar();

@@ -4,7 +4,7 @@ $sql = new MySQL();
 $sql->conectar();
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $campos = ["id_libro", "titulo_libro", "autor_libro", "categoria_libro", "cantidad_libro"];
+    $campos = ["id_libro", "titulo_libro", "autor_libro", "fk_categoria", "cantidad_libro"];
     foreach ($campos as $campo) {
         if (!isset($_POST[$campo]) || trim($_POST[$campo]) === '') {
             exit("Error: faltan campos requeridos.");
@@ -24,7 +24,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $id        = intval($_POST["id_libro"]);
     $titulo    = limpiarTexto($_POST["titulo_libro"], $conexion);
     $autor     = limpiarTexto($_POST["autor_libro"], $conexion);
-    $categoria = limpiarTexto($_POST["categoria_libro"], $conexion);
+    $categoria = filter_var($_POST["fk_categoria"], FILTER_SANITIZE_NUMBER_INT);
     $cantidad  = filter_var($_POST["cantidad_libro"], FILTER_SANITIZE_NUMBER_INT);
 
     if (!is_numeric($cantidad) || $cantidad < 0) {
@@ -35,7 +35,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         UPDATE libros SET
             titulo_libro = '$titulo',
             autor_libro = '$autor',
-            categoria_libro = '$categoria',
+            fk_categoria = $categoria,
             disponibilidad_libro = 'Disponible',
             cantidad_libro = $cantidad
         WHERE id_libro = $id

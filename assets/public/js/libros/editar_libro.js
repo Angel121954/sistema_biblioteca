@@ -2,8 +2,9 @@ function editarLibro(btn) {
   const id = btn.dataset.id;
   const titulo = btn.dataset.titulo;
   const autor = btn.dataset.autor;
-  const categoria = btn.dataset.categoria;
+  const categoria_libro = JSON.parse(btn.dataset.categoria);
   const cantidad = btn.dataset.cantidad;
+
   Swal.fire({
     title: "Editar Libro",
     html: `
@@ -23,10 +24,14 @@ function editarLibro(btn) {
             </div>
 
             <div class="col-md-6">
-              <label for="swal_categoria" class="form-label fw-semibold">Categoría</label>
-              <input id="swal_categoria" type="text" class="form-control form-control-lg shadow-sm"
-                     placeholder="Ingrese la categoría" required value="${categoria}">
-            </div>
+            <label for="swal_autor" class="form-label fw-semibold">Categoría</label>
+            <div class="form-floating mb-4">
+          <select id="categoria_libro" name="categoria_libro" class="form-select" required>
+            <option value="" disabled selected>Seleccione una categoría</option>
+          </select>
+          <label for="categoria_libro"><i class="bi bi-tag"></i> Categoría</label>
+        </div>
+        </div>
 
             <div class="col-md-6">
               <label for="swal_cantidad" class="form-label fw-semibold">Cantidad</label>
@@ -43,13 +48,23 @@ function editarLibro(btn) {
     cancelButtonText: "Cancelar",
     confirmButtonColor: "#3085d6",
     cancelButtonColor: "#d33",
+    didOpen: () => {
+      const selectCategoriaLibro = document.querySelector("#categoria_libro");
+      categoria_libro.forEach((c) => {
+        const option = document.createElement("option");
+        option.value = c.id_categoria;
+        option.textContent = c.nombre_categoria;
+        selectCategoriaLibro.appendChild(option);
+      });
+    },
     preConfirm: () => {
       const titulo = document.querySelector("#swal_titulo").value.trim();
       const autor = document.querySelector("#swal_autor").value.trim();
-      const categoria = document.querySelector("#swal_categoria").value.trim();
+      const categoria = document.querySelector("#categoria_libro").value.trim();
       const cantidad = document.querySelector("#swal_cantidad").value;
 
       const regex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
+
       if (!regex.test(titulo) || !titulo || titulo.length < 4) {
         Swal.showValidationMessage(
           "El título debe ser válido y con un minimo de 4 caracteres."
@@ -64,17 +79,8 @@ function editarLibro(btn) {
         return;
       }
 
-      if (!isbn || isbn.length < 5) {
-        Swal.showValidationMessage(
-          "El ISBN debe ser válido y con un minimo de 5 caracteres."
-        );
-        return;
-      }
-
-      if (!regex.test(categoria) || !categoria || categoria.length < 4) {
-        Swal.showValidationMessage(
-          "La categoría debe ser válida y con un minimo de 4 caracteres."
-        );
+      if (!categoria) {
+        Swal.showValidationMessage("La categoría debe ser válida.");
         return;
       }
 
@@ -87,7 +93,7 @@ function editarLibro(btn) {
       fd.append("id_libro", id);
       fd.append("titulo_libro", titulo);
       fd.append("autor_libro", autor);
-      fd.append("categoria_libro", categoria);
+      fd.append("fk_categoria", categoria);
       fd.append("cantidad_libro", cantidad);
 
       return fd;
