@@ -31,24 +31,25 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         exit("No se puede editar con una cantidad negativa.");
     }
 
-    $consulta = "
-        UPDATE libros SET
-            titulo_libro = '$titulo',
-            autor_libro = '$autor',
-            fk_categoria = $categoria,
-            disponibilidad_libro = 'Disponible',
-            cantidad_libro = $cantidad
-        WHERE id_libro = $id
-    ";
+    $libros_repetidos = $sql->efectuarConsulta("SELECT id_libro FROM libros
+                                            WHERE titulo_libro = '$titulo'
+                                            AND id_libro != $id");
+    if ($libros_repetidos->num_rows > 0) {
+        echo "El libro $titulo ya existe en el sistema";
+        $sql->desconectar();
+        exit;
+    }
 
-    $resultado = $sql->efectuarConsulta($consulta);
+    $editar = $sql->efectuarConsulta("UPDATE libros SET titulo_libro = '$titulo',
+                                        autor_libro = '$autor', fk_categoria = $categoria,
+                                        disponibilidad_libro = 'Disponible',
+                                        cantidad_libro = $cantidad
+                                        WHERE id_libro = $id");
 
-    if ($resultado) {
+    if ($editar) {
         echo "ok";
     } else {
         echo "No se pudo editar el libro correctamente.";
     }
-
-    $sql->desconectar();
-    exit;
 }
+$sql->desconectar();

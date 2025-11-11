@@ -123,6 +123,8 @@ function editarLibro(btn) {
           icon: "success",
           confirmButtonColor: "#3085d6",
         }).then(() => location.reload());
+      } else if (res.includes(`El libro ${titulo} ya existe en el sistema`)) {
+        Swal.fire("Fallo", res, "question");
       } else {
         Swal.fire("Error", res, "error");
       }

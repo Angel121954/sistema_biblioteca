@@ -67,11 +67,7 @@ document
 
             const regex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
             if (!regex.test(nombre)) {
-              Swal.fire(
-                "Campo inválido",
-                "El nombre debe ser válido.",
-                "warning"
-              );
+              Swal.showValidationMessage("El nombre debe ser válido.");
               return;
             }
 
@@ -80,18 +76,18 @@ document
               return;
             }
 
-            if (contrasena.length < 4) {
-              Swal.showValidationMessage(
-                "La contrasña debe de tener un minimo de 4 caracteres."
-              );
-              return;
-            }
-
             if (!email || email.includes("'")) {
               Swal.fire(
                 "Campo inválido",
                 "El correo debe ser válido y no debe de contener comilla simple por cuestiones de seguridad.",
                 "warning"
+              );
+              return;
+            }
+
+            if (contrasena.length < 4) {
+              Swal.showValidationMessage(
+                "La contrasña debe de tener un minimo de 4 caracteres."
               );
               return;
             }

@@ -70,7 +70,7 @@ function editarUsuario(btn, tiposUsuariosStr) {
         const apellido = form.apellido_usuario.value.trim();
         const email = form.email_usuario.value.trim();
         const tipo = form.tipo_usuario.value;
-        
+
         const regex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
         if (!regex.test(nombre)) {
           Swal.showValidationMessage("El nombre debe ser válido.");
@@ -123,6 +123,10 @@ function editarUsuario(btn, tiposUsuariosStr) {
               icon: "success",
               confirmButtonText: "Aceptar",
             }).then(() => location.reload());
+          } else if (
+            res.includes("Esté correo ya está registrado en la base de datos!")
+          ) {
+            Swal.fire("Fallo", res, "question");
           } else {
             Swal.fire(
               "Error",
