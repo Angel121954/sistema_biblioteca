@@ -35,8 +35,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (resultado.trim() === "ok") {
           Swal.fire({
-            title: "Libros restaurados",
-            text: "Todos las categorías fueron activadas correctamente.",
+            title: "Categorías restauradas",
+            text: "Todas las categorías fueron activadas correctamente.",
             icon: "success",
             confirmButtonColor: "#28a745",
           }).then(() => {

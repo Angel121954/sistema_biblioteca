@@ -5,11 +5,20 @@ $sql = new MySQL();
 $sql->conectar();
 
 if (
-    isset($_POST["id_categoria"])
-    && !empty($_POST["id_categoria"])
+    isset($_POST["id_categoria"], $_POST["nombre_categoria"])
+    && !empty($_POST["id_categoria"] && !empty($_POST["nombre_categoria"]))
 ) {
     //* variables
     $id = intval($_POST["id_categoria"]);
+    $categoria = filter_var($_POST["nombre_categoria"], FILTER_SANITIZE_SPECIAL_CHARS);
+    $categoria_usuario = $sql->efectuarConsulta("SELECT id_categoria FROM categorias C
+                                                INNER JOIN usuarios u ON u.fk_categoria = c.id_categoria
+                                                WHERE id_categoria = $id");
+    if ($categoria_usuario->num_rows > 0) {
+        echo "No se puede inactivar la categoria $categoria ya que está asociado a un libro";
+        $sql->desconectar();
+        exit;
+    }
     $inactivar = $sql->efectuarConsulta("UPDATE categorias SET estado_categoria =
                                         'Inactiva' WHERE id_categoria = $id");
     if ($inactivar) {

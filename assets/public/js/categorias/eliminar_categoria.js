@@ -14,6 +14,7 @@ function eliminarCategoria(btn) {
     if (result.isConfirmed) {
       const fd = new FormData();
       fd.append("id_categoria", id_categoria);
+      fd.append("nombre_categoria", categoria);
 
       Swal.fire({
         title: "Eliminando categoría...",
@@ -38,8 +39,9 @@ function eliminarCategoria(btn) {
           "success"
         ).then(() => location.reload());
       } else if (
-        res ==
-        `No se puede inactivar la categoría ${titulo_libro} ya que está asociado a un prestamo`
+        res.includes(
+          `No se puede inactivar la categoria ${categoria} ya que está asociado a un libro`
+        )
       ) {
         Swal.fire("Fallo", res, "question");
       } else {
