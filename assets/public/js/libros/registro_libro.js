@@ -132,6 +132,12 @@ document.querySelector("#btn_registro_libro").addEventListener("click", (e) => {
               res.includes(`El libro ${titulo} ya existe en el sistema`)
             ) {
               Swal.fire("Fallo", res, "question");
+            } else if (
+              res.includes(
+                "No se puede repetir el mismo ISBN de un libro ya registrado y activo"
+              )
+            ) {
+              Swal.fire("Fallo", res, "question");
             } else {
               Swal.fire("Error", res, "error");
             }
