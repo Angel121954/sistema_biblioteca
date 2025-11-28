@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
         html: `
           <form id="frm_registro_prestamo" class="text-start" novalidate style="max-width: 450px; margin: 0 auto;">
             <div class="form-floating mb-3">
-              <select name="id_reserva_has_libro" id="id_reserva_has_libro" class="form-control" required>
+              <select name="id_reserva_has_libro" id="id_reserva_has_libro" class="form-select" required>
                 ${opcionesReservas}
               </select>
               <label for="id_reserva_has_libro" class="mt-2">

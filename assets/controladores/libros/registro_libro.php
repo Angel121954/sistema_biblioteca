@@ -33,18 +33,16 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
 
     $libro_repetido = $sql->efectuarConsulta("SELECT id_libro FROM libros
-                                        WHERE titulo_libro = '$titulo'
-                                        AND estado_libro = 'Activo'");
+                                        WHERE titulo_libro = '$titulo'");
     $isbn_repetido = $sql->efectuarConsulta("SELECT id_libro FROM libros
-                                        WHERE isbn_libro = '$isbn'
-                                        AND estado_libro = 'Activo'");
+                                        WHERE isbn_libro = '$isbn'");
     if ($libro_repetido->num_rows > 0) {
         echo "El libro $titulo ya existe en el sistema";
         $sql->desconectar();
         exit;
     }
     if ($isbn_repetido->num_rows > 0) {
-        echo "No se puede repetir el mismo ISBN de un libro ya registrado y activo";
+        echo "No se puede repetir el mismo ISBN de un libro ya registrado";
     }
 
     $registrar = $sql->efectuarConsulta("INSERT INTO libros (

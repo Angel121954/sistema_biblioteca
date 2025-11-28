@@ -11,8 +11,8 @@ if (
     //* variables
     $id = intval($_POST["id_categoria"]);
     $categoria = filter_var($_POST["nombre_categoria"], FILTER_SANITIZE_SPECIAL_CHARS);
-    $categoria_usuario = $sql->efectuarConsulta("SELECT id_categoria FROM categorias C
-                                                INNER JOIN usuarios u ON u.fk_categoria = c.id_categoria
+    $categoria_usuario = $sql->efectuarConsulta("SELECT id_categoria FROM categorias c
+                                                INNER JOIN libros l ON l.fk_categoria = c.id_categoria
                                                 WHERE id_categoria = $id");
     if ($categoria_usuario->num_rows > 0) {
         echo "No se puede inactivar la categoria $categoria ya que está asociado a un libro";
