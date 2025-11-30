@@ -468,10 +468,9 @@ $inactivos = $inactivos_result->fetch_assoc();
                 <!-- End of Content Wrapper -->
                 <!-- Footer -->
                 <footer class="sticky-footer bg-white">
-                    <div class="container my-auto">
-                        <div class="copyright text-center my-auto">
-                            <span>Copyright &copy; Your Website 2021</span>
-                        </div>
+                    <div class="text-center py-3" style="color: #b9c1c9; font-weight: 600; letter-spacing: .5px;">
+                        <span style="opacity: .8;">Hecho con <i class="bi bi-person-heart"></i> por</span>
+                        <span style="color: #9c5716ff;">CodeÁngels</span>
                     </div>
                 </footer>
                 <!-- End of Footer -->
