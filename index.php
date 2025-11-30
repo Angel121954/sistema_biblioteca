@@ -1,19 +1,21 @@
 <?php
 
 session_start();
+require_once "assets/modelos/MySQL.php";
+$sql = new MySQL();
+$sql->conectar();
 
 if (!isset($_SESSION["id_usuario"])) {
     header("Location: login.php");
     exit;
 }
 
-require_once "assets/modelos/MySQL.php";
-$sql = new MySQL();
-$sql->conectar();
+$id_usuario = $_SESSION["id_usuario"];
+
 $fila = $sql->efectuarConsulta("SELECT u.id_usuario, u.nombre_usuario, u.apellido_usuario,
                     u.email_usuario, contrasena_usuario, u.fk_tipo_usuario, t.id_tipo_usuario, t.nombre_tipo_usuario 
                     FROM usuarios AS u INNER JOIN tipos_usuarios AS t ON t.id_tipo_usuario = u.fk_tipo_usuario
-                    WHERE estado_usuario = 'Activo'");
+                    WHERE estado_usuario = 'Activo' AND id_usuario != $id_usuario");
 
 $tipos_usuarios_c = $sql->efectuarConsulta("SELECT * FROM tipos_usuarios");
 $tipos_usuarios = [];
@@ -23,7 +25,6 @@ while ($fila_tipos = $tipos_usuarios_c->fetch_assoc()) {
 
 $tipos_usuarios_json = json_encode($tipos_usuarios, JSON_UNESCAPED_UNICODE);
 
-$id_usuario = $_SESSION["id_usuario"];
 $usuario_result = $sql->efectuarConsulta("SELECT * FROM usuarios WHERE id_usuario = $id_usuario");
 $usuario = $usuario_result->fetch_assoc();
 
