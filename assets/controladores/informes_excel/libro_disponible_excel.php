@@ -9,8 +9,8 @@ $sql = new MySQL();
 $sql->conectar();
 
 $query = $sql->efectuarConsulta("
-    SELECT id_libro, titulo_libro, autor_libro, isbn_libro, categoria_libro, cantidad_libro
-    FROM libros
+    SELECT id_libro, titulo_libro, autor_libro, isbn_libro, nombre_categoria, cantidad_libro
+    FROM libros l INNER JOIN categorias c ON c.id_categoria = l.fk_categoria
     WHERE disponibilidad_libro = 'Disponible';
 ");
 

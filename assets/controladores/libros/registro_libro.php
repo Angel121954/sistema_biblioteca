@@ -43,6 +43,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
     if ($isbn_repetido->num_rows > 0) {
         echo "No se puede repetir el mismo ISBN de un libro ya registrado";
+        $sql->desconectar();
+        exit;
     }
 
     $registrar = $sql->efectuarConsulta("INSERT INTO libros (

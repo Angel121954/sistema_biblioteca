@@ -6,10 +6,12 @@ $sql = new MySQL();
 $sql->conectar();
 
 $libros_result = $sql->efectuarConsulta("SELECT p.id_prestamo, l.titulo_libro, l.autor_libro,
-                                l.isbn_libro, l.categoria_libro, l.disponibilidad_libro,
+                                l.isbn_libro, c.nombre_categoria, l.disponibilidad_libro,
                                 rl.cantidad_libros FROM prestamos p INNER JOIN reservas_has_libros rl ON
                                 p.fk_reserva_has_libro = rl.id_reserva_has_libro INNER JOIN libros l ON
-                                rl.libros_id_libro = l.id_libro ORDER BY p.id_prestamo");
+                                rl.libros_id_libro = l.id_libro INNER JOIN categorias c 
+                                ON c.id_categoria = l.fk_categoria
+                                ORDER BY p.id_prestamo");
 
 $pdf = new FPDF();
 $pdf->AddPage();
@@ -39,7 +41,7 @@ if ($libros_result->num_rows > 0) {
         $pdf->Cell(50, 8, utf8_decode($libro['titulo_libro']), 1, 0, 'L');
         $pdf->Cell(52, 8, utf8_decode($libro['autor_libro']), 1, 0, 'L');
         $pdf->Cell(28, 8, $libro['isbn_libro'], 1, 0, 'C');
-        $pdf->Cell(30, 8, utf8_decode($libro['categoria_libro']), 1, 0, 'C');
+        $pdf->Cell(30, 8, utf8_decode($libro['nombre_categoria']), 1, 0, 'C');
         $pdf->Cell(20, 8, $libro['cantidad_libros'], 1, 1, 'C');
     }
 } else {

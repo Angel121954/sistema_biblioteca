@@ -34,8 +34,10 @@ $cantidades_result = $sql->efectuarConsulta("SELECT
             WHERE disponibilidad_libro = 'Disponible'
         ) AS total_libros_disponibles,
         (
-            SELECT COUNT(*) FROM libros
-            WHERE categoria_libro = 'Historia'
+            SELECT COUNT(*) FROM libros l
+            INNER JOIN categorias c ON
+            c.id_categoria = l.fk_categoria
+            WHERE nombre_categoria = 'Historia'
             AND cantidad_libro > 0
         ) AS cantidad_historia");
 

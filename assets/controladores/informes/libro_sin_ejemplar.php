@@ -6,7 +6,8 @@ $sql = new MySQL();
 $sql->conectar();
 
 $libros_result = $sql->efectuarConsulta("SELECT id_libro, titulo_libro, autor_libro,
-                                isbn_libro, categoria_libro, disponibilidad_libro FROM libros
+                                isbn_libro, nombre_categoria, disponibilidad_libro FROM libros
+                                INNER JOIN categorias c ON c.id_categoria = l.fk_categoria
                                 WHERE disponibilidad_libro = 'Sin ejemplares'");
 
 $pdf = new FPDF();
@@ -36,7 +37,7 @@ if ($libros_result->num_rows > 0) {
         $pdf->Cell(60, 8, utf8_decode($libro['titulo_libro']), 1, 0, 'L');
         $pdf->Cell(56, 8, utf8_decode($libro['autor_libro']), 1, 0, 'L');
         $pdf->Cell(28, 8, $libro['isbn_libro'], 1, 0, 'C');
-        $pdf->Cell(34, 8, utf8_decode($libro['categoria_libro']), 1, 1, 'C');
+        $pdf->Cell(34, 8, utf8_decode($libro['nombre_categoria']), 1, 1, 'C');
     }
 } else {
     $pdf->Cell(190, 10, utf8_decode('No hay libros disponibles actualmente.'), 1, 1, 'C');

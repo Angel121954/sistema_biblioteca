@@ -10,7 +10,7 @@ $sql->conectar();
 
 $query = $sql->efectuarConsulta("
     SELECT id_libro, titulo_libro, autor_libro, isbn_libro, categoria_libro
-    FROM libros
+    FROM libros INNER JOIN categorias c ON c.id_categoria = l.fk_categoria
     WHERE disponibilidad_libro = 'Sin ejemplares';
 ");
 
